@@ -228,3 +228,11 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
   `docs/AGENTS-SUPPORT.md`, and the dev skills `add-interview-type`, `add-agent` and `write-eval`.
 - **Not done here**: the README's "someone from outside installs and practices following only the README" criterion
   needs a published release and a person; the download links point to a repository that does not exist yet.
+
+### After phase 8 — Claude through the person's Claude Code login
+
+- Decided with the maintainer (2026-11-19): the Claude agent runs on the person's own Claude Code install and login
+  (subscription or API key), not only on an API key. The registry passes `CLAUDE_CODE_EXECUTABLE` (the `claude` found
+  on the shell PATH) and no longer `--hide-claude-auth`; an API key in the app is optional. Agents marked
+  `usesPlanLimits` show a warning on "Your AI", in the run dialog and in the practice setup: tasks and interviews spend
+  the person's plan limits. Rationale and the terms caveat in `docs/AGENTS-SUPPORT.md`; PLAN.md section 15 updated.

@@ -138,6 +138,7 @@ describe('runs', () => {
     const agents = await detectAll(() => false)
     expect(agents.find((a) => a.id === 'fake')).toMatchObject({ installed: true, via: 'native' })
     expect(agents.find((a) => a.id === 'gemini')).toMatchObject({ installed: false, via: null })
-    expect(agents.find((a) => a.id === 'claude')?.needsSecret).toBe('ANTHROPIC_API_KEY')
+    // Claude runs on the person's own `claude` CLI: missing from this test PATH, so it is reported
+    expect(agents.find((a) => a.id === 'claude')).toMatchObject({ needsSecret: 'claude', usesPlanLimits: true })
   })
 })

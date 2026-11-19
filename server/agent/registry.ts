@@ -3,9 +3,10 @@
  * agentclientprotocol.com/overview/agents on 2026-11-19 — they change: `docs/AGENTS-SUPPORT.md` is the place to keep
  * them current, and the `add-agent` dev skill says how to add one.
  *
- * Each agent logs in with its own CLI, once, in a terminal (the app never sees passwords). Claude is the exception:
- * the app passes the person's own API key, never a claude.ai subscription login (see docs/AGENTS-SUPPORT.md — offering
- * subscription login inside a third-party product needs Anthropic's approval).
+ * Each agent logs in with its own CLI, once, in a terminal (the app never sees passwords). For Claude, the adapter runs
+ * on the person's own Claude Code install and login (subscription or API key, whatever they set up in the CLI); the
+ * app never logs in for them. Agents on a subscription plan spend that plan's limits: the screens say so
+ * (`usesPlanLimits`). Decided with the maintainer on 2026-11-19 — see docs/AGENTS-SUPPORT.md.
  */
 
 import { which } from './shellPath.js'
@@ -25,6 +26,10 @@ export interface AgentDefinition {
   login: string
   /** environment variables the app passes from its secret store, if set */
   secrets?: string[]
+  /** the person's own CLI the adapter should run (its install and its login), passed in `executableEnv` */
+  executable?: { binary: string; env: string }
+  /** tasks and interviews count against the person's plan limits: warn on screen */
+  usesPlanLimits?: boolean
 }
 
 export const AGENTS: AgentDefinition[] = [
@@ -50,18 +55,21 @@ export const AGENTS: AgentDefinition[] = [
   },
   {
     id: 'claude',
-    name: 'Claude (your API key)',
+    name: 'Claude Code',
     detect: 'claude-agent-acp',
     command: 'claude-agent-acp',
-    args: ['--hide-claude-auth'],
+    args: [],
     fallback: {
       detect: 'npx',
       command: 'npx',
-      args: ['-y', '@agentclientprotocol/claude-agent-acp@0.109.0', '--hide-claude-auth'],
+      args: ['-y', '@agentclientprotocol/claude-agent-acp@0.109.0'],
     },
-    install: 'https://github.com/agentclientprotocol/claude-agent-acp',
-    login: 'Add your Anthropic API key in the settings. Claude subscription login is not offered in this app.',
+    install: 'https://docs.anthropic.com/en/docs/claude-code',
+    login:
+      'Uses your Claude Code login: run `claude` once in a terminal and sign in. Tasks and interviews count against your Claude plan limits.',
     secrets: ['ANTHROPIC_API_KEY'],
+    executable: { binary: 'claude', env: 'CLAUDE_CODE_EXECUTABLE' },
+    usesPlanLimits: true,
   },
   {
     id: 'kimi',
@@ -102,6 +110,7 @@ export interface DetectedAgent {
   install: string
   login: string
   needsSecret: string | null
+  usesPlanLimits: boolean
 }
 
 export interface Launch {
@@ -122,11 +131,13 @@ export async function detect(
   return { via: null, path: null, launch: null }
 }
 
-export async function detectAll(hasSecret: (name: string) => boolean): Promise<DetectedAgent[]> {
+/** Every agent, where it is and what is missing. (Keys are optional now, so `_hasSecret` is kept for the callers.) */
+export async function detectAll(_hasSecret: (name: string) => boolean): Promise<DetectedAgent[]> {
   return Promise.all(
     AGENTS.map(async (def) => {
       const found = await detect(def)
-      const missing = def.id === 'claude' ? ((def.secrets ?? []).find((s) => !hasSecret(s)) ?? null) : null
+      // the person's own CLI must exist when the adapter runs on it (Claude Code)
+      const missing = def.executable && !(await which(def.executable.binary)) ? def.executable.binary : null
       return {
         id: def.id,
         name: def.name,
@@ -136,9 +147,30 @@ export async function detectAll(hasSecret: (name: string) => boolean): Promise<D
         install: def.install,
         login: def.login,
         needsSecret: missing,
+        usesPlanLimits: Boolean(def.usesPlanLimits),
       }
     }),
   )
 }
 
 export const findAgent = (id: string) => AGENTS.find((a) => a.id === id) ?? null
+
+/**
+ * The environment an agent runs with: its API keys from the secret store (when set) and, for adapters that run on the
+ * person's own CLI, the path of that CLI (so its install and its login are used).
+ */
+export async function agentEnv(
+  def: AgentDefinition,
+  secret: (name: string) => string | null,
+): Promise<Record<string, string>> {
+  const extra: Record<string, string> = {}
+  for (const name of def.secrets ?? []) {
+    const value = secret(name)
+    if (value) extra[name] = value
+  }
+  if (def.executable) {
+    const cli = await which(def.executable.binary)
+    if (cli) extra[def.executable.env] = cli
+  }
+  return extra
+}

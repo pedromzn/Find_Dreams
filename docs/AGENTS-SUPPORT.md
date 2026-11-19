@@ -9,7 +9,7 @@ this file and `server/agent/registry.ts` are updated together.
 | ------------------ | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------- | -------------------------------------------------- |
 | Gemini CLI         | `npm i -g @google/gemini-cli`                                                                   | `gemini --acp`                                              | run `gemini` and sign in                           |
 | Codex              | `npm i -g @agentclientprotocol/codex-acp` (or nothing: the app falls back to `npx`)             | `codex-acp` / `npx -y @agentclientprotocol/codex-acp@2.8.0` | `codex login`, or an OpenAI API key in the app     |
-| Claude             | `npm i -g @agentclientprotocol/claude-agent-acp` (or nothing: `npx` fallback)                   | `claude-agent-acp --hide-claude-auth`                       | **your Anthropic API key**, in the app (see below) |
+| Claude Code        | Claude Code, plus `npm i -g @agentclientprotocol/claude-agent-acp` (or nothing: `npx` fallback) | `claude-agent-acp`, on your own `claude`                    | run `claude` and sign in (subscription or API key) |
 | Kimi Code          | `npm i -g @moonshot-ai/kimi-code` or `brew install kimi-code` (the Python kimi-cli is archived) | `kimi acp`                                                  | run `kimi` and use `/login`                        |
 | OpenCode           | see opencode.ai                                                                                 | `opencode acp`                                              | `opencode auth login`                              |
 | GitHub Copilot CLI | `npm i -g @github/copilot` (public preview)                                                     | `copilot --acp --stdio`                                     | run `copilot` and sign in to GitHub                |
@@ -18,16 +18,22 @@ this file and `server/agent/registry.ts` are updated together.
 The app finds these on your **shell's PATH**: a desktop app on macOS/Linux does not inherit it, so the app asks your
 login shell once (`server/agent/shellPath.ts`).
 
-## Claude: API key only
+## Claude: your Claude Code login
 
-Anthropic's terms do not allow third-party products to offer claude.ai login or subscription limits without prior
-approval, and the Claude ACP adapter is built on the Claude Agent SDK. So the app starts the adapter with
-`--hide-claude-auth` (it refuses subscription billing) and passes **your own Anthropic API key** (kept in the operating
-system keychain in the desktop app). If you use Claude Code with a subscription, you can still use it the other way:
-open Claude Code yourself in the workspace folder and paste the prompt the app gives you. Whether the app may offer
-subscription sign-in is an open decision (docs/PLAN.md, section 15) that depends on Anthropic.
+The app starts the official Claude ACP adapter on **your own Claude Code install and login**
+(`CLAUDE_CODE_EXECUTABLE` points it at the `claude` on your PATH): sign in once with `claude` in a terminal —
+subscription or API key, whatever you use there — and the app never logs in for you. An Anthropic API key in the
+app is optional.
 
-Check each provider's terms before promising "use your subscription" anywhere.
+**It spends your plan's limits.** Every task and every practice interview run through Claude counts against your
+Claude plan, like using Claude Code yourself; the app says so on "Your AI", when you run a task and when you start an
+interview with your agent as the engine. For long voice practice, a local Ollama model costs nothing.
+
+MZN Vagas is free and open source and does not resell or charge for access to Claude. Anthropic's terms for the
+Claude Agent SDK restrict third-party products from offering claude.ai login or subscription limits without approval;
+the maintainer chose to allow it here (2026-11-19) because the app is free, runs the person's own CLI and login, and
+is explicit about the usage. If Anthropic objects, switching back is one line (`--hide-claude-auth` in
+`server/agent/registry.ts`). Check each provider's terms for your own use.
 
 ## What the agent can do in your workspace
 

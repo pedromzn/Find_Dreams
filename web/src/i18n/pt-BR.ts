@@ -439,7 +439,7 @@ export const ptBR: Dictionary = {
       gemini: 'Rode `gemini` uma vez num terminal e faça login.',
       codex: 'Rode `codex login` uma vez num terminal (ou adicione uma chave de API da OpenAI abaixo).',
       claude:
-        'Adicione sua chave de API da Anthropic abaixo. O login por assinatura do Claude não é oferecido neste app.',
+        'Usa o login do seu Claude Code: rode `claude` uma vez num terminal e faça login. A chave de API da Anthropic abaixo é opcional.',
       kimi: 'Rode `kimi` uma vez num terminal e use /login.',
       opencode: 'Rode `opencode auth login` uma vez num terminal.',
       copilot: 'Rode `copilot` uma vez num terminal e entre na sua conta do GitHub.',
@@ -454,7 +454,8 @@ export const ptBR: Dictionary = {
     testing: 'Testando…',
     testOk: (ms: number) => `Respondeu em ${(ms / 1000).toFixed(1).replace('.', ',')} s.`,
     testFailed: 'Não respondeu:',
-    needsKey: 'Precisa da sua chave de API (abaixo).',
+    needsKey: (cli: string) => `Precisa da CLI \`${cli}\` instalada e logada (rode uma vez num terminal).`,
+    planLimits: 'Roda na sua própria assinatura: cada tarefa e cada entrevista gastam os limites do seu plano.',
     keys: 'Chaves de API',
     keysNote:
       'Só para agentes que usam uma. Ficam no cofre do sistema no app de desktop (em memória durante o desenvolvimento); esta página nunca consegue lê-las de volta.',

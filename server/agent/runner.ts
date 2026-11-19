@@ -12,7 +12,7 @@ import { HttpError } from '../errors.js'
 import { log } from '../logger.js'
 import { AgentSession, type AgentEvent } from './acp.js'
 import { broadcast } from './events.js'
-import { detect, findAgent, type AgentDefinition } from './registry.js'
+import { agentEnv, detect, findAgent, type AgentDefinition } from './registry.js'
 import { markDone, promptFor, readRequest } from './requests.js'
 import { childEnv } from './shellPath.js'
 
@@ -42,15 +42,7 @@ export function selectedAgent(): string | null {
 async function launchFor(def: AgentDefinition) {
   const found = await detect(def)
   if (!found.launch) throw new HttpError(409, `${def.name} is not installed.`, 'agent_missing')
-  const extra: Record<string, string> = {}
-  for (const name of def.secrets ?? []) {
-    const value = secrets.get(name)
-    if (value) extra[name] = value
-  }
-  if (def.id === 'claude' && !extra.ANTHROPIC_API_KEY) {
-    throw new HttpError(409, 'Add your Anthropic API key in the settings first.', 'agent_needs_key')
-  }
-  return { launch: found.launch, env: await childEnv(extra) }
+  return { launch: found.launch, env: await childEnv(await agentEnv(def, secrets.get)) }
 }
 
 function emit(run: Run, event: AgentEvent | { kind: 'status'; status: RunStatus; error?: string | null }) {

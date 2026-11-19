@@ -17,7 +17,7 @@ import { HttpError } from '../errors.js'
 import { secrets } from '../secrets.js'
 import { getPreference } from '../store/settings.js'
 import { AgentSession } from '../agent/acp.js'
-import { detect, findAgent } from '../agent/registry.js'
+import { agentEnv, detect, findAgent } from '../agent/registry.js'
 import { selectedAgent } from '../agent/runner.js'
 import { childEnv } from '../agent/shellPath.js'
 
@@ -163,15 +163,10 @@ export async function acpBrain(agentId = selectedAgent()): Promise<InterviewBrai
   if (!def) throw new HttpError(409, 'Choose an agent in "Your AI" first.', 'agent_missing')
   const found = await detect(def)
   if (!found.launch) throw new HttpError(409, `${def.name} is not installed.`, 'agent_missing')
-  const extra: Record<string, string> = {}
-  for (const name of def.secrets ?? []) {
-    const v = secrets.get(name)
-    if (v) extra[name] = v
-  }
   let text = ''
   const session = new AgentSession(
     found.launch,
-    await childEnv(extra),
+    await childEnv(await agentEnv(def, secrets.get)),
     (e) => e.kind === 'text' && (text += e.text),
     'reject',
   )

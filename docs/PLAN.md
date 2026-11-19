@@ -395,6 +395,6 @@ o README.
 Já decidido: o nome é **MZN Vagas** (repositório e pacote npm `mzn-vagas`, pasta `mzn_vagas`, título da
 janela e dos instaladores "MZN Vagas").
 
-- Porta padrão em dev (sugestão: 3060, seguindo 3040/3050 dos irmãos).
-- Se o Claude via assinatura será suportado (depende de aprovação da Anthropic) ou só por chave de API.
+- ~~Porta padrão em dev~~ **Decidido:** 3060.
+- ~~Se o Claude via assinatura será suportado~~ **Decidido (19/11/2026):** sim. O app usa o login do Claude Code da própria pessoa (assinatura ou chave de API), avisa que cada tarefa e entrevista gastam os limites do plano, e o projeto é gratuito e não cobra pelo acesso. Ver `docs/AGENTS-SUPPORT.md`.
 - Comprar certificados de assinatura (Apple Developer, assinatura no Windows) no lançamento ou depois.

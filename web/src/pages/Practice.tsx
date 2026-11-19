@@ -29,6 +29,7 @@ import { useLanguage, useT } from '@/i18n'
 import { api, useData } from '@/lib/api'
 import { HandOffDialog, useHandOff } from '@/agent/AgentActions'
 import { VoiceControls, useVoice } from '@/voice/useVoice'
+import { useAgents } from '@/agent/useAgents'
 
 type Brain = 'auto' | 'ollama' | 'acp' | 'api'
 type Turn = { speaker: 'interviewer' | 'candidate'; text: string; latencyMs?: number }
@@ -67,6 +68,8 @@ export default function Practice() {
   const end = useRef<HTMLDivElement>(null)
   const prepare = useHandOff(detail.reload)
   const voice = useVoice(language, slug)
+  const agents = useAgents()
+  const agentOnPlan = agents.data?.agents.find((a) => a.id === agents.data?.selected)?.usesPlanLimits ?? false
 
   useEffect(() => {
     if (brainInfo.data) setBrain(brainInfo.data.choice)
@@ -215,6 +218,9 @@ export default function Practice() {
               )}
             </Field>
           </div>
+          {agentOnPlan && (brain === 'acp' || brain === 'auto') && (
+            <p className="text-sm text-warning">{t.agent.planLimits}</p>
+          )}
           <VoiceControls voice={voice} mode={mode} onMode={setMode} />
           <ErrorLine message={error} />
           <Button onClick={start} disabled={busy} className="self-start">

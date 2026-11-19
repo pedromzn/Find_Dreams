@@ -13,6 +13,7 @@ export interface DetectedAgent {
   install: string
   login: string
   needsSecret: string | null
+  usesPlanLimits: boolean
 }
 
 export interface Run {

@@ -448,7 +448,8 @@ export const en = {
     logins: {
       gemini: 'Run `gemini` once in a terminal and sign in.',
       codex: 'Run `codex login` once in a terminal (or add an OpenAI API key below).',
-      claude: 'Add your Anthropic API key below. Claude subscription login is not offered in this app.',
+      claude:
+        'Uses your Claude Code login: run `claude` once in a terminal and sign in. An Anthropic API key below is optional.',
       kimi: 'Run `kimi` once in a terminal and use /login.',
       opencode: 'Run `opencode auth login` once in a terminal.',
       copilot: 'Run `copilot` once in a terminal and sign in to GitHub.',
@@ -463,7 +464,8 @@ export const en = {
     testing: 'Testing…',
     testOk: (ms: number) => `It answered in ${(ms / 1000).toFixed(1)} s.`,
     testFailed: 'It did not answer:',
-    needsKey: 'Needs your API key (below).',
+    needsKey: (cli: string) => `Needs the \`${cli}\` CLI installed and signed in (run it once in a terminal).`,
+    planLimits: 'Runs on your own subscription: every task and interview counts against your plan limits.',
     keys: 'API keys',
     keysNote:
       'Only for agents that use one. Kept in the operating system keychain in the desktop app (in memory during development); this page can never read them back.',

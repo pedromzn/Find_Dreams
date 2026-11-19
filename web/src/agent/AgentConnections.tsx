@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react'
-import { ArrowSquareOut, CheckCircle, Key } from '@phosphor-icons/react'
+import { ArrowSquareOut, CheckCircle, Gauge, Key } from '@phosphor-icons/react'
 import { Badge, Button, ErrorLine, Input, Loading, Panel, join } from '@/components/ui'
 import { useT } from '@/i18n'
 import { api, useData } from '@/lib/api'
@@ -64,7 +64,13 @@ function AgentRow({ agent, selected, onSelect }: { agent: DetectedAgent; selecte
         </div>
       </div>
       <p className="text-sm text-muted">{t.agent.logins[agent.id] ?? agent.login}</p>
-      {agent.needsSecret && <p className="text-sm text-warning">{t.agent.needsKey}</p>}
+      {agent.needsSecret && <p className="text-sm text-warning">{t.agent.needsKey(agent.needsSecret)}</p>}
+      {agent.usesPlanLimits && (
+        <p className="flex items-start gap-1.5 text-sm text-warning">
+          <Gauge size={16} className="mt-0.5 shrink-0" aria-hidden />
+          {t.agent.planLimits}
+        </p>
+      )}
       {!agent.installed && (
         <a
           href={agent.install}

@@ -45,6 +45,7 @@ export function RunWithAgent({ request, onFinished }: { request: AgentRequest; o
       ) : (
         <RunPanel run={run} />
       )}
+      {agent.usesPlanLimits && !run && <p className="text-xs text-warning">{t.agent.planLimits}</p>}
       <ErrorLine message={error} />
       <p className="text-sm text-faint">{t.agent.orCopy}</p>
     </div>
