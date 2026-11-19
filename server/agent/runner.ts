@@ -181,11 +181,13 @@ export async function testAgent(
       ),
       new Promise((_, fail) => setTimeout(() => fail(new Error('No answer in 120 s.')), 120_000).unref()),
     ])
+    // it was asked for the single word OK: anything else (an adapter streams auth or billing errors as text) fails
+    const ok = /^\W*ok\W*$/i.test(answer.trim())
     return {
-      ok: answer.trim().length > 0,
+      ok,
       latencyMs: Date.now() - started,
       answer: answer.trim().slice(0, 200),
-      error: null,
+      error: ok ? null : answer.trim().slice(0, 300) || 'No answer.',
     }
   } catch (e) {
     return { ok: false, latencyMs: Date.now() - started, answer, error: e instanceof Error ? e.message : String(e) }

@@ -18,6 +18,13 @@ this file and `server/agent/registry.ts` are updated together.
 The app finds these on your **shell's PATH**: a desktop app on macOS/Linux does not inherit it, so the app asks your
 login shell once (`server/agent/shellPath.ts`).
 
+## Your own CLI, your own account
+
+Every agent runs **your** CLI with **your** login: Gemini, Kimi, OpenCode and Copilot natively; Codex and Claude
+through their ACP adapters, pointed at your own `codex` (`CODEX_PATH`) and `claude` (`CLAUDE_CODE_EXECUTABLE`). The app
+never logs in for you. On a plan (ChatGPT, Claude, Google, Kimi, Copilot), every task and practice interview spends
+that plan's limits, and the app says so; OpenCode is not flagged because it may run a local model.
+
 ## Claude: your Claude Code login
 
 The app starts the official Claude ACP adapter on **your own Claude Code install and login**

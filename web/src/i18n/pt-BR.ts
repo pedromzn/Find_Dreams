@@ -437,7 +437,8 @@ export const ptBR: Dictionary = {
       'O app inicia seu agente via ACP (Agent Client Protocol), na sua pasta de trabalho. Cada agente faz login pela própria CLI, uma vez, num terminal.',
     logins: {
       gemini: 'Rode `gemini` uma vez num terminal e faça login.',
-      codex: 'Rode `codex login` uma vez num terminal (ou adicione uma chave de API da OpenAI abaixo).',
+      codex:
+        'Usa o login do seu Codex: rode `codex login` uma vez num terminal (plano do ChatGPT ou chave de API da OpenAI).',
       claude:
         'Usa o login do seu Claude Code: rode `claude` uma vez num terminal e faça login. A chave de API da Anthropic abaixo é opcional.',
       kimi: 'Rode `kimi` uma vez num terminal e use /login.',

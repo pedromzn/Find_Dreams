@@ -5,8 +5,9 @@
  *
  * Each agent logs in with its own CLI, once, in a terminal (the app never sees passwords). For Claude, the adapter runs
  * on the person's own Claude Code install and login (subscription or API key, whatever they set up in the CLI); the
- * app never logs in for them. Agents on a subscription plan spend that plan's limits: the screens say so
- * (`usesPlanLimits`). Decided with the maintainer on 2026-11-19 — see docs/AGENTS-SUPPORT.md.
+ * app never logs in for them; Codex runs on the person's own `codex` the same way. Every agent here runs the person's
+ * own CLI and account. Agents on a plan spend that plan's limits: the screens say so (`usesPlanLimits`; not OpenCode,
+ * which may run a local model). Decided with the maintainer on 2026-11-19 — see docs/AGENTS-SUPPORT.md.
  */
 
 import { which } from './shellPath.js'
@@ -41,6 +42,7 @@ export const AGENTS: AgentDefinition[] = [
     args: ['--acp'],
     install: 'https://geminicli.com/docs/cli/acp-mode/',
     login: 'Run `gemini` once in a terminal and sign in.',
+    usesPlanLimits: true,
   },
   {
     id: 'codex',
@@ -52,6 +54,9 @@ export const AGENTS: AgentDefinition[] = [
     install: 'https://github.com/agentclientprotocol/codex-acp',
     login: 'Run `codex login` once in a terminal (or set an OpenAI API key in the settings).',
     secrets: ['OPENAI_API_KEY'],
+    // the adapter bundles a Codex of its own: point it at the person's install (and its ChatGPT login)
+    executable: { binary: 'codex', env: 'CODEX_PATH' },
+    usesPlanLimits: true,
   },
   {
     id: 'claude',
@@ -79,6 +84,7 @@ export const AGENTS: AgentDefinition[] = [
     args: ['acp'],
     install: 'https://github.com/MoonshotAI/kimi-code',
     login: 'Run `kimi` once in a terminal and use /login.',
+    usesPlanLimits: true,
   },
   {
     id: 'opencode',
@@ -97,6 +103,7 @@ export const AGENTS: AgentDefinition[] = [
     args: ['--acp', '--stdio'],
     install: 'https://docs.github.com/en/copilot/reference/copilot-cli-reference/acp-server',
     login: 'Run `copilot` once in a terminal and sign in to GitHub.',
+    usesPlanLimits: true,
   },
 ]
 

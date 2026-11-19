@@ -128,6 +128,17 @@ describe('runs', () => {
     }
   })
 
+  it('a connection test only passes on the word OK (adapters stream billing errors as text)', async () => {
+    process.env.FAKE_AGENT_MODE = 'error-text'
+    try {
+      const failed = await testAgent('fake')
+      expect(failed).toMatchObject({ ok: false })
+      expect(failed.error).toMatch(/402 Payment Required/)
+    } finally {
+      delete process.env.FAKE_AGENT_MODE
+    }
+  })
+
   it('the connection test', async () => {
     const result = await testAgent('fake')
     expect(result).toMatchObject({ ok: true, answer: 'OK', error: null })

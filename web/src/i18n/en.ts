@@ -447,7 +447,7 @@ export const en = {
       'The app starts your agent through ACP (Agent Client Protocol), in your workspace folder. Each agent signs in with its own CLI, once, in a terminal.',
     logins: {
       gemini: 'Run `gemini` once in a terminal and sign in.',
-      codex: 'Run `codex login` once in a terminal (or add an OpenAI API key below).',
+      codex: 'Uses your Codex login: run `codex login` once in a terminal (ChatGPT plan or an OpenAI API key).',
       claude:
         'Uses your Claude Code login: run `claude` once in a terminal and sign in. An Anthropic API key below is optional.',
       kimi: 'Run `kimi` once in a terminal and use /login.',

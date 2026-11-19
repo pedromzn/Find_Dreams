@@ -45,7 +45,14 @@ acp
       sessionId,
       update: {
         sessionUpdate: 'agent_message_chunk',
-        content: { type: 'text', text: said.includes('connection test') ? 'OK' : 'Working on it. ' },
+        content: {
+          type: 'text',
+          text: said.includes('connection test')
+            ? process.env.FAKE_AGENT_MODE === 'error-text'
+              ? 'unexpected status 402 Payment Required'
+              : 'OK'
+            : 'Working on it. ',
+        },
       },
     })
     if (said.includes('connection test')) return { stopReason: 'end_turn' }
