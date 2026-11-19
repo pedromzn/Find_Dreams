@@ -121,3 +121,30 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
 - **Job fetches refuse private addresses** (loopback, RFC 1918, link-local, CGNAT, metadata, ULA) and follow
   redirects by hand, re-checking each hop (flagged by a security review). Known gap: the DNS answer is not pinned
   between the check and the connection.
+
+### Phase 4 — ACP
+
+- **The official SDK, version 2.x** (`@agentclientprotocol/sdk@2.8.0`, stable v1 entry point). Its API changed in
+  2.0 (2026-10): `client().onRequest(...).onNotification(...).connect(ndJsonStream(stdin, stdout))` — the older
+  `ClientSideConnection` no longer exists. Several adapter packages were renamed under `@agentclientprotocol/`.
+- **`AgentSession`** (`server/agent/acp.ts`) spawns the agent with the workspace as `cwd` (created first: a missing
+  `cwd` makes spawn fail with a misleading ENOENT for the binary), answers fs requests only inside the workspace and
+  never in `.mzn/`, and turns session updates into simple events. Three races found by the tests and fixed:
+  a permission answered synchronously was lost (now registered before it is announced); "connection closed" hid the
+  exit message with the agent's stderr (now preferred); the last chunks before a prompt's response were dropped (the
+  SDK does not await notification handlers; a short drain follows each prompt).
+- **Runs** (`server/agent/runner.ts`) stream over the same SSE bus; permissions become buttons on the page; the
+  outcome (not the text) is stored in `agent_runs` (migration v2). The app also marks the request done when the turn
+  ends.
+- **Shell PATH**: the login shell is asked once (`$SHELL -ilc`), merged with ours and well-known folders.
+- **npx fallback** for the Codex and Claude adapters, pinned to exact versions, shown as "available via npx" (not
+  "installed").
+- **Claude: API key only** (`--hide-claude-auth`), keys behind a `SecretStore` (memory/env in dev; the desktop app
+  plugs in the OS keychain). This is open decision 2 of the plan; the safe default was taken and documented in
+  `docs/AGENTS-SUPPORT.md`.
+- **Verified with a real adapter**: `claude-agent-acp@0.109.0` ran an analyze-fit request end to end through
+  `AgentSession` (session 16 s, result 76 s). The plan's "two different agents" criterion could not be met on this
+  machine: Codex's account answers 402, and Gemini, Kimi, OpenCode and Copilot are not installed. The fake agent covers
+  the protocol paths.
+- **Headless screenshots**: Chrome's `--screenshot` stalls while an SSE stream is open; the dev screenshots go through
+  the DevTools protocol instead (not part of the app).

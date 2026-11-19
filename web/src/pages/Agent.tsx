@@ -13,6 +13,8 @@ import { format, useLanguage, useT } from '@/i18n'
 import { api, useData } from '@/lib/api'
 import { useServerEvents } from '@/lib/events'
 import { AgentConnections } from '@/agent/AgentConnections'
+import { RunPanel } from '@/agent/RunPanel'
+import type { Run } from '@/agent/useAgents'
 
 type RequestRow = { id: string; request: AgentRequest | null; problems: string[] }
 
@@ -21,9 +23,11 @@ export default function Agent() {
   const language = useLanguage((s) => s.language)
   const kit = useData<KitStatus>('/api/agent-kit')
   const requests = useData<RequestRow[]>('/api/requests')
+  const runs = useData<Run[]>('/api/runs')
   const [shown, setShown] = useState<CreatedRequest | null>(null)
   useServerEvents((e) => {
     if (e.type === 'file' && e.kind === 'request') void requests.reload()
+    if (e.type === 'agent') void runs.reload()
   })
 
   if (kit.error) return <ScreenError error={kit.error} onRetry={kit.reload} />
@@ -38,6 +42,22 @@ export default function Agent() {
     <div className="flex max-w-4xl flex-col gap-6">
       <Header title={t.agent.title} note={t.agent.note} />
       <AgentConnections />
+
+      <Panel className="flex flex-col gap-3 p-6">
+        <h2 className="text-xl">{t.agent.runs}</h2>
+        {!runs.data?.length ? (
+          <p className="text-muted">{t.agent.noRuns}</p>
+        ) : (
+          runs.data.slice(0, 5).map((run) => (
+            <div key={run.id} className="flex flex-col gap-1">
+              <p className="text-xs text-faint">
+                {run.agent} · {format.date(run.startedAt)}
+              </p>
+              <RunPanel run={run} />
+            </div>
+          ))
+        )}
+      </Panel>
 
       <Panel className="flex flex-col gap-3 p-6">
         <h2 className="text-xl">{t.agent.kit}</h2>
