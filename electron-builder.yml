@@ -1,0 +1,50 @@
+# The desktop installers (electron-builder 26 — v27 changes the publish defaults; see docs/ARCHITECTURE.md).
+# Built by .github/workflows/desktop.yml on a `v*` tag, one runner per system; or locally: npm run desktop:build
+appId: io.github.pedromzn.mznvagas
+productName: MZN Vagas
+copyright: MZN Vagas contributors
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**
+  - dist-desktop/**
+  - package.json
+  - '!**/*.map'
+# Python cannot read inside the asar archive, and the agent kit is copied into the person's workspace: real files
+extraResources:
+  - from: agent-kit
+    to: agent-kit
+  - from: voice
+    to: voice
+    filter: ['*.py', 'requirements.txt']
+asarUnpack:
+  - node_modules/pdfjs-dist/**
+mac:
+  category: public.app-category.productivity
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+    # the zip is what electron-updater reads on macOS (latest-mac.yml)
+    - target: zip
+      arch: [x64, arm64]
+  # unsigned until the certificates exist (docs/PLAN.md, section 15): the README explains how to open it
+  identity: null
+  extendInfo:
+    NSMicrophoneUsageDescription: MZN Vagas uses the microphone only during voice practice interviews, transcribed on this computer.
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+linux:
+  category: Office
+  target: [AppImage, deb]
+  maintainer: MZN Vagas contributors
+publish:
+  provider: github
+  owner: pedromzn
+  repo: mzn-vagas
+  releaseType: draft

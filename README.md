@@ -8,7 +8,20 @@ stage — HR, technical, client, hiring manager, live coding, system design — 
 - The app calls no AI API on its own: the intelligence is the AI you already use.
 - English and Brazilian Portuguese, for the app and for the interviews.
 
-> 🚧 **Early development.** The desktop installers arrive in a later phase; see [`docs/PLAN.md`](docs/PLAN.md).
+## Install
+
+Download the installer for your system from the [latest release](https://github.com/pedromzn/mzn-vagas/releases/latest):
+`.dmg` (macOS, Intel or Apple Silicon), `.exe` (Windows) or `.AppImage` / `.deb` (Linux).
+
+The builds are **not code-signed yet**, so the system warns you the first time:
+
+- **macOS**: right-click the app in Applications → **Open** → **Open** (or System Settings → Privacy & Security →
+  "Open Anyway"). Unsigned macOS apps cannot update themselves: the app tells you when a new version is out.
+- **Windows**: SmartScreen → **More info** → **Run anyway**. Updates install by themselves.
+- **Linux (AppImage)**: `chmod +x MZN-Vagas-*.AppImage`. Updates install by themselves.
+
+Then connect your AI in **Your AI** (see [docs/AGENTS-SUPPORT.md](docs/AGENTS-SUPPORT.md)), or just copy the prompts
+the app gives you into the AI you already use.
 
 ## Run from source
 

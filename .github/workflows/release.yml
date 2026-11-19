@@ -1,0 +1,66 @@
+# A tag `vX.Y.Z` on main: run the full verification, then build the desktop installers on the three systems and
+# publish them to a DRAFT GitHub release with the `latest*.yml` files electron-updater reads. Review the draft and
+# publish it. To release: bump "version" in package.json, merge, then
+#   git tag v1.2.0 && git push origin v1.2.0
+#
+# Signing: the builds are unsigned until the certificates exist (docs/PLAN.md, section 15). When they do, add the
+# secrets (CSC_LINK / CSC_KEY_PASSWORD for macOS and Windows, APPLE_ID / APPLE_APP_SPECIFIC_PASSWORD / APPLE_TEAM_ID
+# for notarization), drop `identity: null` from electron-builder.yml and set MZN_MAC_SIGNED=1 at build time.
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: The tag matches package.json
+        run: |
+          version="v$(node -p "require('./package.json').version")"
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::The tag is $GITHUB_REF_NAME but package.json says $version"
+            exit 1
+          fi
+      - run: npm run verify
+
+  desktop:
+    name: Installers (${{ matrix.os }})
+    needs: verify
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: --mac
+          - os: windows-latest
+            target: --win
+          - os: ubuntu-latest
+            target: --linux
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run desktop:compile
+      - name: Build and publish to the draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: npx electron-builder ${{ matrix.target }} --publish always

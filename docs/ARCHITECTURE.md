@@ -187,3 +187,29 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
   answered and Kokoro spoke, for a full HR screening in pt-BR and in English. Brain 4–6 s per turn with the ACP
   agent, which is why the screen suggests Ollama for voice (not installed on the machine used). The browser
   microphone path is not exercised by any automated check.
+
+### Phase 7 — desktop
+
+- **Electron 45.4.1** (Node 24.22.3 inside): `node:sqlite` works without a flag, checked in Electron's Node and in the
+  packaged app — no better-sqlite3 needed. **electron-builder 26.18.1** and **electron-updater 6.8.12** (the 27/7
+  alphas disable implicit publishing and require signed update manifests).
+- **The same server**: `desktop/main.ts` sets the environment (workspace, `MZN_DATA = userData`, agent kit and voice
+  scripts from the extra resources, a per-launch token), then imports the bundled server and listens on 127.0.0.1 with
+  a random port. esbuild compiles main + server into one ESM file and the preload into CommonJS (a sandboxed preload
+  cannot be ESM); dependencies stay external and electron-builder packs only the server's runtime ones (the web app's
+  libraries moved to devDependencies — Vite compiles them into `dist/`).
+- **Hardening**: contextIsolation, no nodeIntegration, sandbox, no webview; CSP set on every response (production
+  only; Vite dev needs inline scripts); external links open in the system browser, other navigation is blocked; only
+  the microphone permission, only for the app's origin; one instance per user.
+- **Workspace**: `~/Documents/MZN Vagas` by default, changeable in Settings (the app relaunches). The choice lives in
+  `userData/desktop.json`. `MZN_USER_DATA` gives a separate profile for development and smoke tests.
+- **Keys** in the OS keychain through `safeStorage`; saving refuses (instead of falling back to plain text) when the
+  keychain is unavailable.
+- **Updates**: Windows (NSIS) and Linux (AppImage) update by themselves; unsigned macOS apps cannot, so the app only
+  tells the person and links the release (the mac `zip` target is still built for when signing arrives).
+- **Release**: on a `v*` tag, CI verifies, then builds on macOS, Windows and Linux runners and publishes to a draft
+  release with the `latest*.yml` files. Unsigned until the certificates exist (open decision 3).
+- **Checked locally (macOS x64)**: `electron .` and the packaged, unsigned `.app` (349 MB) both start, install the
+  agent kit from the extra resources, serve the API with the token, store in SQLite, detect agents through the shell
+  PATH; the window has the CSP, no Node and the preload bridge. **Not checked**: the Windows and Linux installers and
+  the update path end to end — they need the GitHub repository and a tag.

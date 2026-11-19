@@ -23,6 +23,12 @@ export default defineConfig({
     environment: 'node',
     root: __dirname,
     setupFiles: ['test/setup.ts'],
-    include: ['shared/**/*.test.ts', 'server/**/*.test.ts', 'scripts/**/*.test.ts', 'web/src/**/*.test.{ts,tsx}'],
+    include: [
+      'shared/**/*.test.ts',
+      'server/**/*.test.ts',
+      'scripts/**/*.test.ts',
+      'desktop/**/*.test.ts',
+      'web/src/**/*.test.{ts,tsx}',
+    ],
   },
 })

@@ -320,6 +320,9 @@ export const ptBR: Dictionary = {
     apiBaseUrl: 'URL base',
     keyReady: 'Chave de API definida (em "Sua IA").',
     keyMissing: 'Ainda sem chave de API: adicione em "Sua IA".',
+    chooseFolder: 'Escolher outra pasta',
+    revealFolder: 'Mostrar no gerenciador de arquivos',
+    chooseFolderNote: 'O app reinicia com a pasta nova. A pasta atual continua onde está.',
     privacy: 'Privacidade',
     privacyNote:
       'Sem conta, sem servidor nosso, sem telemetria. O app só manda dados para a IA que você conectar, e só o que cada tarefa precisa.',

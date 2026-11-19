@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { FolderSimple, ShieldCheck } from '@phosphor-icons/react'
 import type { Settings as SettingsData } from '@shared/api'
 import { LANGUAGE_DATA, LANGUAGES, type Language } from '@shared/languages'
-import { Header, Loading, Panel, ScreenError, Select } from '@/components/ui'
+import { Button, Header, Loading, Panel, ScreenError, Select } from '@/components/ui'
 import { useLanguage, useT } from '@/i18n'
 import { useData } from '@/lib/api'
 
@@ -16,6 +16,13 @@ export function SettingsSection({ title, children }: { title: string; children: 
     </Panel>
   )
 }
+
+/** Only in the desktop app (the preload exposes it). */
+const desktop = (
+  window as unknown as {
+    mznDesktop?: { chooseWorkspace(): Promise<string | null>; revealWorkspace(): Promise<string> }
+  }
+).mznDesktop
 
 export default function Settings({ extra }: { extra?: ReactNode }) {
   const t = useT()
@@ -47,6 +54,17 @@ export default function Settings({ extra }: { extra?: ReactNode }) {
           {data.data.workspaceFolder}
         </p>
         <p className="text-sm text-muted">{t.settings.workspaceNote}</p>
+        {desktop && (
+          <div className="flex flex-wrap items-center gap-2">
+            <Button size="small" variant="subtle" onClick={() => void desktop.chooseWorkspace()}>
+              {t.settings.chooseFolder}
+            </Button>
+            <Button size="small" variant="ghost" onClick={() => void desktop.revealWorkspace()}>
+              {t.settings.revealFolder}
+            </Button>
+            <p className="w-full text-xs text-faint">{t.settings.chooseFolderNote}</p>
+          </div>
+        )}
       </SettingsSection>
       {extra}
       <SettingsSection title={t.settings.privacy}>

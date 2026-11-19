@@ -330,6 +330,9 @@ export const en = {
     apiBaseUrl: 'Base URL',
     keyReady: 'API key set (in "Your AI").',
     keyMissing: 'No API key yet: add it in "Your AI".',
+    chooseFolder: 'Choose another folder',
+    revealFolder: 'Show in the file manager',
+    chooseFolderNote: 'The app restarts with the new folder. Your current folder stays where it is.',
     privacy: 'Privacy',
     privacyNote:
       'No account, no server of ours, no telemetry. The app only sends data to the AI you connect, and only what each task needs.',
