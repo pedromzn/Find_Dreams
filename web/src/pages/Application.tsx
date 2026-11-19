@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Trash } from '@phosphor-icons/react'
+import { Microphone, NotePencil, Trash } from '@phosphor-icons/react'
 import type { ApplicationDetail } from '@shared/api'
 import { STATUSES, type Status } from '@shared/application'
-import { Button, Loading, Panel, Problems, ScreenError, Select, Tabs } from '@/components/ui'
+import { Button, LinkButton, Loading, Panel, Problems, ScreenError, Select, Tabs } from '@/components/ui'
 import { useT } from '@/i18n'
 import { api, useData } from '@/lib/api'
 import { useLiveReload } from '@/lib/events'
@@ -138,7 +138,16 @@ export default function Application() {
         {tab === 'interviews' && (
           <InterviewsTab
             detail={d}
-            actions={<AgentActions slug={slug} only={['interviews']} onDone={detail.reload} />}
+            actions={
+              <div className="flex flex-wrap gap-2">
+                <LinkButton to={`/applications/${slug}/practice`} icon={<Microphone size={18} />}>
+                  {t.interview.practice}
+                </LinkButton>
+                <LinkButton to={`/applications/${slug}/debrief`} variant="subtle" icon={<NotePencil size={18} />}>
+                  {t.interview.debrief}
+                </LinkButton>
+              </div>
+            }
           />
         )}
         {tab === 'timeline' && <TimelineTab detail={d} />}

@@ -4,6 +4,7 @@
  */
 
 import { useState, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 import { ChatCircleText, Buildings, Target, Microphone, ClockCounterClockwise } from '@phosphor-icons/react'
 import type { ApplicationDetail } from '@shared/api'
 import { Badge, Button, Empty, ErrorLine, Panel, Problems, TextArea } from '@/components/ui'
@@ -240,7 +241,12 @@ export function InterviewsTab({ detail, actions }: { detail: ApplicationDetail; 
               <Panel key={i.id} className="p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <p className="text-text">
-                    {i.session ? t.interviewType[i.session.interviewType] : i.id}
+                    <Link
+                      to={`/applications/${detail.slug}/interviews/${i.id}`}
+                      className="text-text hover:text-accent-text"
+                    >
+                      {i.session ? t.interviewType[i.session.interviewType] : i.id}
+                    </Link>
                     <span className="ml-2 text-sm text-faint">{i.id.slice(0, 10)}</span>
                   </p>
                   {i.feedback && (
@@ -269,6 +275,14 @@ export function InterviewsTab({ detail, actions }: { detail: ApplicationDetail; 
                       <span className="ml-2 text-sm text-faint">{format.date(d.debrief.date)}</span>
                     </p>
                     <p className="mt-2 text-sm text-muted">{d.debrief.account}</p>
+                    {d.debrief.analysis && <p className="mt-2 text-sm text-text">{d.debrief.analysis}</p>}
+                    {d.debrief.adjustments.length > 0 && (
+                      <ul className="mt-2 list-disc pl-5 text-sm text-text">
+                        {d.debrief.adjustments.map((a) => (
+                          <li key={a}>{a}</li>
+                        ))}
+                      </ul>
+                    )}
                   </>
                 ) : (
                   <Problems problems={d.problems} file={`debriefs/${d.id}.json`} />

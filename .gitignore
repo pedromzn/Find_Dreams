@@ -14,6 +14,9 @@ workspace/
 *.pdf
 *.docx
 
+# the voice engines and other downloads (MZN_DATA in the desktop app)
+.data/
+
 # build output: the web app, the compiled server/main process and the installers
 dist/
 dist-*/

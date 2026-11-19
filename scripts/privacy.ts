@@ -13,7 +13,7 @@ import { execFileSync } from 'node:child_process'
 import path from 'node:path'
 
 /** Top-level folders that only exist in a person's workspace. */
-const WORKSPACE_ROOTS = new Set(['workspace', 'profile', 'applications', 'requests'])
+const WORKSPACE_ROOTS = new Set(['workspace', 'profile', 'applications', 'requests', '.data'])
 
 /** File types that are personal documents or local state, anywhere in the tree. */
 const FORBIDDEN_EXTENSIONS = /\.(pdf|docx?|odt|rtf|pages|sqlite3?|db|sqlite-wal|sqlite-shm)$/i

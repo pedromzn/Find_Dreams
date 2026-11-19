@@ -14,6 +14,7 @@ import { Loading } from '@/components/ui'
 import Board from '@/pages/Board'
 import { useLanguage } from '@/i18n'
 import { LanguagePicker } from '@/i18n/LanguagePicker'
+import { BrainSettings } from '@/interview/BrainSettings'
 import { api, useData } from '@/lib/api'
 
 const Application = lazy(() => import('@/pages/Application'))
@@ -22,6 +23,9 @@ const Profile = lazy(() => import('@/pages/Profile'))
 const SettingsPage = lazy(() => import('@/pages/Settings'))
 const Welcome = lazy(() => import('@/pages/Welcome'))
 const Agent = lazy(() => import('@/pages/Agent'))
+const Practice = lazy(() => import('@/pages/Practice'))
+const InterviewDetail = lazy(() => import('@/pages/InterviewDetail'))
+const Debrief = lazy(() => import('@/pages/Debrief'))
 
 function Screen({ children }: { children: ReactNode }) {
   return (
@@ -90,6 +94,30 @@ export default function App() {
           }
         />
         <Route
+          path="/applications/:slug/practice"
+          element={
+            <Screen>
+              <Practice />
+            </Screen>
+          }
+        />
+        <Route
+          path="/applications/:slug/interviews/:folder"
+          element={
+            <Screen>
+              <InterviewDetail />
+            </Screen>
+          }
+        />
+        <Route
+          path="/applications/:slug/debrief"
+          element={
+            <Screen>
+              <Debrief />
+            </Screen>
+          }
+        />
+        <Route
           path="/agent"
           element={
             <Screen>
@@ -109,7 +137,7 @@ export default function App() {
           path="/settings"
           element={
             <Screen>
-              <SettingsPage />
+              <SettingsPage extra={<BrainSettings />} />
             </Screen>
           }
         />

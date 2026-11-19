@@ -58,7 +58,11 @@ export interface WorkspaceFile {
 }
 
 const SLUG = SLUG_PATTERN.source.slice(1, -1)
-const DATED_TYPE = `\\d{4}-\\d{2}-\\d{2}-(?:${INTERVIEW_TYPES.join('|')})`
+/** `2026-11-12-hr_screening`, or `…-2` for a second one on the same day */
+const DATED_TYPE = `\\d{4}-\\d{2}-\\d{2}-(?:${INTERVIEW_TYPES.join('|')})(?:-\\d+)?`
+
+/** The interview type inside a dated name (`2026-11-12-technical-2` → `technical`). */
+export const typeOfDated = (name: string) => name.slice(11).replace(/-\d+$/, '')
 
 const PATTERNS: Array<[RegExp, FileKind]> = [
   [/^profile\/profile\.json$/, 'profile'],
@@ -163,7 +167,7 @@ function pathProblems(file: WorkspaceFile, data: Record<string, unknown>): strin
     return [`application: must match the folder name ("${file.application}").`]
   }
   if ((file.kind === 'session' || file.kind === 'debrief') && file.name) {
-    const type = file.name.slice(11)
+    const type = typeOfDated(file.name)
     if (data.interviewType !== type) return [`interviewType: must match the folder or file name ("${type}").`]
   }
   if (file.kind === 'debrief' && file.name && data.date !== file.name.slice(0, 10)) {

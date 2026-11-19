@@ -122,3 +122,18 @@ export const debriefSchema = z
   })
   .strict()
 export type Debrief = z.infer<typeof debriefSchema>
+
+// ── the interview brain's answer ─────────────────────────────────────────────
+
+export const BRAIN_INTENTS = ['probe', 'next_topic', 'wrap_up', 'end'] as const
+
+/**
+ * What the conversation brain returns each turn (Ollama's JSON format, an API's JSON, or the ACP agent's text parsed
+ * as JSON). `notes` are the interviewer's private notes: kept in memory for the turn, never shown or saved.
+ */
+export const brainReplySchema = z.object({
+  say: z.string().trim().min(1).max(2000),
+  intent: z.enum(BRAIN_INTENTS),
+  notes: z.string().max(1000).default(''),
+})
+export type BrainReply = z.infer<typeof brainReplySchema>

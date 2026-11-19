@@ -13,6 +13,7 @@ if (process.env.FAKE_AGENT_MODE === 'crash') {
 }
 
 let cancelled = false
+let interviewTurns = 0
 const stream = acp.ndJsonStream(Writable.toWeb(process.stdout), Readable.toWeb(process.stdin))
 acp
   .agent({ name: 'fake-agent' })
@@ -24,6 +25,22 @@ acp
   .onRequest(acp.methods.agent.session.prompt, async ({ params, client }) => {
     const sessionId = params.sessionId
     const said = params.prompt.map((b) => (b.type === 'text' ? b.text : '')).join(' ')
+    if (said.includes('MZN-INTERVIEWER') || said.includes('The candidate says')) {
+      interviewTurns++
+      const reply =
+        interviewTurns >= 3
+          ? { say: 'Thank you, that is all for today.', intent: 'end', notes: '' }
+          : {
+              say: interviewTurns === 1 ? 'Hi! Tell me about yourself.' : 'Can you give a concrete example?',
+              intent: 'probe',
+              notes: 'n',
+            }
+      await client.notify(acp.methods.client.session.update, {
+        sessionId,
+        update: { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: JSON.stringify(reply) } },
+      })
+      return { stopReason: 'end_turn' }
+    }
     await client.notify(acp.methods.client.session.update, {
       sessionId,
       update: {

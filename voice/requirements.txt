@@ -1,0 +1,5 @@
+# The interview voice, installed on demand by the app (Settings → Voice, or `npm run voice:install`) in an isolated
+# environment in the app's data folder: Kokoro speaks (Apache 2.0), Whisper listens (faster-whisper, MIT).
+kokoro-onnx==0.6.1
+faster-whisper==1.2.1
+soundfile==0.14.0

@@ -27,4 +27,8 @@ export const config = {
   workspaceFolder: path.resolve(root, process.env.MZN_WORKSPACE || 'workspace'),
   /** the manual and skills copied into the workspace for the person's AI (packaged as an extra resource) */
   agentKitFolder: path.resolve(root, process.env.MZN_AGENT_KIT || 'agent-kit'),
+  /** what the app installs or caches outside the workspace: the voice engines (~1 GB). The desktop app passes userData. */
+  dataFolder: path.resolve(root, process.env.MZN_DATA || '.data'),
+  /** the Python workers (packaged as an extra resource) */
+  voiceScripts: path.resolve(root, process.env.MZN_VOICE_SCRIPTS || 'voice'),
 }

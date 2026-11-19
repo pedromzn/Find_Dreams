@@ -148,3 +148,42 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
   the protocol paths.
 - **Headless screenshots**: Chrome's `--screenshot` stalls while an SSE stream is open; the dev screenshots go through
   the DevTools protocol instead (not part of the app).
+
+### Phase 5 — text simulator
+
+- **Preparation is agent work, conversation is brain work.** `prepare-interview` writes the persona
+  (`interviewers/<id>.json`, every trait with its `basis`); the live turns come from an `InterviewBrain`
+  (`server/interview/brains.ts`): `ollama` (copied from learning-anything's Feynman brain: JSON through Ollama's
+  `format`), `acp` (one agent session kept open for the whole interview, tools refused, JSON answers parsed out of the
+  text) or `api` (the person's key; Anthropic `claude-haiku-5-5` by default, or any OpenAI-compatible endpoint whose
+  model the person sets). "Automatic" picks Ollama if running, then the agent, then the API key.
+- **The conduct is the `interviewer` skill**, read from the workspace copy first, so the person's edits apply. The
+  brain gets it plus the persona, the job, the company research and the CV, all inside `<data>` tags.
+- **Without a prepared persona** the app builds a generic one for the stage from `prepare-interview/reference/` (the
+  screen offers to prepare a real one with the AI).
+- **Transcripts are saved after every turn**; a second interview on the same day gets `<date>-<type>-2` (the
+  workspace map accepts the suffix). Ending creates an `interview-feedback` request.
+- **Debriefs** are a guided form (the plan says "guided conversation"): the person's account is saved as-is, and the
+  analysis and next-stage adjustments are the AI's (`debrief` skill), which may also update the next persona.
+- **Checked on 2026-11-19** with the real Claude ACP adapter as the brain: an HR screening (the recruiter insisted
+  politely on the salary range when the candidate dodged) and a technical round (it dug one level deeper after a vague
+  answer and noticed an evasive one), 4–6 s per turn. Claude Code then wrote both feedbacks: one score per criterion,
+  stuck points quoting the transcript, better answers built only from the CV (with `[fill in]` gaps where the CV had
+  no facts).
+
+### Phase 6 — voice
+
+- **Copied** the Whisper and Kokoro workers and `PythonProcess` from learning-anything. Installed on demand into the
+  app's data folder (`MZN_DATA`, `.data/` in dev; the desktop app passes `userData`) with uv or a system Python;
+  Kokoro model files sha256-checked (same pins as the sibling).
+- **No ffmpeg**: the page records 16 kHz mono 16-bit WAV itself (ScriptProcessor: deprecated but universal in
+  Chromium, and needs no worklet file a strict CSP could block), with silence detection calibrated on the room.
+- **Whisper gets the job's vocabulary** as `initial_prompt` (company, role, the person's stack, CLT/PJ/backend…),
+  built server-side from the files. It fixed "backend" (heard as "baquê" without it); a synthesized "CLT" is still
+  misheard — real speech should do better, not verified.
+- **The interviewer speaks sentence by sentence**: the next sentence is synthesized while the current one plays, so
+  the first words come in about a second instead of 4–9 s for a long turn.
+- **Checked** with a microphone-free run: Kokoro synthesized the candidate's answers, Whisper heard them, the ACP brain
+  answered and Kokoro spoke, for a full HR screening in pt-BR and in English. Brain 4–6 s per turn with the ACP
+  agent, which is why the screen suggests Ollama for voice (not installed on the machine used). The browser
+  microphone path is not exercised by any automated check.

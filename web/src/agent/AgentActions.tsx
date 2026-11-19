@@ -51,7 +51,7 @@ export function useHandOff(onDone: () => void) {
   return { start, busy, error, dialog }
 }
 
-function HandOffDialog({ created, onClose }: { created: CreatedRequest | null; onClose: () => void }) {
+export function HandOffDialog({ created, onClose }: { created: CreatedRequest | null; onClose: () => void }) {
   const t = useT()
   return (
     <Dialog open={created !== null} onClose={onClose} title={created ? t.agent.tasks[created.request.task] : ''}>

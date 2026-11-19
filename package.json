@@ -20,7 +20,9 @@
     "vagas:status": "tsx scripts/vagas.ts status",
     "vagas:validate": "tsx scripts/vagas.ts validate",
     "vagas:schemas": "tsx scripts/vagas.ts schemas",
-    "privacy:check": "tsx scripts/privacy.ts"
+    "privacy:check": "tsx scripts/privacy.ts",
+    "voice:install": "tsx scripts/voice.ts install",
+    "voice:test": "tsx scripts/voice.ts test"
   },
   "dependencies": {
     "@agentclientprotocol/sdk": "2.8.0",
