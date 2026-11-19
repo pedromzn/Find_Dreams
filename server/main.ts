@@ -20,6 +20,10 @@ import { config } from './config.js'
 import { apiRouter } from './api.js'
 import { handleError } from './errors.js'
 import { checkHostAndOrigin, injectToken, requireToken, sessionToken } from './security.js'
+import { clearSession, installKit, writeSession } from './agent/kit.js'
+import { watchWorkspace } from './agent/events.js'
+import { syncIndex } from './store/applicationIndex.js'
+import { log } from './logger.js'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -58,11 +62,36 @@ export async function createApp({ token = sessionToken }: { token?: string } = {
   return app
 }
 
+/**
+ * What runs once the server listens (dev, `npm start` and the desktop app alike): the agent kit in the workspace, the
+ * session file the AI's validator reads, and the watcher that keeps the page live. A failure here never stops the
+ * app — it only means the AI side is degraded, and the log says why.
+ */
+export function startServices(port: number, token: string = sessionToken): () => void {
+  try {
+    installKit()
+    writeSession(port, token)
+  } catch (error) {
+    log.warn('agent kit not installed', { error })
+  }
+  const stop = watchWorkspace((file) => {
+    if (file.endsWith('application.json')) syncIndex()
+  })
+  const cleanup = () => {
+    stop()
+    clearSession()
+  }
+  process.once('exit', cleanup)
+  return cleanup
+}
+
 const entryPoint = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
 if (entryPoint) {
   const app = await createApp()
-  app.listen(config.port, config.host, () => {
+  const server = app.listen(config.port, config.host, () => {
+    startServices((server.address() as import('node:net').AddressInfo).port)
     console.log(`\n  ● MZN Vagas at http://${config.host === '0.0.0.0' ? 'localhost' : config.host}:${config.port}\n`)
     console.log(`    workspace: ${config.workspaceFolder}\n`)
   })
+  for (const signal of ['SIGINT', 'SIGTERM'] as const) process.once(signal, () => process.exit(0))
 }

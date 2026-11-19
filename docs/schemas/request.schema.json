@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^\\d{8}-\\d{6}-[a-z0-9-]+$"
+    },
+    "task": {
+      "type": "string",
+      "enum": [
+        "track-application",
+        "research-company",
+        "analyze-fit",
+        "reply-recruiter",
+        "prepare-interview",
+        "interview-feedback",
+        "debrief",
+        "fix-files"
+      ]
+    },
+    "application": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "file": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "interviewType": {
+      "type": "string",
+      "enum": [
+        "hr_screening",
+        "technical",
+        "client",
+        "hiring_manager",
+        "live_coding",
+        "system_design",
+        "take_home_review",
+        "panel",
+        "language",
+        "final_executive",
+        "case_study",
+        "async_video"
+      ]
+    },
+    "details": {
+      "default": "",
+      "type": "string",
+      "maxLength": 4000
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "pt-BR"
+      ]
+    },
+    "status": {
+      "default": "pending",
+      "type": "string",
+      "enum": [
+        "pending",
+        "done"
+      ]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    }
+  },
+  "required": [
+    "id",
+    "task",
+    "language",
+    "createdAt"
+  ],
+  "additionalProperties": false
+}

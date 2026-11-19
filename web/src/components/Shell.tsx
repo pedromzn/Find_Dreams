@@ -5,7 +5,7 @@
 
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { Gear, Kanban, Plus, UserCircle } from '@phosphor-icons/react'
+import { Gear, Kanban, Plus, Robot, UserCircle } from '@phosphor-icons/react'
 import { Brand } from './Brand'
 import { join } from './ui'
 import { useT } from '@/i18n'
@@ -13,6 +13,7 @@ import { useT } from '@/i18n'
 const DESTINATIONS = [
   { to: '/', navKey: 'board', icon: Kanban, end: true },
   { to: '/new', navKey: 'newApplication', icon: Plus, end: false },
+  { to: '/agent', navKey: 'agent', icon: Robot, end: false },
   { to: '/profile', navKey: 'profile', icon: UserCircle, end: false },
   { to: '/settings', navKey: 'settings', icon: Gear, end: false },
 ] as const

@@ -49,6 +49,8 @@ export interface MarkdownFile {
   name: string
   content: string
   problems: string[]
+  /** for a recruiter message: the AI's reply drafts (`<name>.drafts.md`), if any */
+  drafts?: MarkdownFile | null
 }
 
 export interface InterviewSummary {
@@ -132,4 +134,23 @@ export interface CapturedJob {
 export interface Settings {
   language: Language | null
   workspaceFolder: string
+}
+
+/** `GET /api/agent-kit` */
+export interface KitStatus {
+  version: string
+  installed: string | null
+  conflicts: string[]
+}
+
+/** `POST /api/requests`: the request, the prompt to paste and the folder to open the AI in. */
+export interface CreatedRequest {
+  request: import('./request.js').AgentRequest
+  prompt: string
+  folder: string
+}
+
+export interface FileReport {
+  file: string
+  problems: string[]
 }

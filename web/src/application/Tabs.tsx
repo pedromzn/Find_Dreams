@@ -190,6 +190,13 @@ export function MessagesTab({
             <Panel key={m.name} className="p-5">
               <p className="mb-2 font-mono text-xs text-faint">{m.name}</p>
               <Markdown text={m.content} />
+              {m.drafts && (
+                <div className="mt-4 rounded-tile border border-border bg-bg p-4">
+                  <p className="mb-2 text-xs font-medium tracking-wide text-muted uppercase">{t.agent.drafts}</p>
+                  <Problems problems={m.drafts.problems} file={m.drafts.name} />
+                  <Markdown text={m.drafts.content} />
+                </div>
+              )}
               {actions?.(m.name)}
             </Panel>
           ))

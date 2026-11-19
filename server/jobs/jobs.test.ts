@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { config } from '../config.js'
-import { captureJob, route, type Fetcher } from './capture.js'
+import { captureJob, isPrivateAddress, networkFetcher, route, type Fetcher } from './capture.js'
 import { detectKind, importCv } from './cvImport.js'
 
 const fixture = (name: string) => readFileSync(path.join(config.root, 'test', 'fixtures', 'jobs', name), 'utf8')
@@ -92,6 +92,30 @@ describe('job capture', () => {
       code: 'login_required',
     })
     expect(f.asked).toEqual([])
+  })
+
+  it.each([
+    '127.0.0.1',
+    '10.0.0.5',
+    '172.20.1.1',
+    '192.168.0.1',
+    '169.254.169.254',
+    '100.64.0.1',
+    '0.0.0.0',
+    '::1',
+    'fd00::1',
+    'fe80::1',
+    '::ffff:127.0.0.1',
+  ])('treats %s as private', (ip) => expect(isPrivateAddress(ip)).toBe(true))
+
+  it.each(['8.8.8.8', '151.101.1.69', '2606:4700::6810:84e5'])('treats %s as public', (ip) => {
+    expect(isPrivateAddress(ip)).toBe(false)
+  })
+
+  it('the real fetcher refuses local addresses before connecting', async () => {
+    await expect(networkFetcher('http://127.0.0.1:3060/api/health')).rejects.toMatchObject({ code: 'fetch_failed' })
+    await expect(networkFetcher('http://[::1]/')).rejects.toMatchObject({ code: 'fetch_failed' })
+    await expect(networkFetcher('http://localhost/')).rejects.toMatchObject({ code: 'fetch_failed' })
   })
 
   it('refuses non-http links and reports dead pages', async () => {

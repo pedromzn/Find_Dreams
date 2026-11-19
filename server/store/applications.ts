@@ -114,8 +114,10 @@ export function applicationDetail(slug: string): ApplicationDetail {
   })
 
   const messages = entries(`${base}/messages`, 'files', '.md')
+    .filter((file) => !file.endsWith('.drafts.md'))
     .map((file) => readMarkdown(`${base}/messages/${file}`))
     .filter((m): m is MarkdownFile => m !== null)
+    .map((m) => ({ ...m, drafts: readMarkdown(`${base}/messages/${m.name.slice(0, -3)}.drafts.md`) }))
 
   const detail: ApplicationDetail = {
     slug,

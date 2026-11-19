@@ -26,6 +26,7 @@ import {
 } from '@/components/ui'
 import { format, useT } from '@/i18n'
 import { useData } from '@/lib/api'
+import { useServerEvents } from '@/lib/events'
 import { StatusBadge } from '@/application/labels'
 
 type Indexed = Extract<ApplicationSummary, { company: string }>
@@ -184,6 +185,12 @@ export default function Board() {
   const t = useT()
   const list = useData<ApplicationSummary[]>('/api/applications')
   const metrics = useData<Metrics>('/api/metrics')
+  useServerEvents((e) => {
+    if (e.type === 'file' && e.kind === 'application') {
+      void list.reload()
+      void metrics.reload()
+    }
+  })
   const [view, setView] = useState(storedView)
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState<Status | ''>('')

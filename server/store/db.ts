@@ -30,7 +30,7 @@ process.emitWarning = ((warning: string | Error, ...rest: unknown[]) => {
 const { DatabaseSync: Sqlite } = createRequire(import.meta.url)('node:sqlite') as typeof import('node:sqlite')
 
 /** Bumped on every schema change; the migrations live in `migrate`. */
-const VERSION = 1
+const VERSION = 2
 
 /**
  * v1: the application index, the status history and the preferences. The index keeps no salary, no contact and no
@@ -62,12 +62,27 @@ CREATE TABLE IF NOT EXISTS preferences (
 );
 `
 
+/** v2: the agent runs (outcome only: the agent's text and tool output are not kept). */
+const SCHEMA_V2 = `
+CREATE TABLE IF NOT EXISTS agent_runs (
+  id TEXT PRIMARY KEY,
+  request_id TEXT,
+  agent TEXT NOT NULL,
+  status TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  ended_at TEXT,
+  error TEXT
+);
+CREATE INDEX IF NOT EXISTS agent_runs_by_date ON agent_runs (started_at);
+`
+
 function migrate(db: DatabaseSync): void {
   const { user_version: current } = db.prepare('PRAGMA user_version').get() as { user_version: number }
   if (current >= VERSION) return
   db.exec('BEGIN IMMEDIATE')
   try {
     if (current < 1) db.exec(SCHEMA_V1)
+    if (current < 2) db.exec(SCHEMA_V2)
     db.exec(`PRAGMA user_version = ${VERSION}`)
     db.exec('COMMIT')
   } catch (e) {

@@ -13,6 +13,8 @@
  *   applications/<slug>/interviews/<date>-<type>/transcript.json simulated session (application = folder)
  *   applications/<slug>/interviews/<date>-<type>/feedback.json   feedback of that session
  *   applications/<slug>/debriefs/<date>-<type>.json              debrief of a real interview
+ *   applications/<slug>/messages/<message>.drafts.md             reply drafts: 2 or 3 `## ` options
+ *   requests/<id>.json                                           a task the app handed to the AI
  *
  * Anything else (messages, the agent kit, notes) is the person's and the AI's business: not validated.
  */
@@ -29,6 +31,7 @@ import {
 } from './interview.js'
 import { INTERVIEW_TYPES } from './interviewTypes.js'
 import { profileSchema } from './profile.js'
+import { requestSchema } from './request.js'
 
 export const FILE_KINDS = [
   'profile',
@@ -41,6 +44,8 @@ export const FILE_KINDS = [
   'session',
   'feedback',
   'debrief',
+  'drafts',
+  'request',
 ] as const
 export type FileKind = (typeof FILE_KINDS)[number]
 
@@ -66,6 +71,8 @@ const PATTERNS: Array<[RegExp, FileKind]> = [
   [new RegExp(`^applications/(${SLUG})/interviews/(${DATED_TYPE})/transcript\\.json$`), 'session'],
   [new RegExp(`^applications/(${SLUG})/interviews/(${DATED_TYPE})/feedback\\.json$`), 'feedback'],
   [new RegExp(`^applications/(${SLUG})/debriefs/(${DATED_TYPE})\\.json$`), 'debrief'],
+  [new RegExp(`^applications/(${SLUG})/messages/([\\w-]+)\\.drafts\\.md$`), 'drafts'],
+  [/^requests\/()(\d{8}-\d{6}-[a-z0-9-]+)\.json$/, 'request'],
 ]
 
 /** Which file this is, from its path relative to the workspace (`/` or `\` separators). Null = not validated. */
@@ -113,6 +120,7 @@ const JSON_SCHEMAS: Partial<Record<FileKind, z.ZodType>> = {
   session: interviewSessionSchema,
   feedback: interviewFeedbackSchema,
   debrief: debriefSchema,
+  request: requestSchema,
 }
 
 const MAX_PROBLEMS = 20
@@ -125,6 +133,12 @@ function zodProblems(error: z.ZodError): string[] {
 
 function markdownProblems(file: WorkspaceFile, content: string): string[] {
   if (file.kind === 'cv') return content.trim() ? [] : ['The CV is empty.']
+  if (file.kind === 'drafts') {
+    const options = content.match(/^## /gm)?.length ?? 0
+    return options >= 2 && options <= 3
+      ? []
+      : [`Write 2 or 3 reply options, each under a "## " heading (found ${options}).`]
+  }
   const front = readFrontMatter(content)
   if (!front) return ['Missing the front matter: start the file with a `---` block of `key: value` lines.']
   const problems: string[] = []
@@ -143,6 +157,7 @@ function pathProblems(file: WorkspaceFile, data: Record<string, unknown>): strin
   if (file.kind === 'application' && data.slug !== file.application) {
     return [`slug: must match the folder name ("${file.application}").`]
   }
+  if (file.kind === 'request' && data.id !== file.name) return [`id: must match the file name ("${file.name}").`]
   if (file.kind === 'persona' && data.id !== file.name) return [`id: must match the file name ("${file.name}").`]
   if (file.kind === 'session' && data.application !== file.application) {
     return [`application: must match the folder name ("${file.application}").`]
@@ -188,4 +203,5 @@ export const SCHEMAS: Record<string, z.ZodType> = {
   debrief: debriefSchema,
   'job-front-matter': jobFrontMatterSchema,
   'company-front-matter': companyFrontMatterSchema,
+  request: requestSchema,
 }

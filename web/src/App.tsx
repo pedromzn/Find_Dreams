@@ -21,6 +21,7 @@ const NewApplication = lazy(() => import('@/pages/NewApplication'))
 const Profile = lazy(() => import('@/pages/Profile'))
 const SettingsPage = lazy(() => import('@/pages/Settings'))
 const Welcome = lazy(() => import('@/pages/Welcome'))
+const Agent = lazy(() => import('@/pages/Agent'))
 
 function Screen({ children }: { children: ReactNode }) {
   return (
@@ -85,6 +86,14 @@ export default function App() {
           element={
             <Screen>
               <Application />
+            </Screen>
+          }
+        />
+        <Route
+          path="/agent"
+          element={
+            <Screen>
+              <Agent />
             </Screen>
           }
         />

@@ -8,6 +8,7 @@ import { STATUSES, type Status } from '@shared/application'
 import { Button, Loading, Panel, Problems, ScreenError, Select, Tabs } from '@/components/ui'
 import { useT } from '@/i18n'
 import { api, useData } from '@/lib/api'
+import { useLiveReload } from '@/lib/events'
 import { SummaryTab } from '@/application/SummaryTab'
 import { CompanyTab, FitTab, InterviewsTab, MessagesTab, TimelineTab } from '@/application/Tabs'
 import { AgentActions, MessageActions } from '@/agent/AgentActions'
@@ -21,6 +22,7 @@ export default function Application() {
   const detail = useData<ApplicationDetail>(`/api/applications/${slug}`)
   const [tab, setTab] = useState<Tab>('summary')
   const [confirming, setConfirming] = useState(false)
+  useLiveReload(detail.reload, slug)
 
   if (detail.error) {
     return (

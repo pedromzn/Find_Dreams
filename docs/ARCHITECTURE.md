@@ -95,3 +95,29 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
   per-origin `localStorage`) keeps it. This closes the phase 0 known issue.
 - **Dates**: a bare `YYYY-MM-DD` is read as local noon when formatted (as UTC midnight it showed the previous day in
   Brazil).
+
+### Phase 3 — agent kit and the copy-the-prompt fallback
+
+- **`agent-kit/`** holds the person's AI manual (`AGENTS.md`), `CLAUDE.md`, a Cursor rule and the skills. The app
+  installs it into the workspace on start; `.mzn/agent-kit.json` records the hash of each file as written, so an
+  update replaces untouched files and leaves edited ones alone, writing the new version as `<file>.new` and listing a
+  conflict the person resolves on the "Your AI" screen (keep mine / use the new one).
+- **Validation for the person's AI without npm**: the app writes `.mzn/validate.mjs` (plain Node, no dependency) and
+  `.mzn/session.json` (this run's port and token). The script asks the running app to validate (`POST /api/validate`),
+  so the rules live in one place. Both sides go through `realpath` (a workspace behind a symlink — iCloud, `/var` on
+  macOS — broke the relative paths). Files the app does not validate (pasted messages) print `[skipped]`, not a
+  problem. The token in `session.json` protects against websites, not local processes, which can read the workspace
+  anyway. PLAN section 8 offered a packaged CLI; this works the same in dev and in the desktop app, with nothing to
+  put on the PATH.
+- **Requests** (`requests/<id>.json`, schema in `shared/request.ts`) are written for every task, with or without an
+  agent. Without one, the dialog shows the folder and a one-line prompt to paste into any AI CLI.
+- **Reply drafts** live next to the message: `messages/<name>.drafts.md`, 2 or 3 `## ` options (validated).
+- **Live screens**: `fs.watch` (recursive) on the workspace, debounced per file, validates each changed file and sends
+  it over SSE (`/api/events`, the only route that takes the token in the query string — `EventSource` cannot send
+  headers). The board and the application screen reload on their own while the AI writes.
+- **Checked end to end** on 2026-11-19 with Claude Code 2.1 in a scratch workspace: analyze-fit, reply-recruiter,
+  track-application (from a pasted e-mail) and research-company all produced valid files and marked their requests
+  done. Codex could not be tried on this machine (its account answered 402 `deactivated_workspace`).
+- **Job fetches refuse private addresses** (loopback, RFC 1918, link-local, CGNAT, metadata, ULA) and follow
+  redirects by hand, re-checking each hop (flagged by a security review). Known gap: the DNS answer is not pinned
+  between the check and the connection.

@@ -11,6 +11,7 @@ import type { Source, Status } from '@shared/application'
 import type { WorkModel } from '@shared/common'
 import type { InterviewType } from '@shared/interviewTypes'
 import type { TimelineKind } from '@shared/api'
+import type { Task } from '@shared/request'
 
 const s = (n: number, one: string, many: string) => (n === 1 ? one : many)
 
@@ -325,6 +326,45 @@ export const en = {
     privacy: 'Privacy',
     privacyNote:
       'No account, no server of ours, no telemetry. The app only sends data to the AI you connect, and only what each task needs.',
+  },
+
+  agent: {
+    title: 'Your AI',
+    note: 'The app does not think on its own: your AI does. Connect it here, or copy a prompt into it.',
+    analyzeFit: 'Analyze the fit with my AI',
+    redoFit: 'Analyze again',
+    researchCompany: 'Research the company with my AI',
+    draftReplies: 'Draft replies with my AI',
+    fixFiles: 'Ask my AI to fix the file',
+    prepareInterview: 'Prepare an interview with my AI',
+    copyTitle: 'Hand it to your AI',
+    copyNote:
+      'Open your AI (Claude Code, Codex, Gemini CLI, Cursor…) in the folder below and paste the prompt. This screen updates by itself when it writes the files.',
+    folder: 'Folder',
+    prompt: 'Prompt',
+    requestSaved: (id: string) => `Saved as requests/${id}.json.`,
+    drafts: 'Reply drafts',
+    kit: 'Instructions for your AI',
+    kitNote: (version: string) => `The manual (AGENTS.md) and the skills are in your workspace, version ${version}.`,
+    kitConflicts: 'You (or your AI) edited these files. The new version is next to each one as .new:',
+    keepMine: 'Keep mine',
+    useNew: 'Use the new version',
+    requests: 'Requests',
+    noRequests: 'No requests yet. The buttons on each application create them.',
+    pending: 'Pending',
+    done: 'Done',
+    showPrompt: 'Show prompt',
+    tasks: {
+      'track-application': 'Track an application',
+      'research-company': 'Research the company',
+      'analyze-fit': 'Analyze the fit',
+      'reply-recruiter': 'Draft replies',
+      'prepare-interview': 'Prepare an interview',
+      'interview-feedback': 'Interview feedback',
+      debrief: 'Debrief',
+      'fix-files': 'Fix files',
+    } satisfies Record<Task, string>,
+    live: 'Updated just now',
   },
 
   /** API error codes (`server/errors.ts`) → message */

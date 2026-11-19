@@ -16,6 +16,8 @@
  */
 
 import { Readability } from '@mozilla/readability'
+import { lookup } from 'node:dns/promises'
+import { isIP } from 'node:net'
 import { parseHTML } from 'linkedom'
 import TurndownService from 'turndown'
 import type { CapturedJob } from '../../shared/api.js'
@@ -208,16 +210,67 @@ export function route(link: string): { adapter: Adapter; api: string; id?: strin
   return { adapter: generic, api: url.href, url }
 }
 
-/** The real network, bounded: 15 s, 3 MB, a generic client name (no personal data in the request). */
-export const networkFetcher: Fetcher = async (url) => {
+/**
+ * Addresses a job link must never reach: this server, the person's router and LAN, cloud metadata. A job page that
+ * redirects there (or a typed link) would otherwise make the app read a local service for them.
+ */
+export function isPrivateAddress(ip: string): boolean {
+  const v4 = ip.startsWith('::ffff:') ? ip.slice(7) : ip
+  if (isIP(v4) === 4) {
+    const [a, b] = v4.split('.').map(Number) as [number, number]
+    return (
+      a === 0 ||
+      a === 10 ||
+      a === 127 ||
+      (a === 100 && b >= 64 && b <= 127) ||
+      (a === 169 && b === 254) ||
+      (a === 172 && b >= 16 && b <= 31) ||
+      (a === 192 && b === 168) ||
+      a >= 224
+    )
+  }
+  const v6 = ip.toLowerCase()
+  return v6 === '::' || v6 === '::1' || /^f[cd]/.test(v6) || /^fe[89ab]/.test(v6) || /^ff/.test(v6)
+}
+
+async function assertPublic(url: URL): Promise<void> {
+  const host = url.hostname.replace(/^\[|\]$/g, '')
+  const addresses = isIP(host) ? [host] : (await lookup(host, { all: true })).map((a) => a.address)
+  if (!addresses.length || addresses.some(isPrivateAddress)) {
+    throw new HttpError(422, 'That link points to a private or local address.', 'fetch_failed')
+  }
+}
+
+const MAX_REDIRECTS = 5
+
+/**
+ * The real network, bounded: 15 s, 3 MB, at most 5 redirects — each one re-checked against private addresses — and a
+ * generic client name (no personal data in the request). Known gap: the DNS answer is not pinned for the connection,
+ * so a rebinding race between the check and the fetch is possible; the result only ever goes back to the person's own
+ * page, which keeps the impact low.
+ */
+export const networkFetcher: Fetcher = async (start) => {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), TIMEOUT_MS)
   try {
-    const res = await fetch(url, {
-      signal: controller.signal,
-      redirect: 'follow',
-      headers: { 'User-Agent': 'Mozilla/5.0 (MZN Vagas desktop app)', Accept: 'text/html,application/json' },
-    })
+    let url = new URL(start)
+    let res: Response | undefined
+    for (let hop = 0; ; hop++) {
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') throw new HttpError(422, 'Invalid link.', 'invalid')
+      await assertPublic(url)
+      res = await fetch(url, {
+        signal: controller.signal,
+        redirect: 'manual',
+        headers: { 'User-Agent': 'Mozilla/5.0 (MZN Vagas desktop app)', Accept: 'text/html,application/json' },
+      })
+      const location = res.headers.get('location')
+      if (res.status < 300 || res.status >= 400 || !location) break
+      if (hop >= MAX_REDIRECTS) throw new HttpError(422, 'Too many redirects.', 'fetch_failed')
+      url = new URL(location, url)
+      if (LOGIN_WALLS.some((r) => r.test(url.hostname))) {
+        throw new HttpError(422, 'This site needs a login: paste the job text instead.', 'login_required')
+      }
+    }
     const reader = res.body?.getReader()
     let size = 0
     const chunks: Uint8Array[] = []

@@ -25,4 +25,6 @@ export const config = {
   root,
   /** the person's data: profile, applications, interviews (the AI reads and writes here) */
   workspaceFolder: path.resolve(root, process.env.MZN_WORKSPACE || 'workspace'),
+  /** the manual and skills copied into the workspace for the person's AI (packaged as an extra resource) */
+  agentKitFolder: path.resolve(root, process.env.MZN_AGENT_KIT || 'agent-kit'),
 }

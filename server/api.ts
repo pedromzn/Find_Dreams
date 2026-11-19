@@ -6,6 +6,8 @@
 
 import { Router } from 'express'
 import type { Health } from '../shared/api.js'
+import { agentRouter } from './routes/agent.js'
+import { agentsRouter } from './routes/agents.js'
 import { applicationsRouter, metricsRouter } from './routes/applications.js'
 import { cvImportRouter, jobsRouter } from './routes/jobs.js'
 import { profileRouter, settingsRouter } from './routes/profile.js'
@@ -23,3 +25,5 @@ apiRouter.use('/profile/cv/import', cvImportRouter)
 apiRouter.use('/profile', profileRouter)
 apiRouter.use('/jobs', jobsRouter)
 apiRouter.use('/settings', settingsRouter)
+apiRouter.use('/', agentRouter)
+apiRouter.use('/', agentsRouter)

@@ -65,7 +65,9 @@ function sameToken(given: string, expected: string): boolean {
 /** Every `/api` route requires the session token. */
 export function requireToken(expected: string = sessionToken): RequestHandler {
   return (req, res, next) => {
-    const given = req.headers[TOKEN_HEADER]
+    // EventSource cannot send headers: only the event stream takes the token in the query string
+    const fromQuery = req.method === 'GET' && req.path === '/events' ? req.query.token : undefined
+    const given = req.headers[TOKEN_HEADER] ?? fromQuery
     if (typeof given !== 'string' || !sameToken(given, expected)) {
       res.status(401).json({ error: 'Missing or wrong session token.', code: 'unauthorized' })
       return
