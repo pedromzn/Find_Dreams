@@ -1,0 +1,48 @@
+{
+  "application": "acme-pagamentos-backend-engineer-20261110",
+  "interviewType": "technical",
+  "persona": "default-technical",
+  "language": "pt-BR",
+  "mode": "text",
+  "brain": "acp",
+  "turns": [
+    {
+      "speaker": "interviewer",
+      "text": "Olá, Ana, tudo bem? Obrigado por participar desta conversa técnica para a vaga de Backend Engineer na Acme Pagamentos. Para começar, você pode me contar sobre a API de pagamentos que construiu na Exemplo Tech: como era a arquitetura e qual foi exatamente a sua parte nela?",
+      "ts": "2026-11-19T21:23:22.227Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Usamos microsserviços porque escala melhor.",
+      "ts": "2026-11-19T21:23:22.228Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Entendi. Mas me conta de forma mais concreta: quais eram os serviços, como eles se comunicavam entre si, e qual dessas peças foi você quem desenhou ou implementou?",
+      "ts": "2026-11-19T21:23:26.404Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Pra idempotência a gente usava uma chave por requisição salva no Postgres com unique constraint.",
+      "ts": "2026-11-19T21:23:26.404Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Boa, isso já é mais concreto. E o que acontece quando chegam duas requisições com a mesma chave ao mesmo tempo, a primeira ainda processando? O que a segunda recebe, e como você garante que o pagamento não é cobrado duas vezes?",
+      "ts": "2026-11-19T21:23:30.774Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Não sei muito de sharding, nunca precisei.",
+      "ts": "2026-11-19T21:23:30.774Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Tudo bem, é bom saber o que você nunca precisou usar. Mas a minha pergunta era outra, não é sobre sharding: num banco só, se duas requisições com a mesma chave de idempotência chegam quase juntas e a primeira ainda está processando, o que acontece com a segunda no seu desenho?",
+      "ts": "2026-11-19T21:23:35.882Z"
+    }
+  ],
+  "startedAt": "2026-11-19T21:23:17.731Z",
+  "endedAt": "2026-11-19T21:23:35.882Z",
+  "status": "completed"
+}

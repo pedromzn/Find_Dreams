@@ -1,0 +1,62 @@
+{
+  "scores": [
+    {
+      "criterion": "Aderência às perguntas",
+      "score": 1,
+      "comment": "Nenhuma das três respostas respondeu ao que foi perguntado. O entrevistador pediu a arquitetura e a sua parte nela, e você respondeu com um slogan. Na segunda vez ele pediu os serviços e como se comunicavam, e você falou de idempotência. Quando ele perguntou de concorrência com a mesma chave, você falou de sharding. Ele precisou repetir a mesma pergunta duas vezes."
+    },
+    {
+      "criterion": "Clareza sobre o próprio papel",
+      "score": 1,
+      "comment": "O entrevistador perguntou duas vezes qual parte você desenhou ou implementou, e as respostas usaram só \"a gente\" e \"usamos\". Numa entrevista técnica para um cargo de 5 anos de experiência, ele precisa saber o que foi decisão e código seu."
+    },
+    {
+      "criterion": "Arquitetura e justificativa de decisões",
+      "score": 1,
+      "comment": "\"Usamos microsserviços porque escala melhor\" não diz quais eram os serviços, como se comunicavam (HTTP? Kafka, que está no seu CV?) nem o que exatamente escalava melhor. Uma justificativa genérica assim costuma gerar desconfiança em vez de confiança."
+    },
+    {
+      "criterion": "Profundidade técnica (idempotência e concorrência)",
+      "score": 2,
+      "comment": "A chave de idempotência salva no PostgreSQL com unique constraint é um ponto concreto e correto, e o entrevistador reconheceu isso. Faltou o próximo passo: o que acontece com a segunda requisição enquanto a primeira ainda está processando. É justamente o caso que importa em pagamentos, e ficou sem resposta."
+    },
+    {
+      "criterion": "Lidar com o que não sabe",
+      "score": 2,
+      "comment": "Admitir que nunca precisou de sharding é honesto e isso conta a favor. Mas a pergunta não era sobre sharding. Quando não tiver certeza do que foi perguntado, peça para reformular. Quando não souber a resposta, pense em voz alta a partir do que você conhece, aqui o próprio PostgreSQL."
+    }
+  ],
+  "strengths": [
+    "Trouxe um mecanismo técnico concreto e correto: chave de idempotência por requisição, persistida no PostgreSQL com unique constraint. É exatamente o tipo de detalhe que uma vaga de API de pagamentos procura.",
+    "Foi honesta sobre o limite da sua experiência (\"nunca precisei\" de sharding) em vez de improvisar algo que não domina."
+  ],
+  "stuckPoints": [
+    {
+      "excerpt": "Usamos microsserviços porque escala melhor.",
+      "why": "A pergunta tinha duas partes, a arquitetura e a sua parte nela, e a resposta não cobre nenhuma das duas. \"Escala melhor\" é uma frase que qualquer pessoa pode dizer. O entrevistador ficou sem saber o que você construiu.",
+      "betterAnswer": "Na Exemplo Tech, a API de pagamentos era escrita em Node.js com PostgreSQL, e os serviços trocavam eventos por Kafka. [Liste os serviços reais, por exemplo quem recebia a requisição, quem falava com o adquirente e quem consumia os eventos, e diga o que era síncrono e o que era assíncrono.] A minha parte foi [o serviço ou componente que você de fato desenhou ou implementou, e uma decisão que você tomou nele]. Separamos em serviços porque [o motivo real: deploy independente, carga diferente entre partes, isolamento de falhas], e o custo disso foi [um trade-off real, por exemplo consistência entre serviços ou mais coisas para operar]."
+    },
+    {
+      "excerpt": "Pra idempotência a gente usava uma chave por requisição salva no Postgres com unique constraint.",
+      "why": "O conteúdo é bom, mas responde a uma pergunta que ainda não tinha sido feita. O entrevistador tinha pedido os serviços, a comunicação entre eles e a sua parte, e isso continuou sem resposta. Além disso, \"a gente\" não deixa claro se foi você quem implementou.",
+      "betterAnswer": "Responda primeiro ao que foi perguntado (serviços, comunicação e a sua parte, como na resposta anterior) e então puxe o gancho: \"Uma das partes que [eu implementei / eu acompanhei de perto, escolha a que for verdade] foi a idempotência: cada requisição trazia uma chave, que a gente salvava no PostgreSQL com unique constraint, para que uma retentativa do cliente não gerasse uma segunda cobrança.\""
+    },
+    {
+      "excerpt": "Não sei muito de sharding, nunca precisei.",
+      "why": "A pergunta era sobre duas requisições concorrentes com a mesma chave num único banco, e o entrevistador precisou esclarecer isso. Era a continuação natural do que você mesma tinha trazido e a pergunta mais importante da conversa para uma vaga de pagamentos.",
+      "betterAnswer": "Se não tiver certeza do que foi perguntado: \"Só para confirmar, você quer saber o que acontece com a segunda requisição enquanto a primeira ainda está processando, certo?\" Depois, conte como era no sistema de vocês. [Descreva só o que de fato acontecia lá. Se não souber, diga isso e raciocine em voz alta.] Um desenho comum no PostgreSQL, para usar como raciocínio e não como experiência sua: a primeira requisição insere a chave com status \"processando\" antes de chamar o adquirente. A segunda bate na unique constraint (por exemplo, com INSERT ... ON CONFLICT DO NOTHING, que não insere nada) e lê o registro existente. Se ainda está processando, recebe um 409 ou um aviso para tentar de novo depois. Se já terminou, recebe a mesma resposta que foi salva. Também vale guardar um hash do corpo da requisição, para recusar a mesma chave com outro conteúdo, e repassar a chave para o adquirente, para que uma cobrança não seja duplicada lá também."
+    }
+  ],
+  "nextPractice": [
+    "Antes de responder, repita mentalmente a pergunta. Se ela tiver duas partes (\"como era\" e \"qual foi a sua parte\"), responda às duas, nessa ordem.",
+    "Prepare um desenho de dois minutos da API de pagamentos da Exemplo Tech: os serviços, o que era síncrono e o que passava pelo Kafka, onde ficava o PostgreSQL, e qual peça era sua.",
+    "Troque \"a gente\" por \"eu\" sempre que a decisão ou o código forem seus, e diga com clareza quando algo foi do time.",
+    "Estude idempotência sob concorrência no PostgreSQL: unique constraint, INSERT ... ON CONFLICT, SELECT ... FOR UPDATE, estados \"processando\" e \"concluído\", resposta salva e o que retornar para a segunda requisição.",
+    "Treine responder \"não sei\" de um jeito útil: diga o que você sabe, raciocine em voz alta e diga como descobriria o resto.",
+    "Para cada decisão de arquitetura que for citar, prepare o motivo real e um trade-off. Evite justificativas genéricas como \"escala melhor\".",
+    "Refaça esta entrevista técnica até o fim. A sessão terminou com a pergunta de concorrência sem resposta."
+  ],
+  "overall": "A sessão foi curta e terminou com a pergunta principal sem resposta, mas o padrão ficou claro: o problema maior não é falta de conhecimento, é responder a uma pergunta diferente da que foi feita. As três respostas desviaram do que o entrevistador pediu, e ele precisou repetir a pergunta duas vezes. Você tem material bom para uma vaga exatamente no seu domínio (5 anos com Node.js e PostgreSQL numa API de pagamentos, com Kafka), e o detalhe da chave de idempotência com unique constraint mostra isso. Ainda faltam três coisas: descrever a arquitetura de forma concreta, deixar claro o que foi seu e aprofundar o caso de concorrência, que é o que uma empresa de pagamentos mais quer ouvir. Nas respostas sugeridas, os trechos entre colchetes são para você completar com fatos reais. O desenho de concorrência descrito é um padrão comum, não uma experiência sua, e só deve ser apresentado como seu se foi assim que vocês fizeram.",
+  "language": "pt-BR",
+  "generatedAt": "2026-11-19T21:40:00Z"
+}

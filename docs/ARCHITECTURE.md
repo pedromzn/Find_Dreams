@@ -213,3 +213,18 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
   agent kit from the extra resources, serve the API with the token, store in SQLite, detect agents through the shell
   PATH; the window has the CSP, no Node and the preload bridge. **Not checked**: the Windows and Linux installers and
   the update path end to end — they need the GitHub repository and a tag.
+
+### Phase 8 — evals, docs and launch
+
+- **Evals** (`scripts/evals.ts`, data in `evals/`): verifiable criteria for the promises of the agent kit — HR covers
+  the salary (asking, or confirming a figure the candidate offered) and insists after a dodge; the technical
+  interviewer probes after a vague answer; one question at a time; the interview stays in its language; feedback quotes
+  the transcript; drafts have 2–3 options, invent no experience and take salary figures from the profile. Each
+  criterion is tested passing and failing. The recorded cases are real outputs from 2026-11-19 for the fictional
+  candidate; `npm run evals` runs them in `verify` and CI. `--live` runs scripted candidates against a real brain
+  (and `.github/workflows/evals-live.yml` does it on demand with an API key from the repository secrets).
+- **Every interview type** now has a preparation reference and an interviewer conduct (agent kit version 3).
+- **Docs**: README (download links, a GIF tour and screenshots of the fictional candidate), `docs/PRIVACY.md`,
+  `docs/AGENTS-SUPPORT.md`, and the dev skills `add-interview-type`, `add-agent` and `write-eval`.
+- **Not done here**: the README's "someone from outside installs and practices following only the README" criterion
+  needs a published release and a person; the download links point to a repository that does not exist yet.

@@ -14,7 +14,7 @@
     "build": "vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "verify": "npm run format:check && npm run typecheck && npm test && npm run vagas:validate -- --all --workspace test/fixtures/sample-workspace && npm run vagas:schemas -- --check && npm run privacy:check && npm run build",
+    "verify": "npm run format:check && npm run typecheck && npm test && npm run vagas:validate -- --all --workspace test/fixtures/sample-workspace && npm run vagas:schemas -- --check && npm run privacy:check && npm run evals && npm run build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "vagas:status": "tsx scripts/vagas.ts status",
@@ -26,7 +26,8 @@
     "desktop:compile": "tsx scripts/build-desktop.ts",
     "desktop:dev": "npm run build && npm run desktop:compile && electron .",
     "desktop:build": "npm run build && npm run desktop:compile && electron-builder --publish never",
-    "desktop:release": "npm run build && npm run desktop:compile && electron-builder --publish always"
+    "desktop:release": "npm run build && npm run desktop:compile && electron-builder --publish always",
+    "evals": "tsx scripts/evals.ts"
   },
   "dependencies": {
     "@agentclientprotocol/sdk": "2.8.0",

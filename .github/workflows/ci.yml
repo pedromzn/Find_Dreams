@@ -58,6 +58,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run vagas:validate -- --all --workspace test/fixtures/sample-workspace
+      # the deterministic product evals (recorded outputs of the fictional candidate)
+      - run: npm run evals
 
   build:
     name: Build

@@ -28,21 +28,22 @@ The plan, the phases and the reasons behind each decision: [`docs/PLAN.md`](docs
 | `test/`      | test setup (a temp workspace per run) and fixtures                                                 |
 | `docs/`      | plan, architecture, privacy, agent support, generated JSON Schemas                                 |
 | `.github/`   | CI, CodeQL, Dependabot, issue and PR templates                                                     |
-| `agent-kit/` | (phase 3) what is copied into the person's workspace: their AI's manual and skills                 |
-| `desktop/`   | (phase 7) Electron main, preload, shell PATH, updater                                              |
+| `agent-kit/` | what is copied into the person's workspace: their AI's manual and skills                           |
+| `desktop/`   | Electron main, preload, keychain, updater                                                          |
 
 ## 3. The commands
 
-| Command                                           | What for                                                   |
-| ------------------------------------------------- | ---------------------------------------------------------- |
-| `npm run dev`                                     | server + Vite at http://localhost:3060 (data: ./workspace) |
-| `npm run verify`                                  | everything CI checks, in one go                            |
-| `npm test`                                        | Vitest                                                     |
-| `npm run vagas:status [-- --workspace <dir>]`     | the workspace: profile, applications, files with problems  |
-| `npm run vagas:validate -- <file\|slug> \| --all` | validates workspace files; exit 1 on problems              |
-| `npm run vagas:schemas [-- --check]`              | writes (or checks) `docs/schemas/*.schema.json`            |
-| `npm run privacy:check`                           | fails if git tracks anything that may hold personal data   |
-| `npm run format`                                  | Prettier                                                   |
+| Command                                                     | What for                                                   |
+| ----------------------------------------------------------- | ---------------------------------------------------------- |
+| `npm run dev`                                               | server + Vite at http://localhost:3060 (data: ./workspace) |
+| `npm run verify`                                            | everything CI checks, in one go                            |
+| `npm test`                                                  | Vitest                                                     |
+| `npm run vagas:status` / `vagas:validate` / `vagas:schemas` | the workspace files, their validation, the JSON Schemas    |
+| `npm run evals [-- --live --brain ollama\|acp\|api]`        | product evals: recorded (CI) or against a real brain       |
+| `npm run voice:install` / `voice:test`                      | the local voice (Whisper + Kokoro) in the data folder      |
+| `npm run desktop:dev` / `desktop:build`                     | the Electron app / an installer for this system            |
+| `npm run privacy:check`                                     | fails if git tracks anything that may hold personal data   |
+| `npm run format`                                            | Prettier                                                   |
 
 After changing a schema in `shared/`, run `npm run vagas:schemas` and keep `test/fixtures/sample-workspace/` valid.
 

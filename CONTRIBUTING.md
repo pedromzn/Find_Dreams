@@ -32,6 +32,17 @@ npm run format       # Prettier, if the format check complained
 - **No profiling of people**: no LinkedIn scraping, no profiles of real recruiters or interviewers.
 - Tests: change the code, change the tests. A new test for every bug fixed.
 
+## Interview types, agents and evals
+
+- **A new interview stage**: `.claude/skills/add-interview-type/SKILL.md` (the enum, both dictionaries, a preparation
+  reference and an interviewer conduct in `agent-kit/`, an eval).
+- **A new ACP agent**: `.claude/skills/add-agent/SKILL.md` (check its current command in its docs, register it, run the
+  connection test, record the result in `docs/AGENTS-SUPPORT.md`).
+- **An eval**: `.claude/skills/write-eval/SKILL.md`. Every criterion needs a passing and a failing test, and the data in
+  `evals/` is for fictional candidates only.
+- **The AI's instructions** (`agent-kit/`) are product code: bump `agent-kit/VERSION` when you change them, so every
+  workspace gets the update (edits the person made are kept).
+
 ## Pull request
 
 - One change per PR, with a description of the problem and how you tested it.

@@ -1,0 +1,48 @@
+{
+  "application": "acme-pagamentos-backend-engineer-20261110",
+  "interviewType": "hr_screening",
+  "persona": "default-hr-screening",
+  "language": "pt-BR",
+  "mode": "voice",
+  "brain": "acp",
+  "turns": [
+    {
+      "speaker": "interviewer",
+      "text": "Olá, Ana, tudo bem? Obrigada por participar. Eu sou recrutadora aqui na Acme Pagamentos e vou conduzir essa primeira conversa, que deve levar uns vinte minutos. A ideia é te conhecer melhor, entender seu momento e alinhar alguns pontos práticos. Para começar, você pode me contar um pouco sobre você e sua trajetória?",
+      "ts": "2026-11-19T21:28:12.371Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Sou desenvolvedora, baquê ainda há 5 anos e trabalhei com a API de pagamentos da exemplo TESH.",
+      "ts": "2026-11-19T21:28:27.709Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Legal, Ana. Cinco anos com backend e uma API de pagamentos é uma experiência bem próxima do que buscamos. Você pode me contar um pouco mais sobre o seu papel na Exemplo Tech, como era o seu dia a dia, e de alguma entrega da qual você se orgulha?",
+      "ts": "2026-11-19T21:28:33.206Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Busco entre R$ 14.000 e R$ 18.000 por mês no regime CELITER.",
+      "ts": "2026-11-19T21:28:41.417Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Anotado, entre quatorze e dezoito mil reais por mês no regime CLT, obrigada pela clareza. Voltando um passo, antes de falarmos de condições eu queria entender melhor a sua trajetória: qual era exatamente o seu papel no time da API de pagamentos da Exemplo Tech?",
+      "ts": "2026-11-19T21:28:46.665Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "consigo começar em 30 dias.",
+      "ts": "2026-11-19T21:28:53.858Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Perfeito, trinta dias de disponibilidade, anotado. Agora eu queria entender o seu momento: o que te faz buscar uma nova oportunidade agora, e o que te chamou a atenção na Acme Pagamentos?",
+      "ts": "2026-11-19T21:28:59.983Z"
+    }
+  ],
+  "startedAt": "2026-11-19T21:28:07.569Z",
+  "endedAt": "2026-11-19T21:29:03.840Z",
+  "status": "completed"
+}

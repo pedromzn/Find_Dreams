@@ -1,0 +1,61 @@
+{
+  "scores": [
+    {
+      "criterion": "Aderência às perguntas",
+      "score": 1,
+      "comment": "Duas das três respostas não responderam ao que foi perguntado: quando a recrutadora pediu detalhes do seu papel na API de pagamentos, você falou de salário; quando ela pediu a faixa salarial, você falou da data de início. Numa triagem de RH, isso passa a impressão de desatenção ou de fuga do assunto."
+    },
+    {
+      "criterion": "Apresentação pessoal (pitch)",
+      "score": 2,
+      "comment": "A abertura tem o essencial (5 anos de backend, Exemplo Tech, API de pagamentos), mas cabe em uma linha. Faltaram a stack (Node.js, PostgreSQL, Kafka, Go), o tipo de problema que você resolvia e por que a Acme Pagamentos te interessa."
+    },
+    {
+      "criterion": "Pretensão salarial",
+      "score": 1,
+      "comment": "\"Pode ser o que vocês acharem justo\" entrega a negociação para a empresa e, quando a recrutadora insistiu pedindo uma faixa CLT, a pergunta ficou sem resposta. Seu perfil já tem uma faixa definida; use-a."
+    },
+    {
+      "criterion": "Disponibilidade e logística",
+      "score": 3,
+      "comment": "\"Posso começar em 30 dias\" é claro e objetivo, só veio na hora errada. A pergunta sobre o modelo híbrido ficou sem resposta porque a sessão terminou."
+    },
+    {
+      "criterion": "Comunicação e profundidade",
+      "score": 2,
+      "comment": "Tom cordial, mas as respostas são curtas demais para uma conversa de 20 minutos. A recrutadora precisou puxar cada informação e não recebeu nenhum exemplo concreto do seu trabalho."
+    }
+  ],
+  "strengths": [
+    "Abertura direta, já citando o que mais importa para a vaga: 5 anos de backend e experiência com API de pagamentos, o próprio domínio da Acme.",
+    "Prazo de início claro e específico (30 dias), sem rodeios."
+  ],
+  "stuckPoints": [
+    {
+      "excerpt": "Oi! Sou dev backend há 5 anos, trabalhei na Exemplo Tech com a API de pagamentos.",
+      "why": "Para \"conte um pouco sobre você\", uma frase é pouco: a recrutadora não fica sabendo da sua stack, do que você fazia nem do motivo do seu interesse pela vaga. É a melhor chance de conduzir a conversa para os seus pontos fortes.",
+      "betterAnswer": "Oi, tudo bem! Sou desenvolvedora backend há 5 anos. De 2021 a 2026 trabalhei na Exemplo Tech, na API de pagamentos, com Node.js, PostgreSQL e Kafka. Nos últimos dois anos também trabalhei com Go, em nível intermediário. [Cite em uma frase o tipo de problema que você resolvia, por exemplo integrações, consistência de transações ou desempenho, usando só o que você de fato fez.] Me interessei pela Acme porque a vaga é exatamente nesse domínio: construir e operar a API de pagamentos com Node.js ou Go, PostgreSQL e sistemas orientados a eventos."
+    },
+    {
+      "excerpt": "Ah, salário... pode ser o que vocês acharem justo.",
+      "why": "Essa resposta não tem a ver com a pergunta (seu papel no time e uma entrega de que você se orgulha). Além disso, adiantou o tema salário sem nenhuma referência. Perdeu-se a chance de mostrar seu trabalho.",
+      "betterAnswer": "Claro! Na Exemplo Tech eu trabalhava como desenvolvedora backend na API de pagamentos, com Node.js e PostgreSQL, e com Kafka para os eventos entre serviços. [Descreva seu papel real no time.] Uma entrega de que me orgulho foi [uma entrega real: qual era o problema, o que você fez e qual foi o resultado, de preferência com um número]. Use a estrutura situação, ação e resultado, em até dois minutos."
+    },
+    {
+      "excerpt": "Posso começar em 30 dias.",
+      "why": "A recrutadora perguntou pela faixa salarial em regime CLT e, pela segunda vez, não teve resposta. Ela precisou deixar o tema para depois, e isso pode atrasar ou atrapalhar o processo, porque a triagem de RH serve justamente para checar se a faixa bate.",
+      "betterAnswer": "Para CLT, estou buscando algo entre R$ 14 mil e R$ 18 mil por mês, dependendo do pacote de benefícios. Essa faixa está alinhada com o que vocês têm para a vaga? Sobre a disponibilidade, consigo começar em 30 dias."
+    }
+  ],
+  "nextPractice": [
+    "Ouça a pergunta até o fim e responda a ela primeiro. Se não entendeu, peça para repetir ou reformular antes de responder.",
+    "Treine um pitch de 60 a 90 segundos: quem você é, sua stack (Node.js, PostgreSQL, Kafka, Go), o que fazia na Exemplo Tech e por que a Acme.",
+    "Prepare uma história real de entrega na API de pagamentos no formato situação, ação e resultado. Se puder, conecte-a a temas da vaga, como idempotência em retentativas de pagamento ou sistemas orientados a eventos.",
+    "Ensaie a resposta de pretensão salarial com a sua faixa (R$ 14 mil a R$ 18 mil/mês, CLT), dita com naturalidade e seguida de uma pergunta sobre a faixa da vaga.",
+    "Prepare a resposta para o modelo híbrido: você aceita híbrido e não pretende se mudar, então pergunte onde fica o escritório e quantos dias presenciais são esperados.",
+    "Refaça esta triagem até o fim, para praticar também o fechamento e as suas próprias perguntas à recrutadora."
+  ],
+  "overall": "A sessão foi curta e terminou antes da pergunta sobre o modelo híbrido, mas já deixa claro o que trabalhar. O maior problema não é o conteúdo, é a aderência: duas respostas não tinham relação com a pergunta feita, e numa triagem de RH isso pesa mais do que respostas curtas. Você tem uma boa história para contar (5 anos de backend em pagamentos, o mesmo domínio da vaga), mas ela não apareceu. As prioridades são: responder exatamente ao que foi perguntado, ter um pitch de um minuto e uma entrega real bem contada, e dizer sua faixa salarial sem hesitar. Nas respostas sugeridas, os trechos entre colchetes são para você completar com fatos reais da sua experiência; eu não inventei nenhuma conquista.",
+  "language": "pt-BR",
+  "generatedAt": "2026-11-19T21:30:00Z"
+}

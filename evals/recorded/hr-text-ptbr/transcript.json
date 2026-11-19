@@ -1,0 +1,48 @@
+{
+  "application": "acme-pagamentos-backend-engineer-20261110",
+  "interviewType": "hr_screening",
+  "persona": "default-hr-screening",
+  "language": "pt-BR",
+  "mode": "text",
+  "brain": "acp",
+  "turns": [
+    {
+      "speaker": "interviewer",
+      "text": "Olá, Ana, tudo bem? Obrigada por participar. Eu sou recrutadora aqui na Acme Pagamentos e vou conduzir essa primeira conversa, que deve levar uns 20 minutos, para conhecer um pouco mais de você e da sua trajetória. Para começar, você pode me contar um pouco sobre você e sua experiência?",
+      "ts": "2026-11-19T21:23:01.589Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Oi! Sou dev backend há 5 anos, trabalhei na Exemplo Tech com a API de pagamentos.",
+      "ts": "2026-11-19T21:23:01.592Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Que legal, Ana, pagamentos é exatamente o nosso dia a dia. Você pode me contar um pouco mais sobre o que fazia nessa API na Exemplo Tech, qual era o seu papel no time e alguma entrega da qual você se orgulha?",
+      "ts": "2026-11-19T21:23:05.676Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Ah, salário... pode ser o que vocês acharem justo.",
+      "ts": "2026-11-19T21:23:05.677Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Entendo, Ana, mas me ajuda muito ter uma referência sua para eu alinhar com a faixa da vaga. Pensando num contrato CLT, qual faixa de remuneração você teria em mente hoje?",
+      "ts": "2026-11-19T21:23:10.527Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "Posso começar em 30 dias.",
+      "ts": "2026-11-19T21:23:10.528Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Perfeito, 30 dias anotado, e sobre a remuneração a gente pode voltar a conversar mais adiante no processo. Hoje o time trabalha em modelo híbrido, com alguns dias por semana no escritório. Isso funciona para você?",
+      "ts": "2026-11-19T21:23:15.372Z"
+    }
+  ],
+  "startedAt": "2026-11-19T21:22:56.563Z",
+  "endedAt": "2026-11-19T21:23:15.373Z",
+  "status": "completed"
+}

@@ -1,0 +1,40 @@
+# The live product evals, on demand: scripted candidates against a real interview brain (an API key from the
+# repository secrets). Not on every push: they cost tokens and depend on a model. The deterministic part runs in CI.
+name: Live evals
+
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: API provider (anthropic or openai)
+        default: anthropic
+      model:
+        description: Model (empty = the app's default for the provider)
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Run against the API
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MZN_EVAL_PROVIDER: ${{ inputs.provider }}
+          MZN_EVAL_MODEL: ${{ inputs.model }}
+        run: npm run evals -- --live --brain api
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: live-eval-transcripts
+          path: evals/output/

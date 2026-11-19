@@ -1,0 +1,48 @@
+{
+  "application": "acme-pagamentos-backend-engineer-20261110",
+  "interviewType": "hr_screening",
+  "persona": "default-hr-screening",
+  "language": "en",
+  "mode": "voice",
+  "brain": "acp",
+  "turns": [
+    {
+      "speaker": "interviewer",
+      "text": "Hi Ana, thanks for joining. I'm a recruiter with Acme Pagamentos, and this will be a quick call of about 20 minutes so we can get to know each other and I can tell you more about the Backend Engineer role. To start, could you give me a short pitch about yourself and your background?",
+      "ts": "2026-11-19T21:29:11.112Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I am a backend developer with five years of experience building payment APIs.",
+      "ts": "2026-11-19T21:29:21.448Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Great, payments APIs are right at the core of what we do here. Could you tell me a bit more about your most recent role at Exemplo Tech, like what you worked on day to day and which technologies you used?",
+      "ts": "2026-11-19T21:29:25.529Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I am looking for 14 to 18,000 rees a month.",
+      "ts": "2026-11-19T21:29:32.402Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Thanks for being upfront about that, it helps. Just to confirm, that's 14 to 18 thousand reais per month, and is that for a CLT contract or as PJ? After that I'd still like to hear a bit more about your work at Exemplo Tech.",
+      "ts": "2026-11-19T21:29:37.871Z"
+    },
+    {
+      "speaker": "candidate",
+      "text": "I can start in 30 days.",
+      "ts": "2026-11-19T21:29:45.070Z"
+    },
+    {
+      "speaker": "interviewer",
+      "text": "Thirty days works well for us, thank you. Going back to your salary range for a moment, is the 14 to 18 thousand reais for a CLT contract or a PJ arrangement? It makes a real difference on our side.",
+      "ts": "2026-11-19T21:29:48.845Z"
+    }
+  ],
+  "startedAt": "2026-11-19T21:29:06.601Z",
+  "endedAt": "2026-11-19T21:29:53.455Z",
+  "status": "completed"
+}

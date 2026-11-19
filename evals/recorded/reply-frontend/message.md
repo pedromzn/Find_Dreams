@@ -1,0 +1,1 @@
+Oi Ana, tudo bem? Sou a Júlia, recrutadora da Globex. Vi seu perfil e queria saber se você tem interesse na vaga de Frontend. Qual sua pretensão salarial e disponibilidade para uma conversa esta semana?

@@ -17,6 +17,9 @@ workspace/
 # the voice engines and other downloads (MZN_DATA in the desktop app)
 .data/
 
+# live eval transcripts (npm run evals -- --live)
+evals/output/
+
 # build output: the web app, the compiled server/main process and the installers
 dist/
 dist-*/
