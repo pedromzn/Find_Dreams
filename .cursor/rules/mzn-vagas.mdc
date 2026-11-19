@@ -1,0 +1,13 @@
+---
+description: MZN Vagas — how to develop this repository
+alwaysApply: true
+---
+
+This repository is MZN Vagas, a desktop app (Electron + Express + React) that tracks job applications and simulates
+interviews with the person's own AI. Read the root `AGENTS.md` before doing anything, and `docs/PLAN.md` for the plan.
+
+Golden rules:
+
+- personal data (CVs, salaries, recruiter messages, `workspace/`, PDFs, DOCXs) never goes into git, tests or logs;
+- every file the app or the AI writes is validated by the zod schemas in `shared/`;
+- `npm run verify` must pass before every commit.

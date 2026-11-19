@@ -1,0 +1,6 @@
+# The person's workspace is written by the app and by their AI, and checked by the validator, not by the formatter.
+workspace/
+dist/
+dist-*/
+release/
+package-lock.json

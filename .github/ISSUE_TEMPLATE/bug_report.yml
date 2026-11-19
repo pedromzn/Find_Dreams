@@ -1,0 +1,59 @@
+name: Bug report
+description: Something in the app, the interview simulator, the agent connection or the AI instructions does not work.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Do not paste personal data**: your CV, salary, recruiter messages, company names from
+        your real applications or interview transcripts. Describe the problem with made-up data instead.
+        Security problems go to a private report instead: see SECURITY.md.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce
+      placeholder: |
+        1. Open the app
+        2. …
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Tracker (dashboard, applications, job capture)
+        - Copilot (fit, company research, recruiter replies)
+        - Interview simulator (text)
+        - Interview simulator (voice)
+        - Agent connection (ACP) / Ollama
+        - Desktop app (install, update)
+        - AI instructions (agent-kit, skills)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App version and system
+      placeholder: 0.1.0 on macOS 15 / Windows 11 / Ubuntu 24.04
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent or brain in use
+      placeholder: Gemini CLI 0.x / Codex / Ollama qwen3 / none
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: The app log (personal data is masked, but check before pasting).
+      render: shell

@@ -1,0 +1,125 @@
+/*
+ * Black and red. The tokens live in @theme (they become Tailwind utilities: bg-bg, bg-surface, text-muted,
+ * border-border…) and point to the CSS variables below. A new color comes from here, never loose in a component.
+ * `contrast.test.ts` reads this file and checks every text/background pair against WCAG AA.
+ *
+ * Color hierarchy: near-black surfaces give depth; red is the BRAND and the action (main button, active item, focus,
+ * links, progress) — it is emphasis, not alarm. Errors and "rejected" use a different, pinker red (`danger`), always
+ * with an icon and a word, so they never read as the brand. Green (success, offer) and amber (warning) are used
+ * sparingly, so the app stays black and red.
+ *
+ * Dark is the only theme in v1.
+ */
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-text: var(--accent-text);
+  --color-on-accent: var(--on-accent);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+
+  --font-display: 'Fraunces Variable', 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Instrument Sans Variable', 'Instrument Sans', system-ui, sans-serif;
+  --font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
+
+  --radius-pill: 999px;
+  --radius-panel: 18px;
+  --radius-tile: 12px;
+
+  --animate-appear: appear 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+  @keyframes appear {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --surface: #121212;
+  --surface-2: #1a1a1a;
+  --border: #262626;
+  --border-strong: #3a3a3a;
+  --text: #f5f5f5;
+  --muted: #a3a3a3;
+  --faint: #8a8a8a;
+  /* the brand red: fills (buttons, bars, the logo) with white text on top */
+  --accent: #e50914;
+  --accent-hover: #b80710;
+  /* the brand red as TEXT on black: lighter, so it passes AA */
+  --accent-text: #ff5c5c;
+  --on-accent: #ffffff;
+  /* errors and "rejected": pinker than the brand, never alone (icon + word) */
+  --danger: #f472b6;
+  --success: #4ade80;
+  --warning: #fbbf24;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -18px rgb(0 0 0 / 0.8);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+  }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 560;
+    font-variation-settings: 'opsz' 72;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  a {
+    color: var(--accent-text);
+  }
+}
+
+@layer components {
+  /* a panel: a step above the background, a thin edge and a soft shadow */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+}

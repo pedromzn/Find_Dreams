@@ -1,0 +1,47 @@
+{
+  "name": "mzn-vagas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A local job-search copilot: track your applications, get a fit analysis per job and rehearse every interview stage (HR, technical, client, system design…) by text or voice with YOUR AI. Your data stays on your machine.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "dev": "tsx server/main.ts",
+    "start": "npm run build && NODE_ENV=production tsx server/main.ts",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "verify": "npm run format:check && npm run typecheck && npm test && npm run build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@fontsource-variable/fraunces": "5.2.8",
+    "@fontsource-variable/geist-mono": "5.3.0",
+    "@fontsource-variable/instrument-sans": "5.3.0",
+    "@phosphor-icons/react": "2.1.10",
+    "@tailwindcss/vite": "4.1.14",
+    "@vitejs/plugin-react": "4.7.0",
+    "express": "4.22.3",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-router-dom": "7.18.5",
+    "tailwindcss": "4.1.14",
+    "tsx": "4.20.6",
+    "vite": "6.4.6",
+    "zod": "4.6.7",
+    "zustand": "5.0.8"
+  },
+  "devDependencies": {
+    "@types/express": "4.17.21",
+    "@types/node": "24.19.2",
+    "@types/react": "19.1.16",
+    "@types/react-dom": "19.1.9",
+    "prettier": "3.3.3",
+    "typescript": "5.9.3",
+    "vitest": "4.1.12"
+  }
+}

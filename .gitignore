@@ -1,0 +1,23 @@
+node_modules/
+.env
+*.log
+.DS_Store
+__pycache__/
+
+# The person's data. In dev the workspace lives in ./workspace; it holds a CV, salary expectations and recruiter
+# messages, so it must never reach git (the privacy test in CI double-checks this).
+# (`profile/` and `applications/` are anchored at the root so a source folder with the same name stays tracked.)
+workspace/
+/profile/
+/applications/
+*.pdf
+*.docx
+
+# build output: the web app, the compiled server/main process and the installers
+dist/
+dist-*/
+release/
+
+# local Claude Code state
+.claude/scheduled_tasks.lock
+.claude/settings.local.json

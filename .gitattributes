@@ -1,0 +1,11 @@
+# Text files always use LF (Windows contributors included), so Prettier and the hashes agree everywhere.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.icns binary
+*.onnx binary
+*.bin binary
+
+test/fixtures/** linguist-vendored=true
