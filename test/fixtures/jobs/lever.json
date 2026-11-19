@@ -1,0 +1,10 @@
+{
+  "id": "7f1c2d3e-0000-4000-8000-000000000001",
+  "text": "Frontend Developer",
+  "categories": { "commitment": "Full-time", "location": "São Paulo", "team": "Web" },
+  "workplaceType": "hybrid",
+  "opening": "<p>We are a fictional company.</p>",
+  "description": "<p>You will build our React app.</p>",
+  "lists": [{ "text": "Requirements", "content": "<li>React</li><li>TypeScript</li>" }],
+  "additional": "<p>Health plan.</p>"
+}

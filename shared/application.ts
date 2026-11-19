@@ -70,7 +70,8 @@ const nextStepSchema = z
 
 const contactSchema = z.object({ name: text(80), role: text(80) }).strict()
 
-export const applicationSchema = z
+/** The fields, without the cross-field rules (`.pick`/`.partial` need a plain object). */
+export const applicationFields = z
   .object({
     /** the folder name: `<company>-<role>-<yyyymmdd>` (`applicationSlug`) */
     slug: slugSchema,
@@ -97,10 +98,14 @@ export const applicationSchema = z
     updatedAt: isoDateTime,
   })
   .strict()
-  .refine((a) => a.salaryKind === undefined || a.salary !== undefined, {
-    message: 'salaryKind needs a salary.',
-    path: ['salaryKind'],
-  })
+
+const salaryKindNeedsSalary = (a: { salaryKind?: unknown; salary?: unknown }) =>
+  a.salaryKind === undefined || a.salary !== undefined
+
+export const applicationSchema = applicationFields.refine(salaryKindNeedsSalary, {
+  message: 'salaryKind needs a salary.',
+  path: ['salaryKind'],
+})
 export type Application = z.infer<typeof applicationSchema>
 export type ApplicationInput = z.input<typeof applicationSchema>
 
@@ -109,3 +114,35 @@ export function applicationSlug(company: string, role: string, date: string): st
   const day = date.slice(0, 10).replaceAll('-', '')
   return [slugify(company, 30), slugify(role, 36), day].filter(Boolean).join('-')
 }
+
+/** What the app's form sends to create an application; the server adds slug, dates and `job.md`. */
+export const newApplicationSchema = applicationFields
+  .pick({
+    company: true,
+    role: true,
+    seniority: true,
+    url: true,
+    source: true,
+    location: true,
+    workModel: true,
+    salary: true,
+    salaryKind: true,
+    contract: true,
+    appliedAt: true,
+    notes: true,
+  })
+  .extend({
+    status: statusSchema.default('saved'),
+    /** the job post as Markdown (pasted or captured from the link) */
+    jobMarkdown: z.string().trim().max(200_000).default(''),
+  })
+  .strict()
+  .refine(salaryKindNeedsSalary, { message: 'salaryKind needs a salary.', path: ['salaryKind'] })
+export type NewApplication = z.input<typeof newApplicationSchema>
+
+/** An edit from the app: any field but the identity and the dates the server keeps. */
+export const applicationPatchSchema = applicationFields
+  .omit({ slug: true, createdAt: true, updatedAt: true })
+  .partial()
+  .strict()
+export type ApplicationPatch = z.input<typeof applicationPatchSchema>

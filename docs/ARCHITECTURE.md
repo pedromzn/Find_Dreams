@@ -73,3 +73,25 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
   and `evals/`.
 - **The validator CLI speaks English** (zod's English locale), since its reader is a developer or their AI; the app's
   forms still get Portuguese messages in pt-BR.
+
+### Phase 2 — tracker without AI
+
+- **Job capture** (`server/jobs/capture.ts`): one adapter per public format — Greenhouse and Lever JSON APIs, Gupy's
+  `__NEXT_DATA__` (undocumented: when it changes, the generic adapter still reads the page), Ashby's public board — and
+  a generic adapter (Readability + Turndown). Endpoints checked live on 2026-11-19. LinkedIn and Glassdoor are refused
+  before any request (`login_required`); the UI switches to "paste the text". Fetches are bounded (15 s, 3 MB,
+  http(s) only) and send a generic User-Agent, nothing about the person. Tests use recorded fixtures and a fake
+  fetcher: no network in CI.
+- **linkedom instead of jsdom** for Readability: jsdom 31 requires Node ≥ 22.22 (our floor is 22.13) and is heavy;
+  linkedom does not execute scripts. Readability documents only jsdom, so a quirk is possible (relative links).
+- **CV import** (`server/jobs/cvImport.ts`): the type is detected by magic bytes; DOCX through mammoth → HTML →
+  Turndown (mammoth's Markdown output is deprecated), PDF through `pdfjs-dist` legacy build (unpdf needs Node ≥ 24).
+  The file is sent as the raw request body (no multipart library) and **never stored**: only the reviewed `cv.md`.
+  No PDF/DOCX fixture can live in git (privacy gate), so the PDF test writes a tiny PDF by hand; DOCX is covered only
+  by type detection.
+- **Edits are field patches**: `PATCH /api/applications/:slug` merges only the keys the client sent (a schema default
+  must never wipe what the AI wrote). Deleting moves the folder to `.mzn/trash/`.
+- **Language in SQLite too**: the app mirrors the picked language to `/api/settings`, so the desktop app (random port,
+  per-origin `localStorage`) keeps it. This closes the phase 0 known issue.
+- **Dates**: a bare `YYYY-MM-DD` is read as local noon when formatted (as UTC midnight it showed the previous day in
+  Brazil).

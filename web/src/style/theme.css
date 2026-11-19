@@ -123,3 +123,55 @@
     box-shadow: var(--shadow);
   }
 }
+
+@layer components {
+  /* reading width and rhythm for Markdown (job posts, research, CV) */
+  .reading {
+    max-width: 75ch;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .reading > * + * {
+    margin-top: 0.85em;
+  }
+  .reading h1,
+  .reading h2,
+  .reading h3 {
+    margin-top: 1.4em;
+    font-size: 1.25rem;
+  }
+  .reading h1 {
+    font-size: 1.5rem;
+  }
+  .reading ul {
+    list-style: disc;
+    padding-left: 1.4em;
+  }
+  .reading ol {
+    list-style: decimal;
+    padding-left: 1.4em;
+  }
+  .reading li + li {
+    margin-top: 0.3em;
+  }
+  .reading code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: var(--surface-2);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+  }
+  .reading blockquote {
+    border-left: 2px solid var(--border-strong);
+    padding-left: 1em;
+    color: var(--muted);
+  }
+  .reading table {
+    border-collapse: collapse;
+  }
+  .reading th,
+  .reading td {
+    border: 1px solid var(--border);
+    padding: 0.35em 0.6em;
+  }
+}

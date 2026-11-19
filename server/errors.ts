@@ -1,6 +1,6 @@
 /** API errors: the `{ error, code? }` shape and the middleware that produces it. */
 
-import type { ErrorRequestHandler } from 'express'
+import type { ErrorRequestHandler, Request, RequestHandler, Response } from 'express'
 import { ZodError } from 'zod'
 import { log } from './logger.js'
 
@@ -36,3 +36,12 @@ export const handleError: ErrorRequestHandler = (error, _req, res, next) => {
   log.error('unhandled API error', { error })
   res.status(500).json({ error: 'Internal server error.', code: 'internal' })
 }
+
+/** Express 4 does not catch rejected promises: every async handler goes through this. */
+export const route =
+  (handler: (req: Request, res: Response) => Promise<unknown> | unknown): RequestHandler =>
+  (req, res, next) => {
+    Promise.resolve()
+      .then(() => handler(req, res))
+      .catch(next)
+  }

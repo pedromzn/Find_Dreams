@@ -1,0 +1,8 @@
+{
+  "id": 4012345,
+  "title": "Senior Backend Engineer",
+  "company_name": "Acme Pagamentos",
+  "absolute_url": "https://job-boards.greenhouse.io/acmepagamentos/jobs/4012345",
+  "location": { "name": "Remote - Brazil" },
+  "content": "&lt;h2&gt;About the role&lt;/h2&gt;&lt;p&gt;Build the payments API &amp;amp; its ledger.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Node.js or Go&lt;/li&gt;&lt;li&gt;PostgreSQL&lt;/li&gt;&lt;/ul&gt;"
+}

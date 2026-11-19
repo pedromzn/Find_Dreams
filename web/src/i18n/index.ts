@@ -70,10 +70,13 @@ export const t = (): Dictionary => DICTIONARIES[useLanguage.getState().language]
 const bcp47 = () => LANGUAGE_DATA[useLanguage.getState().language].bcp47
 
 /** Numbers and dates in the interface language. */
+/** A bare `2026-11-21` is UTC midnight for `Date`: in Brazil that is the 20th. Read it as local noon instead. */
+const toDate = (iso: string) => new Date(/^\d{4}-\d{2}-\d{2}$/.test(iso) ? `${iso}T12:00:00` : iso)
+
 export const format = {
   number: (n: number) => n.toLocaleString(bcp47()),
-  date: (iso: string) => new Date(iso).toLocaleDateString(bcp47(), { day: 'numeric', month: 'long', year: 'numeric' }),
-  shortDate: (iso: string) => new Date(iso).toLocaleDateString(bcp47()),
+  date: (iso: string) => toDate(iso).toLocaleDateString(bcp47(), { day: 'numeric', month: 'long', year: 'numeric' }),
+  shortDate: (iso: string) => toDate(iso).toLocaleDateString(bcp47()),
 }
 
 /** Re-renders when the language changes (for screens that format outside `useT`). */

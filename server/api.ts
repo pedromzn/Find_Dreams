@@ -5,9 +5,10 @@
  */
 
 import { Router } from 'express'
-import type { ApplicationSummary, Health } from '../shared/api.js'
-import { listIndexed, syncIndex } from './store/applicationIndex.js'
-import { readApplications } from './store/workspace.js'
+import type { Health } from '../shared/api.js'
+import { applicationsRouter, metricsRouter } from './routes/applications.js'
+import { cvImportRouter, jobsRouter } from './routes/jobs.js'
+import { profileRouter, settingsRouter } from './routes/profile.js'
 
 export const apiRouter = Router()
 
@@ -16,14 +17,9 @@ apiRouter.get('/health', (_req, res) => {
   res.json({ data })
 })
 
-/** The board's list: the index (refreshed from the files) plus the files with problems, so they never disappear. */
-apiRouter.get('/applications', (_req, res) => {
-  syncIndex()
-  const problems = new Map(readApplications().map((a) => [a.slug, a.problems]))
-  const data: ApplicationSummary[] = listIndexed().map((a) => ({ ...a, problems: problems.get(a.slug) ?? [] }))
-  const indexed = new Set(data.map((a) => a.slug))
-  for (const [slug, list] of problems) {
-    if (!indexed.has(slug) && list.length) data.push({ slug, company: null, role: null, problems: list })
-  }
-  res.json({ data })
-})
+apiRouter.use('/applications', applicationsRouter)
+apiRouter.use('/metrics', metricsRouter)
+apiRouter.use('/profile/cv/import', cvImportRouter)
+apiRouter.use('/profile', profileRouter)
+apiRouter.use('/jobs', jobsRouter)
+apiRouter.use('/settings', settingsRouter)

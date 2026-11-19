@@ -1,0 +1,19 @@
+{
+  "apiVersion": "1",
+  "jobs": [
+    {
+      "id": "11111111-2222-4333-8444-555555555555",
+      "title": "Data Engineer",
+      "location": "Lisbon",
+      "isRemote": true,
+      "descriptionHtml": "<p>Pipelines in Python.</p>"
+    },
+    {
+      "id": "99999999-2222-4333-8444-555555555555",
+      "title": "Other",
+      "location": "x",
+      "isRemote": false,
+      "descriptionHtml": "<p>no</p>"
+    }
+  ]
+}

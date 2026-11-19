@@ -54,7 +54,36 @@ async function call<T>(method: string, url: string, body?: unknown): Promise<T> 
   return json?.data as T
 }
 
+/** Sends a file as the raw body (the CV import): no multipart library on either side. */
+async function upload<T>(url: string, file: File): Promise<T> {
+  let answer: Response
+  try {
+    answer = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'X-MZN-Token': token,
+        'Content-Type': file.type || 'application/octet-stream',
+        'X-File-Name': encodeURIComponent(file.name),
+      },
+      body: file,
+    })
+  } catch {
+    throw new ApiError(t().general.noServer, 0, 'no_server')
+  }
+  const json = (await answer.json().catch(() => null)) as { data?: T; error?: string; code?: string } | null
+  if (!answer.ok) {
+    throw new ApiError(
+      translate(json?.code) ?? json?.error ?? t().general.serverResponded(answer.status),
+      answer.status,
+      json?.code,
+    )
+  }
+  return json?.data as T
+}
+
 export const api = {
+  upload,
+  patch: <T>(url: string, body: unknown) => call<T>('PATCH', url, body),
   get: <T>(url: string) => call<T>('GET', url),
   post: <T>(url: string, body: unknown = {}) => call<T>('POST', url, body),
   put: <T>(url: string, body: unknown) => call<T>('PUT', url, body),
@@ -100,3 +129,6 @@ export function useData<T>(url: string | null): Data<T> {
 
   return { data, error, loading, reload }
 }
+
+/** The session token, for the routes that cannot send headers (EventSource takes it in the query string). */
+export const sessionToken = () => token

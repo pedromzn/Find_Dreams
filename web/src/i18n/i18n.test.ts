@@ -20,7 +20,15 @@ describe('dictionaries', () => {
   })
 
   it('no text is empty', () => {
-    for (const entry of shape(ptBR)) expect(entry).not.toMatch(/:undefined$/)
-    expect(JSON.stringify(ptBR)).not.toMatch(/""/)
+    const empty = (value: unknown, path: string): string[] =>
+      typeof value === 'string'
+        ? value.trim()
+          ? []
+          : [path]
+        : value && typeof value === 'object'
+          ? Object.entries(value).flatMap(([k, v]) => empty(v, `${path}.${k}`))
+          : []
+    expect(empty(ptBR, 'pt-BR')).toEqual([])
+    expect(empty(en, 'en')).toEqual([])
   })
 })
