@@ -38,3 +38,38 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
   phase, the preference moves to the server settings (SQLite) or the port becomes stable per install.
 - **The repository URL** used in docs and templates is `https://github.com/pedromzn/mzn-vagas` (assumed from the
   package name; the remote does not exist yet).
+
+### Phase 1 — domain and storage
+
+- **The workspace map and the validator live in `shared/workspace.ts`** (pure, no disk), so the dev CLI
+  (`vagas:validate`), the server and the future packaged `mzn-vagas validate` share one implementation. PLAN.md
+  section 2 was corrected to say so: the `vagas:*` npm scripts are for developers; the person's AI validates through
+  the app.
+- **Schemas are `.strict()`**, like the siblings: an unknown field is an error, so the AI's typos (`compnay`) do not
+  pass silently. Contacts accept only `name` and `role` — an e-mail or phone there is a validation error, not just a
+  convention.
+- **Path cross-checks**: the content must agree with where it lives (`slug` = folder, persona `id` = file name,
+  session `interviewType` = folder suffix, debrief `date` = file name).
+- **`job.md` and `company.md` carry a minimal front matter** (`key: value` lines between `---`, no YAML library):
+  `source`, `capturedAt`, `url?` for the job; `researchedAt` for the company, whose body must cite at least one link.
+- **SQLite holds the index, the status history and preferences** at `<workspace>/.mzn/state.sqlite`. The index keeps
+  no salary, contact or note. The files are the truth: `syncIndex` records status changes made by editing the file,
+  keeps the last good row while a file is broken, and drops rows whose folder is gone.
+- **Writes are atomic** (temp file + rename); the workspace walk never follows symbolic links.
+- **The API token reaches the page in a `<meta>` tag**, not through the Electron preload the plan mentions: the
+  server injects it into the `index.html` it serves (Vite plugin in dev, string replace in production). Same origin,
+  so no other site can read it; the Host check (on every request, page included) stops DNS rebinding. It works the same
+  in the browser and in the Electron window, so there is one mechanism instead of two. The desktop main process only
+  passes the token (`MZN_API_TOKEN` or `createApp({ token })`).
+- **`HOST=0.0.0.0` is effectively unsupported**: the Host check accepts only loopback names. Opening the API to the
+  network is not a use case for a CV and salary database.
+- **Future SSE/WebSocket routes** (agent streaming, phase 4) cannot send custom headers from `EventSource`; they will
+  take the token in the query string, on the same Host/Origin check.
+- **The logger** (`server/logger.ts`, from infra-mercado) masks e-mails, CPF/CNPJ, phone numbers and money amounts,
+  and drops whole fields with sensitive names (`cv`, `salary*`, `messages`, `body`, `text`, `turns`, `notes`…). It is
+  silent under Vitest unless `LOG_LEVEL` is set.
+- **The privacy gate** (`npm run privacy:check`, in `verify` and CI) fails on tracked workspace folders, personal
+  documents (`.pdf`, `.doc(x)`, `.odt`…), databases and `.env` files. Fictional fixtures live in `test/fixtures/`
+  and `evals/`.
+- **The validator CLI speaks English** (zod's English locale), since its reader is a developer or their AI; the app's
+  forms still get Portuguese messages in pt-BR.

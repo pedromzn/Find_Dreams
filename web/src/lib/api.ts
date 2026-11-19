@@ -23,12 +23,21 @@ function translate(code: string | undefined): string | null {
   return t().errors[code] ?? null
 }
 
+/**
+ * The session token the server put in the page (`server/security.ts`). Every `/api` call carries it; without it the
+ * server answers 401, which is what any other website calling 127.0.0.1 gets.
+ */
+const token =
+  typeof document === 'undefined'
+    ? ''
+    : (document.querySelector<HTMLMetaElement>('meta[name="mzn-token"]')?.content ?? '')
+
 async function call<T>(method: string, url: string, body?: unknown): Promise<T> {
   let answer: Response
   try {
     answer = await fetch(url, {
       method,
-      headers: body === undefined ? undefined : { 'Content-Type': 'application/json' },
+      headers: { 'X-MZN-Token': token, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) },
       body: body === undefined ? undefined : JSON.stringify(body),
     })
   } catch {

@@ -1,0 +1,22 @@
+{
+  "slug": "acme-pagamentos-backend-engineer-20261110",
+  "company": "Acme Pagamentos",
+  "role": "Backend Engineer",
+  "seniority": "senior",
+  "url": "https://boards.greenhouse.io/acmepagamentos/jobs/123",
+  "source": "greenhouse",
+  "location": "São Paulo, SP",
+  "workModel": "remote",
+  "salary": { "min": 15000, "max": 20000, "currency": "BRL", "period": "month" },
+  "salaryKind": "announced",
+  "contract": "clt",
+  "status": "interviewing",
+  "stages": [{ "type": "hr_screening", "date": "2026-11-14", "result": "passed" }],
+  "nextSteps": [{ "what": "Technical interview", "due": "2026-11-21" }],
+  "pros": ["Fully remote", "Payments domain"],
+  "cons": ["On-call rotation"],
+  "contacts": [{ "name": "Carla", "role": "Recruiter" }],
+  "appliedAt": "2026-11-10",
+  "createdAt": "2026-11-10T12:00:00Z",
+  "updatedAt": "2026-11-14T18:00:00Z"
+}

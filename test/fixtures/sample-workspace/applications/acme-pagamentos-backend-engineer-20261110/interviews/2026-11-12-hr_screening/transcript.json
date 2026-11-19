@@ -1,0 +1,15 @@
+{
+  "application": "acme-pagamentos-backend-engineer-20261110",
+  "interviewType": "hr_screening",
+  "persona": "hr-screening",
+  "language": "en",
+  "mode": "text",
+  "brain": "ollama",
+  "turns": [
+    { "speaker": "interviewer", "text": "Tell me about yourself.", "ts": "2026-11-12T20:00:00Z" },
+    { "speaker": "candidate", "text": "I build payments APIs.", "ts": "2026-11-12T20:00:20Z" }
+  ],
+  "startedAt": "2026-11-12T20:00:00Z",
+  "endedAt": "2026-11-12T20:15:00Z",
+  "status": "completed"
+}

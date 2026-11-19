@@ -30,6 +30,9 @@ jobs:
       - run: npm ci
       - run: npm run format:check
       - run: npm run typecheck
+      # no personal data tracked by git (workspace folders, CVs, PDFs/DOCXs, databases, .env)
+      - run: npm run privacy:check
+      - run: npm run vagas:schemas -- --check
 
   test:
     name: Tests (${{ matrix.os }}, Node ${{ matrix.node }})
@@ -54,6 +57,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: npm run vagas:validate -- --all --workspace test/fixtures/sample-workspace
 
   build:
     name: Build

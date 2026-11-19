@@ -1,0 +1,173 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "headline": {
+      "default": "",
+      "type": "string",
+      "maxLength": 200
+    },
+    "location": {
+      "default": "",
+      "type": "string",
+      "maxLength": 120
+    },
+    "stack": {
+      "default": [],
+      "maxItems": 60,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "basic",
+              "intermediate",
+              "advanced",
+              "expert"
+            ]
+          },
+          "years": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 50
+          }
+        },
+        "required": [
+          "name",
+          "level",
+          "years"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "languages": {
+      "default": [],
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "basic",
+              "intermediate",
+              "advanced",
+              "fluent",
+              "native"
+            ]
+          }
+        },
+        "required": [
+          "language",
+          "level"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "workModels": {
+      "default": [
+        "remote",
+        "hybrid",
+        "onsite"
+      ],
+      "maxItems": 3,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "remote",
+          "hybrid",
+          "onsite"
+        ]
+      }
+    },
+    "relocation": {
+      "default": false,
+      "type": "boolean"
+    },
+    "salaryExpectation": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100000000
+        },
+        "max": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100000000
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "period": {
+          "default": "month",
+          "type": "string",
+          "enum": [
+            "hour",
+            "month",
+            "year"
+          ]
+        }
+      },
+      "required": [
+        "currency"
+      ],
+      "additionalProperties": false
+    },
+    "links": {
+      "default": [],
+      "maxItems": 10,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 40
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2000,
+            "format": "uri"
+          }
+        },
+        "required": [
+          "label",
+          "url"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "cvPath": {
+      "default": "profile/cv.md",
+      "type": "string",
+      "const": "profile/cv.md"
+    }
+  },
+  "required": [
+    "name"
+  ],
+  "additionalProperties": false
+}

@@ -10,6 +10,7 @@ __pycache__/
 workspace/
 /profile/
 /applications/
+/requests/
 *.pdf
 *.docx
 

@@ -2,6 +2,7 @@
 
 import type { ErrorRequestHandler } from 'express'
 import { ZodError } from 'zod'
+import { log } from './logger.js'
 
 export class HttpError extends Error {
   constructor(
@@ -31,6 +32,7 @@ export const handleError: ErrorRequestHandler = (error, _req, res, next) => {
     res.status(400).json({ error: 'Invalid JSON.', code: 'invalid_json' })
     return
   }
-  console.error('[error]', error)
+  // the logger masks personal data: an error message may quote a CV line or an e-mail
+  log.error('unhandled API error', { error })
   res.status(500).json({ error: 'Internal server error.', code: 'internal' })
 }

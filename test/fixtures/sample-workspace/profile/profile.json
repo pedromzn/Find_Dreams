@@ -1,0 +1,18 @@
+{
+  "name": "Ana Exemplo",
+  "headline": "Backend developer, 5 years, Node.js and Go",
+  "location": "Belo Horizonte, MG",
+  "stack": [
+    { "name": "Node.js", "level": "advanced", "years": 5 },
+    { "name": "Go", "level": "intermediate", "years": 2 },
+    { "name": "PostgreSQL", "level": "advanced", "years": 5 }
+  ],
+  "languages": [
+    { "language": "Portuguese", "level": "native" },
+    { "language": "English", "level": "advanced" }
+  ],
+  "workModels": ["remote", "hybrid"],
+  "relocation": false,
+  "salaryExpectation": { "min": 14000, "max": 18000, "currency": "BRL", "period": "month" },
+  "links": [{ "label": "GitHub", "url": "https://github.com/example" }]
+}

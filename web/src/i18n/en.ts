@@ -34,6 +34,9 @@ export const en = {
   errors: {
     internal: 'Internal server error.',
     invalid_json: 'The request was not valid JSON.',
+    unauthorized: 'This page lost its session with the local server. Reload it.',
+    forbidden_host: 'The local server only answers on 127.0.0.1 or localhost.',
+    forbidden_origin: 'The local server only answers its own page.',
   } as Record<string, string>,
 }
 

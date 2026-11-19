@@ -14,9 +14,13 @@
     "build": "vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "verify": "npm run format:check && npm run typecheck && npm test && npm run build",
+    "verify": "npm run format:check && npm run typecheck && npm test && npm run vagas:validate -- --all --workspace test/fixtures/sample-workspace && npm run vagas:schemas -- --check && npm run privacy:check && npm run build",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "vagas:status": "tsx scripts/vagas.ts status",
+    "vagas:validate": "tsx scripts/vagas.ts validate",
+    "vagas:schemas": "tsx scripts/vagas.ts schemas",
+    "privacy:check": "tsx scripts/privacy.ts"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "5.2.8",

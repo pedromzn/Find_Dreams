@@ -1,0 +1,12 @@
+{
+  "score": 78,
+  "scoreReason": "Strong match on Node.js, PostgreSQL and payments; Go is intermediate.",
+  "matches": [{ "point": "Payments APIs", "evidence": "cv.md: payments API at Exemplo Tech" }],
+  "gaps": [{ "point": "Go in production", "howToAddress": "Mention the two Go services and the plan to deepen it." }],
+  "redFlags": [],
+  "talkingPoints": ["Idempotency in payment retries"],
+  "questionsToAsk": ["How is on-call organized?"],
+  "sources": [{ "title": "Job post", "file": "applications/acme-pagamentos-backend-engineer-20261110/job.md" }],
+  "language": "en",
+  "generatedAt": "2026-11-10T13:00:00Z"
+}

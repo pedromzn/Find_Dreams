@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-14",
+  "interviewType": "hr_screening",
+  "account": "It went well; they asked about salary and notice period.",
+  "questionsAsked": ["Salary expectation", "Notice period"],
+  "selfAssessment": "good",
+  "adjustments": ["Prepare the system design of the payments API"],
+  "outcome": "passed",
+  "language": "en"
+}

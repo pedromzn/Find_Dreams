@@ -33,13 +33,18 @@ The plan, the phases and the reasons behind each decision: [`docs/PLAN.md`](docs
 
 ## 3. The commands
 
-| Command             | What for                                        |
-| ------------------- | ----------------------------------------------- |
-| `npm run dev`       | server + Vite at http://localhost:3060          |
-| `npm run verify`    | format check, types, tests and build — all four |
-| `npm test`          | Vitest                                          |
-| `npm run typecheck` | `tsc --noEmit`                                  |
-| `npm run format`    | Prettier                                        |
+| Command                                           | What for                                                   |
+| ------------------------------------------------- | ---------------------------------------------------------- |
+| `npm run dev`                                     | server + Vite at http://localhost:3060 (data: ./workspace) |
+| `npm run verify`                                  | everything CI checks, in one go                            |
+| `npm test`                                        | Vitest                                                     |
+| `npm run vagas:status [-- --workspace <dir>]`     | the workspace: profile, applications, files with problems  |
+| `npm run vagas:validate -- <file\|slug> \| --all` | validates workspace files; exit 1 on problems              |
+| `npm run vagas:schemas [-- --check]`              | writes (or checks) `docs/schemas/*.schema.json`            |
+| `npm run privacy:check`                           | fails if git tracks anything that may hold personal data   |
+| `npm run format`                                  | Prettier                                                   |
+
+After changing a schema in `shared/`, run `npm run vagas:schemas` and keep `test/fixtures/sample-workspace/` valid.
 
 ## 4. Rules
 

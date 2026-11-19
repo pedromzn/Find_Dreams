@@ -45,7 +45,10 @@ Herdados dos projetos irmãos:
   (JSON/Markdown). O SQLite (`node:sqlite`) guarda só índice, histórico de status, métricas e preferências.
 - **`AGENTS.md` é o manual de qualquer IA.** `CLAUDE.md` aponta para ele, `.cursor/rules/` repete o essencial, skills
   em `.claude/skills/` são Markdown puro (outras IAs abrem por caminho).
-- **Scripts npm como interface para a IA** (`vagas:status`, `vagas:validate`…), como `course:status`/`course:validate`.
+- **Scripts npm como interface para a IA de quem desenvolve** (`vagas:status`, `vagas:validate`…), como
+  `course:status`/`course:validate`. A IA do **usuário** roda na pasta de trabalho, onde não existe `npm`: ela valida
+  pelo app (CLI empacotada `mzn-vagas validate <arquivo>` ou validação automática ao detectar mudança; seção 8). Os
+  dois caminhos usam o mesmo código de validação.
 - **Tudo local, `127.0.0.1` por padrão, sem login.**
 - **Degradar sem quebrar.** Sem voz instalada → entrevista por texto. Sem agente conectado → o app continua útil como
   tracker e o botão vira "copiar prompt para sua IA" (o fluxo de `requests/` dos irmãos).

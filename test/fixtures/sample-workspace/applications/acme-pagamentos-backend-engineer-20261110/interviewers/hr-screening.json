@@ -1,0 +1,11 @@
+{
+  "id": "hr-screening",
+  "interviewType": "hr_screening",
+  "role": "Technical recruiter",
+  "tone": "Friendly and objective",
+  "values": ["Clear communication", "Salary alignment"],
+  "likelyQuestions": ["Tell me about yourself.", "What is your salary expectation?"],
+  "criteria": [{ "name": "Communication", "description": "Clear and concise answers" }],
+  "basis": [{ "trait": "Asks about salary", "source": "job_post", "reference": "job.md: salary range" }],
+  "language": "en"
+}

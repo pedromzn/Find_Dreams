@@ -1,0 +1,15 @@
+{
+  "scores": [{ "criterion": "Communication", "score": 3, "comment": "Clear but too short." }],
+  "strengths": ["Direct"],
+  "stuckPoints": [
+    {
+      "excerpt": "I build payments APIs.",
+      "why": "Too short for an opening question.",
+      "betterAnswer": "I am a backend developer with five years in payments…"
+    }
+  ],
+  "nextPractice": ["A two-minute pitch"],
+  "overall": "Good start; expand the pitch.",
+  "language": "en",
+  "generatedAt": "2026-11-12T20:20:00Z"
+}

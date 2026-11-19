@@ -28,5 +28,8 @@ export const ptBR: Dictionary = {
   errors: {
     internal: 'Erro interno do servidor.',
     invalid_json: 'O pedido não era um JSON válido.',
+    unauthorized: 'Esta página perdeu a sessão com o servidor local. Recarregue.',
+    forbidden_host: 'O servidor local só responde em 127.0.0.1 ou localhost.',
+    forbidden_origin: 'O servidor local só responde à própria página.',
   },
 }

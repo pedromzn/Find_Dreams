@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 80,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "interviewType": {
+      "type": "string",
+      "enum": [
+        "hr_screening",
+        "technical",
+        "client",
+        "hiring_manager",
+        "live_coding",
+        "system_design",
+        "take_home_review",
+        "panel",
+        "language",
+        "final_executive",
+        "case_study",
+        "async_video"
+      ]
+    },
+    "role": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "name": {
+      "default": "",
+      "type": "string",
+      "maxLength": 80
+    },
+    "tone": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "values": {
+      "default": [],
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 400
+      }
+    },
+    "likelyQuestions": {
+      "minItems": 1,
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 400
+      }
+    },
+    "criteria": {
+      "minItems": 1,
+      "maxItems": 12,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 400
+          }
+        },
+        "required": [
+          "name",
+          "description"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "basis": {
+      "minItems": 1,
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "trait": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "job_post",
+              "company_site",
+              "public_source",
+              "user_report"
+            ]
+          },
+          "reference": {
+            "default": "",
+            "type": "string",
+            "maxLength": 400
+          }
+        },
+        "required": [
+          "trait",
+          "source"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "pt-BR"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "interviewType",
+    "role",
+    "tone",
+    "likelyQuestions",
+    "criteria",
+    "basis",
+    "language"
+  ],
+  "additionalProperties": false
+}
