@@ -15,7 +15,7 @@ export function LanguagePicker() {
   return (
     <div className="relative isolate grid min-h-dvh place-items-center px-4 py-10">
       <main className="relative w-full max-w-md animate-appear text-center">
-        <Brand size={56} className="mx-auto" />
+        <Brand size={96} className="mx-auto rounded-[22px]" />
         <h1 className="mt-6 flex flex-col gap-1 text-[clamp(1.6rem,5vw,2.2rem)]">
           {LANGUAGES.map((i) => (
             <span key={i} lang={LANGUAGE_DATA[i].bcp47} className={i === suggested ? 'text-text' : 'text-muted'}>

@@ -27,6 +27,9 @@ import { startUpdater } from './updater.js'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const resources = app.isPackaged ? process.resourcesPath : path.resolve(here, '..')
+/** The app icon while developing (`electron .` would otherwise show Electron's own in the Dock and taskbar). */
+const devIcon = path.resolve(here, '..', 'build', 'icon.png')
+if (!app.isPackaged && process.platform === 'darwin') void app.whenReady().then(() => app.dock?.setIcon(devIcon))
 // MZN_USER_DATA: a separate profile for development and smoke tests (the real one stays untouched)
 if (process.env.MZN_USER_DATA) app.setPath('userData', process.env.MZN_USER_DATA)
 const userData = app.getPath('userData')
@@ -80,8 +83,10 @@ async function start() {
     height: 900,
     minWidth: 960,
     minHeight: 640,
-    backgroundColor: '#0a0a0a',
+    backgroundColor: '#12141a',
     title: 'MZN Vagas',
+    // packaged builds take the icon from the installer; in development, Windows and Linux need it here
+    ...(app.isPackaged ? {} : { icon: devIcon }),
     show: false,
     webPreferences: {
       preload: path.join(here, 'preload.cjs'),

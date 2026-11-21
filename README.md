@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/logo.png" width="128" alt="MZN Vagas" /></p>
+
 # MZN Vagas
 
 **Your job search, on your machine.** Track every application, see how you fit each job and rehearse every interview
