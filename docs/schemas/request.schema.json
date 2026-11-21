@@ -16,7 +16,12 @@
         "prepare-interview",
         "interview-feedback",
         "debrief",
-        "fix-files"
+        "fix-files",
+        "tailor-resume",
+        "cover-letter",
+        "follow-up",
+        "salary-research",
+        "find-jobs"
       ]
     },
     "application": {

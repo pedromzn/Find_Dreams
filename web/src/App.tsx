@@ -6,17 +6,19 @@
  * and `localStorage` (per origin) would forget it every launch.
  */
 
-import { lazy, Suspense, useEffect, type ReactNode } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { lazy, Suspense, useEffect } from 'react'
+import { BrowserRouter, Navigate, Outlet, Route, Routes, useParams } from 'react-router-dom'
 import type { ProfileData, Settings } from '@shared/api'
 import { Shell } from '@/components/Shell'
 import { Loading } from '@/components/ui'
-import Board from '@/pages/Board'
+import Home from '@/pages/Home'
 import { useLanguage } from '@/i18n'
 import { LanguagePicker } from '@/i18n/LanguagePicker'
 import { BrainSettings } from '@/interview/BrainSettings'
 import { api, useData } from '@/lib/api'
+import { useThemeMode } from '@/style/themeMode'
 
+const Board = lazy(() => import('@/pages/Board'))
 const Application = lazy(() => import('@/pages/Application'))
 const NewApplication = lazy(() => import('@/pages/NewApplication'))
 const Profile = lazy(() => import('@/pages/Profile'))
@@ -26,18 +28,25 @@ const Agent = lazy(() => import('@/pages/Agent'))
 const Practice = lazy(() => import('@/pages/Practice'))
 const InterviewDetail = lazy(() => import('@/pages/InterviewDetail'))
 const Debrief = lazy(() => import('@/pages/Debrief'))
+const Discover = lazy(() => import('@/pages/Discover'))
+const Resumes = lazy(() => import('@/pages/Resumes'))
+const Letters = lazy(() => import('@/pages/Letters'))
+const Interviews = lazy(() => import('@/pages/Interviews'))
+const Tools = lazy(() => import('@/pages/Tools'))
 
-function Screen({ children }: { children: ReactNode }) {
+/** The frame every screen shares: the navigation stays mounted, only the page loads. */
+function Layout() {
   return (
-    <Shell>
-      <Suspense fallback={<Loading />}>{children}</Suspense>
-    </Shell>
+    <Suspense fallback={<Loading />}>
+      <Outlet />
+    </Suspense>
   )
 }
 
-/** Keeps the server's copy of the language in step with the browser's. */
-function useLanguageSync() {
+/** Keeps the server's copy of the language and the theme in step with the browser's. */
+function usePreferencesSync() {
   const { language, picked, choose } = useLanguage()
+  const chooseTheme = useThemeMode((s) => s.choose)
   const server = useData<Settings>('/api/settings')
   useEffect(() => {
     if (!server.data) return
@@ -45,14 +54,24 @@ function useLanguageSync() {
     else if (picked && server.data.language !== language)
       void api.put('/api/settings', { language }).catch(() => undefined)
   }, [server.data, picked, language, choose])
+  useEffect(() => {
+    // the server's choice wins on start (the desktop app's random port forgets localStorage)
+    if (server.data?.theme) chooseTheme(server.data.theme)
+  }, [server.data?.theme, chooseTheme])
   return server.data !== null || server.error !== null
+}
+
+/** Old links (`/new`, bookmarks from v1) keep working. */
+function LegacyApplication() {
+  const { slug = '' } = useParams()
+  return <Navigate to={`/applications/${slug}`} replace />
 }
 
 export default function App() {
   const picked = useLanguage((s) => s.picked)
   // re-render everything when the language changes
   const language = useLanguage((s) => s.language)
-  const synced = useLanguageSync()
+  const synced = usePreferencesSync()
   const profile = useData<ProfileData>(picked ? '/api/profile' : null)
 
   if (!synced) return <Loading />
@@ -69,79 +88,28 @@ export default function App() {
   return (
     <BrowserRouter key={language}>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Screen>
-              <Board />
-            </Screen>
-          }
-        />
-        <Route
-          path="/new"
-          element={
-            <Screen>
-              <NewApplication />
-            </Screen>
-          }
-        />
-        <Route
-          path="/applications/:slug"
-          element={
-            <Screen>
-              <Application />
-            </Screen>
-          }
-        />
-        <Route
-          path="/applications/:slug/practice"
-          element={
-            <Screen>
-              <Practice />
-            </Screen>
-          }
-        />
-        <Route
-          path="/applications/:slug/interviews/:folder"
-          element={
-            <Screen>
-              <InterviewDetail />
-            </Screen>
-          }
-        />
-        <Route
-          path="/applications/:slug/debrief"
-          element={
-            <Screen>
-              <Debrief />
-            </Screen>
-          }
-        />
-        <Route
-          path="/agent"
-          element={
-            <Screen>
-              <Agent />
-            </Screen>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <Screen>
-              <Profile />
-            </Screen>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <Screen>
-              <SettingsPage extra={<BrainSettings />} />
-            </Screen>
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route element={<Shell />}>
+          <Route element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="applications" element={<Board />} />
+            <Route path="applications/new" element={<NewApplication />} />
+            <Route path="applications/:slug" element={<Application />} />
+            <Route path="applications/:slug/practice" element={<Practice />} />
+            <Route path="applications/:slug/interviews/:folder" element={<InterviewDetail />} />
+            <Route path="applications/:slug/debrief" element={<Debrief />} />
+            <Route path="discover" element={<Discover />} />
+            <Route path="resumes" element={<Resumes />} />
+            <Route path="letters" element={<Letters />} />
+            <Route path="interviews" element={<Interviews />} />
+            <Route path="tools" element={<Tools />} />
+            <Route path="agent" element={<Agent />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="settings" element={<SettingsPage extra={<BrainSettings />} />} />
+            <Route path="new" element={<Navigate to="/applications/new" replace />} />
+            <Route path="application/:slug" element={<LegacyApplication />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   )

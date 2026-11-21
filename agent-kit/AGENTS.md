@@ -13,6 +13,7 @@ never overwrites your or the person's edits without asking.
 ```
 profile/profile.json        the candidate: stack, languages, work models, salary expectation (SENSITIVE)
 profile/cv.md               the CV in Markdown (SENSITIVE)
+profile/resume.json         the structured résumé built from the CV (and resume.<language>.json translations)
 applications/<slug>/        one folder per application (slug: company-role-yyyymmdd)
   application.json          status, stages, next steps, salary, pros/cons, contacts (name + role only)
   job.md                    the job post, with front matter: source, url, capturedAt
@@ -23,6 +24,11 @@ applications/<slug>/        one folder per application (slug: company-role-yyyym
   interviewers/<id>.json    interviewer personas for practice interviews
   interviews/<date>-<type>/ transcript.json and feedback.json of a practice interview
   debriefs/<date>-<type>.json  the debrief of a REAL interview
+  resume.json               the résumé tailored to this job
+  cover-letter.md           the cover letter, with front matter: tone, language, generatedAt
+  salary.md                 salary research, with front matter: researchedAt, low, high; every figure with a link
+  follow-ups/<date>.md      follow-up drafts
+discoveries/<date>.json     job searches you ran, for the person to triage
 requests/<id>.json          tasks the app handed to you
 .mzn/                       the app's internal state: never write here
 ```
@@ -72,3 +78,8 @@ The exact format of every file is a JSON Schema in `.mzn/schemas/` (generated fr
 | `interviewer`        | how to conduct a practice interview, turn by turn, per stage                  |
 | `interview-feedback` | `feedback.json` for a practice interview transcript                           |
 | `debrief`            | the debrief of a real interview, and what changes for the next stage          |
+| `tailor-resume`      | the structured résumé: base, translated, or tailored to one job (ATS)         |
+| `cover-letter`       | a cover letter for one application, or a review of it                         |
+| `follow-up`          | 2–3 follow-up drafts after applying, interviewing or silence                  |
+| `salary-research`    | `salary.md`: market range from public sources and what to ask for             |
+| `find-jobs`          | `discoveries/<date>.json`: open jobs that fit, from public job pages only     |

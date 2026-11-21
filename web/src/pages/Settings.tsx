@@ -1,17 +1,18 @@
 /** Settings: interface language, workspace folder and the privacy note. Agent, brain and voice join in later phases. */
 
 import type { ReactNode } from 'react'
-import { FolderSimple, ShieldCheck } from '@phosphor-icons/react'
-import type { Settings as SettingsData } from '@shared/api'
+import { Desktop, FolderSimple, Moon, ShieldCheck, Sun } from '@phosphor-icons/react'
+import { THEME_MODES, type Settings as SettingsData, type ThemeMode } from '@shared/api'
 import { LANGUAGE_DATA, LANGUAGES, type Language } from '@shared/languages'
-import { Button, Header, Loading, Panel, ScreenError, Select } from '@/components/ui'
+import { Button, Header, Loading, Panel, ScreenError, Segmented, Select } from '@/components/ui'
 import { useLanguage, useT } from '@/i18n'
-import { useData } from '@/lib/api'
+import { api, useData } from '@/lib/api'
+import { useThemeMode } from '@/style/themeMode'
 
 export function SettingsSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Panel className="flex flex-col gap-3 p-6">
-      <h2 className="text-xl">{title}</h2>
+      <h2 className="text-lg">{title}</h2>
       {children}
     </Panel>
   )
@@ -29,6 +30,13 @@ export default function Settings({ extra }: { extra?: ReactNode }) {
   const language = useLanguage((s) => s.language)
   const choose = useLanguage((s) => s.choose)
   const data = useData<SettingsData>('/api/settings')
+  const theme = useThemeMode((s) => s.mode)
+  const chooseTheme = useThemeMode((s) => s.choose)
+  const setTheme = (mode: ThemeMode) => {
+    chooseTheme(mode)
+    void api.put('/api/settings', { theme: mode }).catch(() => undefined)
+  }
+  const themeIcon = { system: <Desktop size={16} />, dark: <Moon size={16} />, light: <Sun size={16} /> }
   if (data.error) return <ScreenError error={data.error} onRetry={data.reload} />
   if (!data.data) return <Loading />
   return (
@@ -47,6 +55,16 @@ export default function Settings({ extra }: { extra?: ReactNode }) {
             </option>
           ))}
         </Select>
+      </SettingsSection>
+      <SettingsSection title={t.settings.theme}>
+        <div>
+          <Segmented
+            label={t.settings.theme}
+            value={theme}
+            onChange={setTheme}
+            options={THEME_MODES.map((id) => ({ id, label: t.settings.themes[id], icon: themeIcon[id] }))}
+          />
+        </div>
       </SettingsSection>
       <SettingsSection title={t.settings.workspace}>
         <p className="flex items-center gap-2 rounded-tile border border-border bg-bg px-4 py-3 font-mono text-sm break-all text-text">

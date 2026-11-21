@@ -1,0 +1,58 @@
+{
+  "template": "modern",
+  "language": "en",
+  "basics": {
+    "name": "Ana Exemplo",
+    "headline": "Backend Developer — Node.js, Go and PostgreSQL",
+    "location": "Belo Horizonte, MG",
+    "email": "ana@example.com",
+    "links": [
+      {
+        "label": "GitHub",
+        "url": "https://github.com/example"
+      }
+    ]
+  },
+  "summary": "Backend developer with 5 years building payment APIs in Node.js and PostgreSQL, and event-driven systems with Kafka. Fictional candidate used by the tests.",
+  "experience": [
+    {
+      "company": "Exemplo Tech",
+      "role": "Backend Developer",
+      "start": "2021-01",
+      "current": true,
+      "bullets": [
+        "Built and ran the payments API in Node.js and PostgreSQL",
+        "Moved settlement events to Kafka, decoupling three services"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "group": "Languages",
+      "items": ["Node.js", "Go", "SQL"]
+    },
+    {
+      "group": "Data",
+      "items": ["PostgreSQL", "Kafka"]
+    }
+  ],
+  "languages": [
+    {
+      "language": "Portuguese",
+      "level": "Native"
+    },
+    {
+      "language": "English",
+      "level": "Advanced"
+    }
+  ],
+  "generatedAt": "2026-11-20T12:00:00Z",
+  "tailoring": {
+    "application": "acme-pagamentos-backend-engineer-20261110",
+    "changes": [
+      "Summary rewritten for a payments backend role",
+      "Kafka moved up: the post asks for event-driven systems"
+    ],
+    "keywordsCovered": ["Node.js", "Go", "PostgreSQL"]
+  }
+}

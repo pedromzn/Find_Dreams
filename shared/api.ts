@@ -9,6 +9,9 @@ import type { Fit } from './fit.js'
 import type { Debrief, InterviewerPersona, InterviewFeedback, InterviewSession } from './interview.js'
 import type { Language } from './languages.js'
 import type { Profile } from './profile.js'
+import type { Resume } from './resume.js'
+import type { Discovery } from './discovery.js'
+import type { InterviewType } from './interviewTypes.js'
 
 export interface ApiResponse<T> {
   data: T
@@ -97,6 +100,12 @@ export interface ApplicationDetail {
   interviews: InterviewSummary[]
   debriefs: DebriefSummary[]
   messages: MarkdownFile[]
+  /** the résumé tailored to this job (`resume.json`) */
+  resume: Resume | null
+  resumeProblems: string[]
+  letter: MarkdownFile | null
+  salary: MarkdownFile | null
+  followUps: MarkdownFile[]
   timeline: TimelineEvent[]
 }
 
@@ -118,6 +127,52 @@ export interface ProfileData {
   cv: string | null
 }
 
+/** `GET /api/resumes`: the base résumé and its translations (`profile/resume*.json`). */
+export interface ResumeFile {
+  /** `resume.json`, `resume.en.json`… */
+  name: string
+  resume: Resume | null
+  problems: string[]
+}
+
+/** One application as the overview screens see it (home, résumés, letters, interviews, tools). */
+export interface OverviewApplication {
+  slug: string
+  company: string
+  role: string
+  status: Status
+  workModel: WorkModel | null
+  updatedAt: string
+  fit: number | null
+  hasJob: boolean
+  hasResume: boolean
+  hasLetter: boolean
+  hasSalary: boolean
+  /** the ATS score of the tailored résumé (or of the CV, when there is none) against the job post */
+  ats: number | null
+  nextSteps: Array<{ what: string; due: string | null; done: boolean }>
+  stages: Array<{ type: InterviewType; date: string | null; result: string }>
+  practice: Array<{ id: string; type: InterviewType; date: string; score: number | null }>
+  debriefs: number
+}
+
+/** `GET /api/overview` */
+export interface Overview {
+  applications: OverviewApplication[]
+  metrics: Metrics
+  recent: Array<TimelineEvent & { slug: string; company: string }>
+  hasCv: boolean
+  hasBaseResume: boolean
+  profileName: string | null
+}
+
+/** `GET /api/discoveries` */
+export interface DiscoveryFile {
+  name: string
+  discovery: Discovery | null
+  problems: string[]
+}
+
 /** `POST /api/jobs/capture`: what the link gave, for the person to review before creating the application. */
 export interface CapturedJob {
   source: Source
@@ -131,8 +186,12 @@ export interface CapturedJob {
 }
 
 /** `GET/PUT /api/settings`: preferences kept in SQLite (survive the desktop app's random port). */
+export const THEME_MODES = ['system', 'dark', 'light'] as const
+export type ThemeMode = (typeof THEME_MODES)[number]
+
 export interface Settings {
   language: Language | null
+  theme: ThemeMode
   workspaceFolder: string
 }
 

@@ -20,7 +20,7 @@ export type Save = (patch: ApplicationPatch) => Promise<void>
 function Section({ title, children, className }: { title: string; children: ReactNode; className?: string }) {
   return (
     <Panel className={className ? `p-5 ${className}` : 'p-5'}>
-      <h2 className="mb-3 font-sans text-sm font-medium tracking-wide text-muted uppercase">{title}</h2>
+      <h2 className="mb-3 font-sans text-[15px] font-semibold tracking-normal text-text">{title}</h2>
       {children}
     </Panel>
   )
@@ -98,8 +98,8 @@ export function SummaryTab({ detail, a, save }: { detail: ApplicationDetail; a: 
     )
 
   return (
-    <div className="grid gap-4 lg:grid-cols-3">
-      <div className="flex flex-col gap-4 lg:col-span-2">
+    <div className="grid gap-4 2xl:grid-cols-3">
+      <div className="flex flex-col gap-4 2xl:col-span-2">
         <ErrorLine message={error} />
         <Section title={t.application.details}>
           <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">

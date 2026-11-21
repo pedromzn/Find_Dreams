@@ -1,0 +1,19 @@
+{
+  "criteria": "Senior backend, remote in Brazil, Node.js or Go",
+  "sources": ["boards.greenhouse.io", "jobs.lever.co"],
+  "jobs": [
+    {
+      "company": "Exemplo Bank",
+      "role": "Senior Backend Engineer",
+      "url": "https://jobs.lever.co/exemplobank/abc",
+      "location": "Brazil",
+      "workModel": "remote",
+      "salary": "",
+      "why": "Node.js and PostgreSQL in payments, like the CV; asks for Kafka, which the CV shows. (Fictional.)",
+      "match": 81,
+      "status": "new"
+    }
+  ],
+  "language": "en",
+  "generatedAt": "2026-11-20T12:00:00Z"
+}

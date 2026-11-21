@@ -15,7 +15,7 @@ import { api } from '@/lib/api'
 function Block({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section>
-      <h3 className="mb-2 font-sans text-sm font-medium tracking-wide text-muted uppercase">{title}</h3>
+      <h3 className="mb-2.5 font-sans text-[15px] font-semibold tracking-normal text-text">{title}</h3>
       {children}
     </section>
   )
@@ -193,7 +193,7 @@ export function MessagesTab({
               <Markdown text={m.content} />
               {m.drafts && (
                 <div className="mt-4 rounded-tile border border-border bg-bg p-4">
-                  <p className="mb-2 text-xs font-medium tracking-wide text-muted uppercase">{t.agent.drafts}</p>
+                  <p className="mb-2 text-[13px] font-semibold text-text">{t.agent.drafts}</p>
                   <Problems problems={m.drafts.problems} file={m.drafts.name} />
                   <Markdown text={m.drafts.content} />
                 </div>

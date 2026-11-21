@@ -5,6 +5,7 @@
  *
  *   profile/profile.json                                         profile
  *   profile/cv.md                                                Markdown, not empty
+ *   profile/resume.json, profile/resume.<language>.json          structured résumé (base, translations)
  *   applications/<slug>/application.json                         application (slug = folder)
  *   applications/<slug>/job.md                                   front matter: source, capturedAt, url?
  *   applications/<slug>/company.md                               front matter: researchedAt; at least one link
@@ -14,6 +15,11 @@
  *   applications/<slug>/interviews/<date>-<type>/feedback.json   feedback of that session
  *   applications/<slug>/debriefs/<date>-<type>.json              debrief of a real interview
  *   applications/<slug>/messages/<message>.drafts.md             reply drafts: 2 or 3 `## ` options
+ *   applications/<slug>/resume.json                              résumé tailored to this job
+ *   applications/<slug>/cover-letter.md                          front matter: tone, language, generatedAt
+ *   applications/<slug>/salary.md                                front matter: researchedAt; at least one link
+ *   applications/<slug>/follow-ups/<date>.md                     follow-up drafts: 2 or 3 `## ` options
+ *   discoveries/<date>.json                                      a job search the AI ran
  *   requests/<id>.json                                           a task the app handed to the AI
  *
  * Anything else (messages, the agent kit, notes) is the person's and the AI's business: not validated.
@@ -32,6 +38,9 @@ import {
 import { INTERVIEW_TYPES } from './interviewTypes.js'
 import { profileSchema } from './profile.js'
 import { requestSchema } from './request.js'
+import { resumeSchema } from './resume.js'
+import { discoverySchema } from './discovery.js'
+import { languageSchema } from './languages.js'
 
 export const FILE_KINDS = [
   'profile',
@@ -46,6 +55,11 @@ export const FILE_KINDS = [
   'debrief',
   'drafts',
   'request',
+  'resume',
+  'letter',
+  'salary',
+  'followup',
+  'discovery',
 ] as const
 export type FileKind = (typeof FILE_KINDS)[number]
 
@@ -77,6 +91,12 @@ const PATTERNS: Array<[RegExp, FileKind]> = [
   [new RegExp(`^applications/(${SLUG})/debriefs/(${DATED_TYPE})\\.json$`), 'debrief'],
   [new RegExp(`^applications/(${SLUG})/messages/([\\w-]+)\\.drafts\\.md$`), 'drafts'],
   [/^requests\/()(\d{8}-\d{6}-[a-z0-9-]+)\.json$/, 'request'],
+  [/^profile\/resume(?:\.(?:en|pt-BR))?\.json$/, 'resume'],
+  [new RegExp(`^applications/(${SLUG})/resume\\.json$`), 'resume'],
+  [new RegExp(`^applications/(${SLUG})/cover-letter\\.md$`), 'letter'],
+  [new RegExp(`^applications/(${SLUG})/salary\\.md$`), 'salary'],
+  [new RegExp(`^applications/(${SLUG})/follow-ups/(\\d{4}-\\d{2}-\\d{2}(?:-\\d+)?)\\.md$`), 'followup'],
+  [/^discoveries\/()(\d{4}-\d{2}-\d{2}(?:-\d+)?)\.json$/, 'discovery'],
 ]
 
 /** Which file this is, from its path relative to the workspace (`/` or `\` separators). Null = not validated. */
@@ -114,6 +134,22 @@ export const jobFrontMatterSchema = z
 
 export const companyFrontMatterSchema = z.object({ researchedAt: z.union([isoDateTime, isoDate]) }).strict()
 
+export const LETTER_TONES = ['formal', 'direct', 'warm'] as const
+export type LetterTone = (typeof LETTER_TONES)[number]
+
+export const letterFrontMatterSchema = z
+  .object({ tone: z.enum(LETTER_TONES), language: languageSchema, generatedAt: z.union([isoDateTime, isoDate]) })
+  .strict()
+
+/** The salary research: when it was done and the range it suggests asking for (as written, e.g. "R$ 18.000"). */
+export const salaryFrontMatterSchema = z
+  .object({
+    researchedAt: z.union([isoDateTime, isoDate]),
+    low: z.string().trim().max(40).optional(),
+    high: z.string().trim().max(40).optional(),
+  })
+  .strict()
+
 // ── validation ───────────────────────────────────────────────────────────────
 
 const JSON_SCHEMAS: Partial<Record<FileKind, z.ZodType>> = {
@@ -125,6 +161,8 @@ const JSON_SCHEMAS: Partial<Record<FileKind, z.ZodType>> = {
   feedback: interviewFeedbackSchema,
   debrief: debriefSchema,
   request: requestSchema,
+  resume: resumeSchema,
+  discovery: discoverySchema,
 }
 
 const MAX_PROBLEMS = 20
@@ -137,7 +175,7 @@ function zodProblems(error: z.ZodError): string[] {
 
 function markdownProblems(file: WorkspaceFile, content: string): string[] {
   if (file.kind === 'cv') return content.trim() ? [] : ['The CV is empty.']
-  if (file.kind === 'drafts') {
+  if (file.kind === 'drafts' || file.kind === 'followup') {
     const options = content.match(/^## /gm)?.length ?? 0
     return options >= 2 && options <= 3
       ? []
@@ -146,12 +184,22 @@ function markdownProblems(file: WorkspaceFile, content: string): string[] {
   const front = readFrontMatter(content)
   if (!front) return ['Missing the front matter: start the file with a `---` block of `key: value` lines.']
   const problems: string[] = []
-  const schema = file.kind === 'job' ? jobFrontMatterSchema : companyFrontMatterSchema
+  const schema =
+    file.kind === 'job'
+      ? jobFrontMatterSchema
+      : file.kind === 'letter'
+        ? letterFrontMatterSchema
+        : file.kind === 'salary'
+          ? salaryFrontMatterSchema
+          : companyFrontMatterSchema
   const parsed = schema.safeParse(front.data)
   if (!parsed.success) problems.push(...zodProblems(parsed.error).map((p) => `front matter ${p}`))
   if (!front.body.trim()) problems.push('The body is empty.')
   if (file.kind === 'company' && !/https?:\/\/\S+/.test(front.body)) {
     problems.push('Company research must cite at least one public source link.')
+  }
+  if (file.kind === 'salary' && !/https?:\/\/\S+/.test(front.body)) {
+    problems.push('Salary research must cite at least one public source link.')
   }
   return problems
 }
@@ -163,6 +211,12 @@ function pathProblems(file: WorkspaceFile, data: Record<string, unknown>): strin
   }
   if (file.kind === 'request' && data.id !== file.name) return [`id: must match the file name ("${file.name}").`]
   if (file.kind === 'persona' && data.id !== file.name) return [`id: must match the file name ("${file.name}").`]
+  if (file.kind === 'resume' && file.application) {
+    const tailoring = data.tailoring as { application?: string } | undefined
+    if (tailoring?.application !== file.application) {
+      return [`tailoring.application: a tailored résumé must name its application ("${file.application}").`]
+    }
+  }
   if (file.kind === 'session' && data.application !== file.application) {
     return [`application: must match the folder name ("${file.application}").`]
   }
@@ -208,4 +262,8 @@ export const SCHEMAS: Record<string, z.ZodType> = {
   'job-front-matter': jobFrontMatterSchema,
   'company-front-matter': companyFrontMatterSchema,
   request: requestSchema,
+  resume: resumeSchema,
+  discovery: discoverySchema,
+  'letter-front-matter': letterFrontMatterSchema,
+  'salary-front-matter': salaryFrontMatterSchema,
 }

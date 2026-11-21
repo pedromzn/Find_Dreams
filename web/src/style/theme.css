@@ -1,14 +1,14 @@
 /*
- * Black and red. The tokens live in @theme (they become Tailwind utilities: bg-bg, bg-surface, text-muted,
- * border-border…) and point to the CSS variables below. A new color comes from here, never loose in a component.
- * `contrast.test.ts` reads this file and checks every text/background pair against WCAG AA.
+ * Graphite and red, in two themes. The tokens live in @theme (they become Tailwind utilities: bg-bg, bg-surface,
+ * text-muted, border-border, text-st-applied…) and point to the CSS variables below. A new color comes from here, never
+ * loose in a component. `contrast.test.ts` reads BOTH theme blocks and checks every text/background pair (WCAG AA).
  *
- * Color hierarchy: near-black surfaces give depth; red is the BRAND and the action (main button, active item, focus,
- * links, progress) — it is emphasis, not alarm. Errors and "rejected" use a different, pinker red (`danger`), always
- * with an icon and a word, so they never read as the brand. Green (success, offer) and amber (warning) are used
- * sparingly, so the app stays black and red.
+ * Hierarchy: the surfaces are graphite, not black — each layer (bg → surface → surface-2 → surface-3) is a visible
+ * step lighter, so panels read as panels. Red is the BRAND and the main action. The stages of a process have their
+ * own colors (`st-*`): that spectrum is the app's signature — the dashboard funnel, the card edges, the board columns.
+ * Errors use `danger` (pinker than the brand), always with an icon and a word.
  *
- * Dark is the only theme in v1.
+ * The theme is chosen in Settings (system / dark / light); `style/themeMode.ts` sets `data-theme` on <html>.
  */
 @import 'tailwindcss';
 
@@ -16,6 +16,7 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
   --color-text: var(--text);
@@ -29,15 +30,34 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
 
-  --font-display: 'Fraunces Variable', 'Fraunces', Georgia, 'Times New Roman', serif;
+  --color-st-saved: var(--st-saved);
+  --color-st-applied: var(--st-applied);
+  --color-st-screening: var(--st-screening);
+  --color-st-interviewing: var(--st-interviewing);
+  --color-st-offer: var(--st-offer);
+  --color-st-accepted: var(--st-accepted);
+  --color-st-rejected: var(--st-rejected);
+  --color-st-withdrawn: var(--st-withdrawn);
+  --color-st-ghosted: var(--st-ghosted);
+
+  /* the printed page (résumés, letters): always paper, whatever the theme */
+  --color-paper: #ffffff;
+  --color-paper-ink: #1b1f27;
+  --color-paper-muted: #545b69;
+  --color-paper-rule: #d9dce3;
+  --color-paper-tint: #f2f4f7;
+  --color-paper-accent: #1e4fb8;
+
+  /* one family carries the whole interface; the hierarchy is weight and size */
+  --font-display: 'Instrument Sans Variable', 'Instrument Sans', system-ui, sans-serif;
   --font-sans: 'Instrument Sans Variable', 'Instrument Sans', system-ui, sans-serif;
   --font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, monospace;
 
   --radius-pill: 999px;
-  --radius-panel: 18px;
-  --radius-tile: 12px;
+  --radius-panel: 16px;
+  --radius-tile: 10px;
 
-  --animate-appear: appear 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-appear: appear 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 
   @keyframes appear {
     from {
@@ -53,25 +73,66 @@
 
 :root {
   color-scheme: dark;
-  --bg: #0a0a0a;
-  --surface: #121212;
-  --surface-2: #1a1a1a;
-  --border: #262626;
-  --border-strong: #3a3a3a;
-  --text: #f5f5f5;
-  --muted: #a3a3a3;
-  --faint: #8a8a8a;
+  --bg: #12141a;
+  --surface: #1a1d26;
+  --surface-2: #232733;
+  --surface-3: #2b3040;
+  --border: #2c3140;
+  --border-strong: #404759;
+  --text: #eef0f5;
+  --muted: #aab0c0;
+  --faint: #9097a8;
   /* the brand red: fills (buttons, bars, the logo) with white text on top */
-  --accent: #e50914;
-  --accent-hover: #b80710;
-  /* the brand red as TEXT on black: lighter, so it passes AA */
-  --accent-text: #ff5c5c;
+  --accent: #d9202c;
+  --accent-hover: #b3141f;
+  /* the brand red as TEXT on graphite: lighter, so it passes AA */
+  --accent-text: #ff7070;
   --on-accent: #ffffff;
-  /* errors and "rejected": pinker than the brand, never alone (icon + word) */
-  --danger: #f472b6;
+  --danger: #f47cbc;
   --success: #4ade80;
   --warning: #fbbf24;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 12px 32px -18px rgb(0 0 0 / 0.8);
+  --st-saved: #a3abbf;
+  --st-applied: #62b4f0;
+  --st-screening: #ae95fb;
+  --st-interviewing: #f5bb4f;
+  --st-offer: #4ade80;
+  --st-accepted: #34d399;
+  --st-rejected: #f47cbc;
+  --st-withdrawn: #9097a8;
+  --st-ghosted: #fb9a4b;
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 30px -16px rgb(0 0 0 / 0.6);
+  --shadow-pop: 0 18px 50px -12px rgb(0 0 0 / 0.65);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4f5f8;
+  --surface: #ffffff;
+  --surface-2: #eceef3;
+  --surface-3: #e2e5ec;
+  --border: #dde1e8;
+  --border-strong: #c3c9d4;
+  --text: #161a22;
+  --muted: #4b5366;
+  --faint: #5d6578;
+  --accent: #c81a26;
+  --accent-hover: #a0121c;
+  --accent-text: #b8141f;
+  --on-accent: #ffffff;
+  --danger: #b0124f;
+  --success: #137337;
+  --warning: #94500a;
+  --st-saved: #535c70;
+  --st-applied: #16609f;
+  --st-screening: #6340cf;
+  --st-interviewing: #8a5300;
+  --st-offer: #137337;
+  --st-accepted: #06694c;
+  --st-rejected: #b0124f;
+  --st-withdrawn: #5d6578;
+  --st-ghosted: #a83a0a;
+  --shadow: 0 1px 2px rgb(22 26 34 / 0.06), 0 8px 24px -14px rgb(22 26 34 / 0.18);
+  --shadow-pop: 0 18px 50px -12px rgb(22 26 34 / 0.25);
 }
 
 @layer base {
@@ -84,7 +145,7 @@
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-sans);
-    font-size: 16px;
+    font-size: 15px;
     line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -101,10 +162,9 @@
   h2,
   h3 {
     font-family: var(--font-display);
-    font-weight: 560;
-    font-variation-settings: 'opsz' 72;
-    letter-spacing: -0.015em;
-    line-height: 1.12;
+    font-weight: 640;
+    letter-spacing: -0.022em;
+    line-height: 1.15;
     text-wrap: balance;
   }
   p {
@@ -173,5 +233,61 @@
   .reading td {
     border: 1px solid var(--border);
     padding: 0.35em 0.6em;
+  }
+}
+
+@layer components {
+  /* a sheet of paper on screen: A4 proportions, scaled to the column */
+  .sheet {
+    background: var(--color-paper);
+    color: var(--color-paper-ink);
+    width: 100%;
+    max-width: 820px;
+    min-height: 1060px;
+    box-shadow: var(--shadow-pop);
+    border-radius: 4px;
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+  .sheet a {
+    color: inherit;
+  }
+  .sheet h1,
+  .sheet h2,
+  .sheet h3 {
+    text-wrap: initial;
+  }
+  .serif-doc {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+  }
+}
+
+/* Printing (Export PDF): only the sheet, at its real size. */
+@media print {
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+  }
+  .print-area .sheet {
+    box-shadow: none;
+    max-width: none;
+    min-height: 0;
+    border-radius: 0;
   }
 }

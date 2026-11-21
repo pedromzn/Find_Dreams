@@ -58,7 +58,7 @@ export default function InterviewDetail() {
             <>
               <p className="text-text">{feedback.overall}</p>
               <section>
-                <h3 className="mb-2 text-sm font-medium tracking-wide text-muted uppercase">{i.scores}</h3>
+                <h3 className="mb-2 font-sans text-[15px] font-semibold tracking-normal text-text">{i.scores}</h3>
                 <ul className="flex flex-col gap-2">
                   {feedback.scores.map((s) => (
                     <li key={s.criterion}>
@@ -75,7 +75,7 @@ export default function InterviewDetail() {
               </section>
               {feedback.strengths.length > 0 && (
                 <section>
-                  <h3 className="mb-2 text-sm font-medium tracking-wide text-muted uppercase">{i.strengths}</h3>
+                  <h3 className="mb-2 font-sans text-[15px] font-semibold tracking-normal text-text">{i.strengths}</h3>
                   <ul className="list-disc pl-5 text-text">
                     {feedback.strengths.map((s) => (
                       <li key={s}>{s}</li>
@@ -85,7 +85,7 @@ export default function InterviewDetail() {
               )}
               {feedback.stuckPoints.length > 0 && (
                 <section className="flex flex-col gap-3">
-                  <h3 className="text-sm font-medium tracking-wide text-muted uppercase">{i.stuck}</h3>
+                  <h3 className="font-sans text-[15px] font-semibold tracking-normal text-text">{i.stuck}</h3>
                   {feedback.stuckPoints.map((p) => (
                     <div key={p.excerpt} className="flex flex-col gap-2 rounded-tile border border-border bg-bg p-4">
                       <p className="text-xs text-faint">{i.youSaid}</p>
@@ -102,7 +102,9 @@ export default function InterviewDetail() {
               )}
               {feedback.nextPractice.length > 0 && (
                 <section>
-                  <h3 className="mb-2 text-sm font-medium tracking-wide text-muted uppercase">{i.nextPractice}</h3>
+                  <h3 className="mb-2 font-sans text-[15px] font-semibold tracking-normal text-text">
+                    {i.nextPractice}
+                  </h3>
                   <ul className="list-disc pl-5 text-text">
                     {feedback.nextPractice.map((s) => (
                       <li key={s}>{s}</li>

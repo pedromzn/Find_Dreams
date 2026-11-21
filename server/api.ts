@@ -13,6 +13,7 @@ import { voiceRouter } from './routes/voice.js'
 import { applicationsRouter, metricsRouter } from './routes/applications.js'
 import { cvImportRouter, jobsRouter } from './routes/jobs.js'
 import { profileRouter, settingsRouter } from './routes/profile.js'
+import { materialsRouter } from './routes/materials.js'
 
 export const apiRouter = Router()
 
@@ -27,6 +28,7 @@ apiRouter.use('/profile/cv/import', cvImportRouter)
 apiRouter.use('/profile', profileRouter)
 apiRouter.use('/jobs', jobsRouter)
 apiRouter.use('/settings', settingsRouter)
+apiRouter.use('/', materialsRouter)
 apiRouter.use('/', agentRouter)
 apiRouter.use('/', agentsRouter)
 apiRouter.use('/', interviewsRouter)

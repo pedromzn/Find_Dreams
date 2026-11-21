@@ -143,3 +143,68 @@ describe('profile and settings', () => {
     expect((await call('PUT', '/settings', { language: 'fr' })).status).toBe(422)
   })
 })
+
+describe('v2: overview, résumés, ATS, letters, discoveries', () => {
+  it('the overview brings each application with its materials and scores', async () => {
+    const { status, json } = await call('GET', '/overview')
+    expect(status).toBe(200)
+    const acme = json.data.applications.find((a: { slug: string }) => a.slug === ACME)
+    expect(acme).toMatchObject({ fit: 78, hasResume: true, hasLetter: true, hasSalary: true, debriefs: 1 })
+    expect(acme.ats).toBeGreaterThan(0)
+    expect(json.data.hasCv).toBe(true)
+    expect(json.data.hasBaseResume).toBe(true)
+    expect(json.data.profileName).toMatch(/^Ana/)
+    for (const e of json.data.recent) expect(e.at.slice(0, 10) <= new Date().toISOString().slice(0, 10)).toBe(true)
+  })
+
+  it('the detail brings the tailored résumé, the letter, the salary and the follow-ups', async () => {
+    const d = (await call('GET', `/applications/${ACME}`)).json.data
+    expect(d.resume.tailoring.application).toBe(ACME)
+    expect(d.letter.problems).toEqual([])
+    expect(d.salary.problems).toEqual([])
+    expect(d.followUps).toHaveLength(1)
+  })
+
+  it('the ATS check reads the tailored résumé against the post', async () => {
+    const { json } = await call('GET', `/applications/${ACME}/ats`)
+    expect(json.data.basis).toBe('resume')
+    expect(json.data.report.score).toBeGreaterThan(50)
+    expect(json.data.report.keywords.length).toBeGreaterThan(0)
+  })
+
+  it('changes a résumé template, and refuses a path outside the résumé files', async () => {
+    expect((await call('PUT', '/resumes/template', { file: 'profile/resume.json', template: 'harvard' })).status).toBe(
+      200,
+    )
+    const list = (await call('GET', '/resumes')).json.data
+    expect(list[0].resume.template).toBe('harvard')
+    expect((await call('PUT', '/resumes/template', { file: 'profile/profile.json', template: 'harvard' })).status).toBe(
+      422,
+    )
+  })
+
+  it('saves an edited letter with valid front matter', async () => {
+    const { status } = await call('PUT', `/applications/${ACME}/letter`, {
+      body: 'Hello team,\n\nEdited.\n\nAna',
+      tone: 'warm',
+      language: 'en',
+    })
+    expect(status).toBe(200)
+    const content = readFileSync(workspacePath('applications', ACME, 'cover-letter.md'), 'utf8')
+    expect(content).toMatch(/^---\ntone: warm\n/)
+    expect(content).toMatch(/Edited\./)
+  })
+
+  it('marks a discovered job as dismissed', async () => {
+    expect((await call('PATCH', '/discoveries/2026-11-20.json/0', { status: 'dismissed' })).status).toBe(200)
+    const files = (await call('GET', '/discoveries')).json.data
+    expect(files[0].discovery.jobs[0].status).toBe('dismissed')
+    expect((await call('PATCH', '/discoveries/../x.json/0', { status: 'saved' })).status).toBe(404)
+  })
+
+  it('keeps the theme preference', async () => {
+    expect((await call('GET', '/settings')).json.data.theme).toBe('system')
+    expect((await call('PUT', '/settings', { theme: 'light' })).json.data.theme).toBe('light')
+    expect((await call('PUT', '/settings', { theme: 'neon' })).status).toBe(422)
+  })
+})

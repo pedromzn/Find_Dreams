@@ -9,6 +9,7 @@ import { Buildings, ChatCircleText, Microphone, Target, Wrench } from '@phosphor
 import type { CreatedRequest } from '@shared/api'
 import type { InterviewType } from '@shared/interviewTypes'
 import type { Task } from '@shared/request'
+import type { Language } from '@shared/languages'
 import { Button, Command, ErrorLine } from '@/components/ui'
 import { Dialog } from '@/components/Dialog'
 import { useLanguage, useT } from '@/i18n'
@@ -26,7 +27,14 @@ export function useHandOff(onDone: () => void) {
 
   async function start(
     task: Task,
-    extra: { application?: string; file?: string; interviewType?: InterviewType; details?: string },
+    extra: {
+      application?: string
+      file?: string
+      interviewType?: InterviewType
+      details?: string
+      /** the language the AI writes in, when it is not the interface's (a résumé translation) */
+      language?: Language
+    },
   ) {
     setBusy(true)
     setError(null)
@@ -116,5 +124,57 @@ export function MessageActions({ slug, message, onDone }: { slug: string; messag
       <ErrorLine message={error} />
       {dialog}
     </div>
+  )
+}
+
+/** One button for any task, with its own hand-off dialog: the v2 screens' way to ask the AI for something. */
+export function AiButton({
+  task,
+  application,
+  file,
+  details,
+  language,
+  label,
+  icon,
+  variant = 'subtle',
+  size = 'normal',
+  onDone,
+  className,
+}: {
+  task: Task
+  application?: string
+  file?: string
+  details?: string
+  language?: Language
+  label: string
+  icon?: React.ReactNode
+  variant?: 'main' | 'subtle' | 'ghost'
+  size?: 'normal' | 'small'
+  onDone?: () => void
+  className?: string
+}) {
+  const { start, busy, error, dialog } = useHandOff(onDone ?? (() => undefined))
+  return (
+    <>
+      <Button
+        variant={variant}
+        size={size}
+        icon={icon}
+        disabled={busy}
+        className={className}
+        onClick={() =>
+          start(task, {
+            ...(application ? { application } : {}),
+            ...(file ? { file } : {}),
+            ...(details ? { details } : {}),
+            ...(language ? { language } : {}),
+          })
+        }
+      >
+        {label}
+      </Button>
+      <ErrorLine message={error} />
+      {dialog}
+    </>
   )
 }

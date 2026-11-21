@@ -30,6 +30,11 @@ stage — HR, technical, client, hiring manager, live coding, system design — 
   design, take-home review, panel, language, final round, case study, async video. By text or by voice (Whisper and
   Kokoro, running locally). Then feedback that quotes where you got stuck and gives you a better answer.
 - **Debriefs** of real interviews, so the next stage is prepared with what you actually heard.
+- **Résumés and cover letters** — your CV becomes a structured résumé in three templates (Modern, Harvard, Classic),
+  tailored to each job and translated by your AI without inventing anything, with an **instant ATS check** (the post's
+  keywords your résumé has and lacks) and PDF export. Cover letters in the tone you choose, editable in place.
+- **Find jobs and tools** — your AI searches public job pages (never LinkedIn) for jobs that fit you; follow-up e-mails,
+  salary research with sources, and an apply kit per job. The app never applies for you.
 
 | The board                             | An application                              |
 | ------------------------------------- | ------------------------------------------- |

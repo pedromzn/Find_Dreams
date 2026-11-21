@@ -25,15 +25,16 @@ type Variant = 'main' | 'subtle' | 'ghost' | 'danger'
 
 const VARIANTS: Record<Variant, string> = {
   main: 'bg-accent text-on-accent hover:bg-accent-hover active:translate-y-px disabled:opacity-50',
-  subtle: 'border border-border bg-surface-2 text-text hover:border-border-strong disabled:opacity-50',
+  subtle:
+    'border border-border bg-surface-2 text-text hover:border-border-strong hover:bg-surface-3 disabled:opacity-50',
   ghost: 'text-muted hover:text-text hover:bg-surface-2 disabled:opacity-40',
   danger: 'border border-danger/40 text-danger hover:bg-danger/10 disabled:opacity-50',
 }
 
 const BUTTON_BASE =
-  'inline-flex items-center justify-center gap-2 rounded-pill font-medium transition-[background,color,transform] duration-150 select-none disabled:cursor-not-allowed'
+  'inline-flex items-center justify-center gap-2 rounded-tile font-medium no-underline transition-[background,color,transform] duration-150 select-none disabled:cursor-not-allowed'
 
-const SIZES = { normal: 'h-11 px-5 text-[15px]', small: 'h-9 px-4 text-sm', large: 'h-13 px-7 text-base' }
+const SIZES = { normal: 'h-10 px-4 text-[14.5px]', small: 'h-8 px-3 text-[13.5px]', large: 'h-12 px-6 text-base' }
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant
@@ -127,8 +128,8 @@ export function Header({
   return (
     <header className={join('flex flex-wrap items-end justify-between gap-x-6 gap-y-4', className)}>
       <div className="min-w-0">
-        <h1 className="text-[clamp(1.75rem,3.4vw,2.6rem)]">{title}</h1>
-        {note && <p className="mt-2 max-w-[65ch] text-muted">{note}</p>}
+        <h1 className="text-[clamp(1.6rem,2.6vw,2.1rem)]">{title}</h1>
+        {note && <p className="mt-1.5 max-w-[72ch] text-muted">{note}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
     </header>
@@ -334,12 +335,179 @@ export function Problems({ problems, file }: { problems: string[]; file?: string
   )
 }
 
-export function Empty({ icon, title, children }: { icon?: ReactNode; title: ReactNode; children?: ReactNode }) {
+export function Empty({
+  icon,
+  title,
+  children,
+  className,
+}: {
+  icon?: ReactNode
+  title: ReactNode
+  children?: ReactNode
+  className?: string
+}) {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-panel border border-dashed border-border px-6 py-12 text-center">
-      {icon && <span className="text-faint">{icon}</span>}
-      <p className="text-text">{title}</p>
+    <div
+      className={join(
+        'flex flex-col items-center gap-3 rounded-panel border border-dashed border-border-strong bg-surface/60 px-6 py-12 text-center',
+        className,
+      )}
+    >
+      {icon && (
+        <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-2 text-muted">{icon}</span>
+      )}
+      <p className="font-medium text-text">{title}</p>
       {children && <div className="max-w-md text-sm text-muted">{children}</div>}
+    </div>
+  )
+}
+
+// ── v2 pieces ────────────────────────────────────────────────────────────────
+
+/** A panel with a title row (and an optional action on the right): the building block of the overview screens. */
+export function Section({
+  title,
+  note,
+  action,
+  children,
+  className,
+  bodyClassName,
+}: {
+  title: ReactNode
+  note?: ReactNode
+  action?: ReactNode
+  children: ReactNode
+  className?: string
+  bodyClassName?: string
+}) {
+  return (
+    <Panel className={join('flex flex-col', className)}>
+      <div className="flex items-start justify-between gap-3 border-b border-border px-5 py-3.5">
+        <div className="min-w-0">
+          <h2 className="font-sans text-[15px] font-semibold tracking-normal text-text">{title}</h2>
+          {note && <p className="mt-0.5 text-[13px] text-faint">{note}</p>}
+        </div>
+        {action && <div className="shrink-0">{action}</div>}
+      </div>
+      <div className={join('flex-1 p-5', bodyClassName)}>{children}</div>
+    </Panel>
+  )
+}
+
+/** A number in a ring: fit and ATS scores (0–100). The color says the level, the number says the value. */
+export function ScoreRing({
+  value,
+  size = 64,
+  stroke = 6,
+  label,
+  className,
+}: {
+  value: number | null
+  size?: number
+  stroke?: number
+  label: string
+  className?: string
+}) {
+  const r = (size - stroke) / 2
+  const c = 2 * Math.PI * r
+  const v = value === null ? 0 : Math.max(0, Math.min(100, value))
+  const color =
+    value === null ? 'var(--border-strong)' : v >= 75 ? 'var(--success)' : v >= 50 ? 'var(--warning)' : 'var(--danger)'
+  return (
+    <span
+      className={join('relative inline-flex shrink-0 items-center justify-center', className)}
+      style={{ width: size, height: size }}
+      role="img"
+      aria-label={`${label}: ${value === null ? '—' : value}`}
+    >
+      <svg width={size} height={size} className="-rotate-90" aria-hidden>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--surface-3)" strokeWidth={stroke} />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth={stroke}
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c - (c * v) / 100}
+          style={{ transition: 'stroke-dashoffset 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)' }}
+        />
+      </svg>
+      <span
+        className="absolute font-semibold text-text tabular-nums"
+        style={{ fontSize: Math.max(11, size * 0.28) }}
+        aria-hidden
+      >
+        {value === null ? '—' : value}
+      </span>
+    </span>
+  )
+}
+
+/** A big number with its label: the metric tiles. */
+export function Stat({
+  label,
+  value,
+  note,
+  accent,
+  className,
+}: {
+  label: ReactNode
+  value: ReactNode
+  note?: ReactNode
+  /** a stage color (`var(--st-applied)`) for the small bar on top */
+  accent?: string
+  className?: string
+}) {
+  return (
+    <Panel className={join('relative flex flex-col gap-1 overflow-hidden px-5 py-4', className)}>
+      {accent && <span className="absolute inset-x-0 top-0 h-[3px]" style={{ background: accent }} aria-hidden />}
+      <span className="text-[13px] text-muted">{label}</span>
+      <span className="text-[28px] leading-tight font-semibold tracking-tight text-text tabular-nums">{value}</span>
+      {note && <span className="text-xs text-faint">{note}</span>}
+    </Panel>
+  )
+}
+
+/** A segmented control: two to four choices, one active (view modes, templates, tones, theme). */
+export function Segmented<T extends string>({
+  options,
+  value,
+  onChange,
+  label,
+  size = 'normal',
+}: {
+  options: Array<{ id: T; label: ReactNode; icon?: ReactNode }>
+  value: T
+  onChange: (id: T) => void
+  label: string
+  size?: 'normal' | 'small'
+}) {
+  return (
+    <div
+      className="inline-flex rounded-tile border border-border bg-surface-2 p-0.5"
+      role="radiogroup"
+      aria-label={label}
+    >
+      {options.map((o) => (
+        <button
+          key={o.id}
+          type="button"
+          role="radio"
+          aria-checked={value === o.id}
+          onClick={() => onChange(o.id)}
+          className={join(
+            'flex items-center gap-1.5 rounded-[8px] font-medium transition-colors',
+            size === 'small' ? 'px-2.5 py-1 text-[13px]' : 'px-3 py-1.5 text-sm',
+            value === o.id ? 'bg-surface text-text shadow-[var(--shadow)]' : 'text-muted hover:text-text',
+          )}
+        >
+          {o.icon}
+          {o.label}
+        </button>
+      ))}
     </div>
   )
 }

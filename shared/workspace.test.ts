@@ -26,6 +26,13 @@ describe('the workspace map', () => {
     [`${APP}/interviews/2026-11-12-hr_screening/transcript.json`, { kind: 'session', name: '2026-11-12-hr_screening' }],
     [`${APP}/debriefs/2026-11-14-hr_screening.json`, { kind: 'debrief' }],
     ['applications\\acme-x-20261110\\fit.json', { kind: 'fit' }],
+    ['profile/resume.json', { kind: 'resume' }],
+    ['profile/resume.pt-BR.json', { kind: 'resume' }],
+    [`${APP}/resume.json`, { kind: 'resume', application: 'acme-pagamentos-backend-engineer-20261110' }],
+    [`${APP}/cover-letter.md`, { kind: 'letter' }],
+    [`${APP}/salary.md`, { kind: 'salary' }],
+    [`${APP}/follow-ups/2026-11-15.md`, { kind: 'followup', name: '2026-11-15' }],
+    ['discoveries/2026-11-20.json', { kind: 'discovery', name: '2026-11-20' }],
   ])('classifies %s', (file, expected) => {
     expect(classify(file)).toMatchObject(expected)
   })
@@ -53,6 +60,12 @@ describe('the fictional fixture workspace', () => {
     `${APP}/interviews/2026-11-12-hr_screening/transcript.json`,
     `${APP}/interviews/2026-11-12-hr_screening/feedback.json`,
     `${APP}/debriefs/2026-11-14-hr_screening.json`,
+    'profile/resume.json',
+    `${APP}/resume.json`,
+    `${APP}/cover-letter.md`,
+    `${APP}/salary.md`,
+    `${APP}/follow-ups/2026-11-15.md`,
+    'discoveries/2026-11-20.json',
   ])('%s is valid', (file) => {
     expect(validateFile(file, fixture(file))).toEqual([])
   })
@@ -145,5 +158,35 @@ describe('helpers', () => {
       body: 'body',
     })
     expect(readFrontMatter('no front matter')).toBeNull()
+  })
+})
+
+describe('v2 files: what the AI must fix', () => {
+  it('a tailored résumé that does not name its application', () => {
+    const resume = json('profile/resume.json')
+    expect(validateFile(`${APP}/resume.json`, JSON.stringify(resume))!.join()).toMatch(/tailoring\.application/)
+  })
+
+  it('a résumé with an invented field or a bad date', () => {
+    const resume = json('profile/resume.json') as { experience: Array<Record<string, unknown>> }
+    resume.experience[0]!.start = 'January 2021'
+    expect(validateFile('profile/resume.json', JSON.stringify(resume))!.join()).toMatch(/YYYY/)
+  })
+
+  it('a cover letter with an unknown tone, and salary research without a link', () => {
+    const letter = '---\ntone: funny\nlanguage: en\ngeneratedAt: 2026-11-20\n---\n\nHello\n'
+    expect(validateFile(`${APP}/cover-letter.md`, letter)!.join()).toMatch(/tone/)
+    const salary = '---\nresearchedAt: 2026-11-20\n---\n\nAbout R$ 18k.\n'
+    expect(validateFile(`${APP}/salary.md`, salary)!.join()).toMatch(/link/)
+  })
+
+  it('a follow-up with a single option', () => {
+    expect(validateFile(`${APP}/follow-ups/2026-11-15.md`, '## Only one\n\nHi')!.join()).toMatch(/2 or 3/)
+  })
+
+  it('a discovered job with a match out of range', () => {
+    const d = json('discoveries/2026-11-20.json') as { jobs: Array<Record<string, unknown>> }
+    d.jobs[0]!.match = 140
+    expect(validateFile('discoveries/2026-11-20.json', JSON.stringify(d))!.join()).toMatch(/match/)
   })
 })

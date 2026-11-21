@@ -20,6 +20,11 @@ export const TASKS = [
   'interview-feedback',
   'debrief',
   'fix-files',
+  'tailor-resume',
+  'cover-letter',
+  'follow-up',
+  'salary-research',
+  'find-jobs',
 ] as const
 export type Task = (typeof TASKS)[number]
 export const taskSchema = z.enum(TASKS)
@@ -34,6 +39,11 @@ export const TASK_SKILL: Record<Task, string> = {
   'interview-feedback': 'interview-feedback',
   debrief: 'debrief',
   'fix-files': 'track-application',
+  'tailor-resume': 'tailor-resume',
+  'cover-letter': 'cover-letter',
+  'follow-up': 'follow-up',
+  'salary-research': 'salary-research',
+  'find-jobs': 'find-jobs',
 }
 
 export const requestSchema = z

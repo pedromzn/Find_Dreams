@@ -2,12 +2,12 @@
 
 import { Router } from 'express'
 import { z } from 'zod'
-import type { Settings } from '../../shared/api.js'
+import { THEME_MODES, type Settings, type ThemeMode } from '../../shared/api.js'
 import { languageSchema } from '../../shared/languages.js'
 import { config } from '../config.js'
 import { route } from '../errors.js'
 import { readProfile, writeCv, writeProfile } from '../store/profile.js'
-import { getLanguage, setPreference } from '../store/settings.js'
+import { getLanguage, getPreference, setPreference } from '../store/settings.js'
 
 export const profileRouter = Router()
 
@@ -33,7 +33,14 @@ profileRouter.put(
 
 export const settingsRouter = Router()
 
-const settings = (): Settings => ({ language: getLanguage(), workspaceFolder: config.workspaceFolder })
+const themeOf = (value: string | null): ThemeMode =>
+  (THEME_MODES as readonly string[]).includes(value ?? '') ? (value as ThemeMode) : 'system'
+
+const settings = (): Settings => ({
+  language: getLanguage(),
+  theme: themeOf(getPreference('theme')),
+  workspaceFolder: config.workspaceFolder,
+})
 
 settingsRouter.get(
   '/',
@@ -43,8 +50,12 @@ settingsRouter.get(
 settingsRouter.put(
   '/',
   route((req, res) => {
-    const body = z.object({ language: languageSchema.optional() }).strict().parse(req.body)
+    const body = z
+      .object({ language: languageSchema.optional(), theme: z.enum(THEME_MODES).optional() })
+      .strict()
+      .parse(req.body)
     if (body.language) setPreference('language', body.language)
+    if (body.theme) setPreference('theme', body.theme)
     res.json({ data: settings() })
   }),
 )

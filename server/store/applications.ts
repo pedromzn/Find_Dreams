@@ -14,8 +14,12 @@ import type {
   DebriefSummary,
   InterviewSummary,
   MarkdownFile,
+  DiscoveryFile,
   Metrics,
+  Overview,
+  OverviewApplication,
   PersonaSummary,
+  ResumeFile,
   TimelineEvent,
 } from '../../shared/api.js'
 import {
@@ -36,7 +40,10 @@ import {
   interviewFeedbackSchema,
   interviewSessionSchema,
 } from '../../shared/interview.js'
-import { validateFile } from '../../shared/workspace.js'
+import { readFrontMatter, validateFile } from '../../shared/workspace.js'
+import { resumeChecks, resumeSchema, resumeText, type Resume } from '../../shared/resume.js'
+import { atsReport } from '../../shared/ats.js'
+import { discoverySchema, type Discovery } from '../../shared/discovery.js'
 import { HttpError } from '../errors.js'
 import { statusHistory } from './applicationIndex.js'
 import {
@@ -119,6 +126,11 @@ export function applicationDetail(slug: string): ApplicationDetail {
     .filter((m): m is MarkdownFile => m !== null)
     .map((m) => ({ ...m, drafts: readMarkdown(`${base}/messages/${m.name.slice(0, -3)}.drafts.md`) }))
 
+  const resume = readJson<Resume>(`${base}/resume.json`, resumeSchema)
+  const followUps = entries(`${base}/follow-ups`, 'files', '.md')
+    .map((file) => readMarkdown(`${base}/follow-ups/${file}`))
+    .filter((m): m is MarkdownFile => m !== null)
+
   const detail: ApplicationDetail = {
     slug,
     application: read.application,
@@ -131,6 +143,11 @@ export function applicationDetail(slug: string): ApplicationDetail {
     interviews,
     debriefs,
     messages,
+    resume: resume.data,
+    resumeProblems: resume.problems,
+    letter: readMarkdown(`${base}/cover-letter.md`),
+    salary: readMarkdown(`${base}/salary.md`),
+    followUps,
     timeline: [],
   }
   detail.timeline = timeline(detail)
@@ -261,4 +278,140 @@ export function metrics(
     responseRate: sent.length ? answered.length / sent.length : null,
     daysToFirstInterview: median(days),
   }
+}
+
+// ── materials the app edits ──────────────────────────────────────────────────
+
+/** Saves the cover letter after the person edits it in the app, keeping (or creating) its front matter. */
+export function saveLetter(slug: string, body: string, tone: string, language: string, now = new Date().toISOString()) {
+  requireSlug(slug)
+  const relative = `applications/${slug}/cover-letter.md`
+  const content = `---\ntone: ${tone}\nlanguage: ${language}\ngeneratedAt: ${now}\n---\n\n${body.trim()}\n`
+  const problems = validateFile(relative, content) ?? []
+  if (problems.length) throw new HttpError(422, problems.join(' '), 'invalid')
+  writeFileAtomic(workspacePath(relative), content)
+}
+
+/** Changes the template of a résumé (the only field the app writes in a file the AI owns). */
+export function setResumeTemplate(relative: string, template: string) {
+  const content = readText(relative)
+  if (content === null) throw new HttpError(404, 'Résumé not found.', 'not_found')
+  const next = `${JSON.stringify({ ...JSON.parse(content), template }, null, 2)}\n`
+  const problems = validateFile(relative, next) ?? []
+  if (problems.length) throw new HttpError(422, problems.join(' '), 'invalid')
+  writeFileAtomic(workspacePath(relative), next)
+}
+
+// ── overview ─────────────────────────────────────────────────────────────────
+
+/** The CV's text, for the ATS score of applications without a tailored résumé. */
+function cvText(): string | null {
+  return readText('profile/cv.md')
+}
+
+function jobBody(slug: string): string | null {
+  const job = readText(`applications/${slug}/job.md`)
+  return job === null ? null : (readFrontMatter(job)?.body ?? job)
+}
+
+export function atsFor(slug: string, resume: Resume | null, cv = cvText()): number | null {
+  const job = jobBody(slug)
+  if (!job) return null
+  if (resume) return atsReport(job, resumeText(resume), resumeChecks(resume)).score
+  return cv ? atsReport(job, cv).score : null
+}
+
+export function overview(): Overview {
+  const cv = cvText()
+  const apps: OverviewApplication[] = []
+  const recent: Overview['recent'] = []
+  for (const read of readApplications()) {
+    const a = read.application
+    if (!a) continue
+    const d = applicationDetail(a.slug)
+    apps.push({
+      slug: a.slug,
+      company: a.company,
+      role: a.role,
+      status: a.status,
+      workModel: a.workModel ?? null,
+      updatedAt: a.updatedAt,
+      fit: d.fit?.score ?? null,
+      hasJob: d.job !== null,
+      hasResume: d.resume !== null,
+      hasLetter: d.letter !== null,
+      hasSalary: d.salary !== null,
+      ats: atsFor(a.slug, d.resume, cv),
+      nextSteps: a.nextSteps.map((s) => ({ what: s.what, due: s.due ?? null, done: s.done })),
+      stages: a.stages.map((s) => ({ type: s.type, date: s.date ?? null, result: s.result })),
+      practice: d.interviews.flatMap((i) =>
+        i.session
+          ? [
+              {
+                id: i.id,
+                type: i.session.interviewType,
+                date: i.id.slice(0, 10),
+                score: i.feedback?.scores.length
+                  ? i.feedback.scores.reduce((sum, s) => sum + s.score, 0) / i.feedback.scores.length
+                  : null,
+              },
+            ]
+          : [],
+      ),
+      debriefs: d.debriefs.length,
+    })
+    // only what already happened: a next step due next week is not "recent activity"
+    const now = new Date().toISOString()
+    for (const e of d.timeline.filter((e) => e.at.slice(0, 10) <= now.slice(0, 10)).slice(0, 6)) {
+      recent.push({ ...e, slug: a.slug, company: a.company })
+    }
+  }
+  recent.sort((x, y) => (x.at < y.at ? 1 : x.at > y.at ? -1 : 0))
+  const profile = readText('profile/profile.json')
+  let profileName: string | null = null
+  try {
+    profileName = profile ? ((JSON.parse(profile) as { name?: string }).name ?? null) : null
+  } catch {
+    /* a broken profile shows its problems on the profile screen */
+  }
+  return {
+    applications: apps.sort((x, y) => (x.updatedAt < y.updatedAt ? 1 : -1)),
+    metrics: metrics(readApplications().flatMap((r) => (r.application ? [r.application] : []))),
+    recent: recent.slice(0, 10),
+    hasCv: Boolean(cv?.trim()),
+    hasBaseResume: existsSync(workspacePath('profile', 'resume.json')),
+    profileName,
+  }
+}
+
+// ── résumés and discoveries (workspace-level files) ──────────────────────────
+
+export function listResumes(): ResumeFile[] {
+  return entries('profile', 'files', '.json')
+    .filter((name) => /^resume(\.(en|pt-BR))?\.json$/.test(name))
+    .map((name) => {
+      const r = readJson<Resume>(`profile/${name}`, resumeSchema)
+      return { name, resume: r.data, problems: r.problems }
+    })
+}
+
+export function listDiscoveries(): DiscoveryFile[] {
+  return entries('discoveries', 'files', '.json')
+    .reverse()
+    .map((name) => {
+      const r = readJson<Discovery>(`discoveries/${name}`, discoverySchema)
+      return { name, discovery: r.data, problems: r.problems }
+    })
+}
+
+/** Marks one discovered job as saved or dismissed (the only field the app writes there). */
+export function setDiscoveryStatus(name: string, index: number, status: 'new' | 'saved' | 'dismissed') {
+  if (!/^\d{4}-\d{2}-\d{2}(-\d+)?\.json$/.test(name)) throw new HttpError(404, 'Search not found.', 'not_found')
+  const relative = `discoveries/${name}`
+  const r = readJson<Discovery>(relative, discoverySchema)
+  if (!r.data) throw new HttpError(409, 'This search file has problems.', 'invalid_file')
+  const job = r.data.jobs[index]
+  if (!job) throw new HttpError(404, 'Job not found.', 'not_found')
+  job.status = status
+  writeFileAtomic(workspacePath(relative), `${JSON.stringify(r.data, null, 2)}\n`)
 }

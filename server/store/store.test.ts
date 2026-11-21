@@ -40,7 +40,7 @@ describe('the workspace repository', () => {
 
   it('every fixture file is valid', () => {
     const reports = checkWorkspace()
-    expect(reports.length).toBe(10)
+    expect(reports.length).toBe(16)
     expect(reports.filter((r) => r.problems.length)).toEqual([])
   })
 

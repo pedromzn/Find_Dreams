@@ -236,3 +236,28 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
   on the shell PATH) and no longer `--hide-claude-auth`; an API key in the app is optional. Agents marked
   `usesPlanLimits` show a warning on "Your AI", in the run dialog and in the practice setup: tasks and interviews spend
   the person's plan limits. Rationale and the terms caveat in `docs/AGENTS-SUPPORT.md`; PLAN.md section 15 updated.
+
+### v2 — feature parity with job-search suites, and a new interface (2026-11-21)
+
+Plan: [`docs/PLAN-V2.md`](PLAN-V2.md). Benchmarked against aiapply.co's public pages.
+
+- **New workspace files**, all validated in `shared/workspace.ts`: `profile/resume.json` (+ `resume.<language>.json`)
+  and `applications/<slug>/resume.json` (`shared/resume.ts`), `cover-letter.md` and `salary.md` (front matter),
+  `follow-ups/<date>.md` (2–3 drafts, like reply drafts) and `discoveries/<date>.json` (`shared/discovery.ts`). The
+  app writes back only what the person changes on screen: a résumé's `template`, the letter's text, a discovered
+  job's `status`.
+- **New tasks and skills** (agent kit version 4): `tailor-resume` (base, translation or tailored — never inventing),
+  `cover-letter`, `follow-up`, `salary-research`, `find-jobs` (public job pages only; never LinkedIn).
+- **The ATS check is local and deterministic** (`shared/ats.ts`): the post's terms (a vocabulary plus the shapes of
+  technical names) weighted by section — requirements ×2, nice-to-have ×0.5 — matched as whole words without accents,
+  plus five structure checks. No AI, so it is instant, repeatable and free; the AI is what fixes the gaps.
+- **Not copied on purpose**: auto-apply and live interview coaching (PLAN.md §14). The "apply kit" on each
+  application gathers what to send and records that the person applied.
+- **Interface**: graphite surfaces in steps (dark) and a light theme (Settings: system/dark/light, mirrored in the
+  server's preferences like the language); each stage has its own color (`--st-*`), used across the funnel, cards and
+  badges; one type family (Instrument Sans; Fraunces removed); a labelled, collapsible sidebar mounted once as a
+  layout route; full width up to 1600 px. `contrast.test.ts` checks both themes and the stage colors against WCAG AA.
+- **Résumés and letters render as paper** in three templates (modern, Harvard, classic); "Export PDF" is the print
+  dialog with print CSS that leaves only the sheet — no PDF library, works in the browser and in Electron.
+- **`GET /api/overview`** feeds the home, résumés, letters, interviews and tools screens from one read of the
+  workspace (fine at personal scale: tens of applications).

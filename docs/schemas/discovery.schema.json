@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "criteria": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "sources": {
+      "minItems": 1,
+      "maxItems": 30,
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200
+      }
+    },
+    "jobs": {
+      "maxItems": 60,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2000,
+            "format": "uri"
+          },
+          "location": {
+            "default": "",
+            "type": "string",
+            "maxLength": 120
+          },
+          "workModel": {
+            "type": "string",
+            "enum": [
+              "remote",
+              "hybrid",
+              "onsite"
+            ]
+          },
+          "salary": {
+            "default": "",
+            "type": "string",
+            "maxLength": 120
+          },
+          "postedAt": {
+            "type": "string",
+            "format": "date",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+          },
+          "why": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          },
+          "match": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "status": {
+            "default": "new",
+            "type": "string",
+            "enum": [
+              "new",
+              "saved",
+              "dismissed"
+            ]
+          }
+        },
+        "required": [
+          "company",
+          "role",
+          "url",
+          "why",
+          "match"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "en",
+        "pt-BR"
+      ]
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+    }
+  },
+  "required": [
+    "criteria",
+    "sources",
+    "jobs",
+    "language",
+    "generatedAt"
+  ],
+  "additionalProperties": false
+}

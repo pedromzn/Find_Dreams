@@ -68,3 +68,13 @@ export function useLiveReload(reload: () => unknown, application?: string) {
     timer.current = window.setTimeout(() => void reload(), 250)
   })
 }
+
+/** Calls `reload` (debounced) when any workspace file changes: the overview screens show every application. */
+export function useAnyFileReload(reload: () => unknown) {
+  const timer = useRef<number | undefined>(undefined)
+  useServerEvents((e) => {
+    if (e.type !== 'file') return
+    window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => void reload(), 300)
+  })
+}
