@@ -13,8 +13,7 @@ import { useData } from '@/lib/api'
 import { useAnyFileReload } from '@/lib/events'
 import { useOverview } from '@/lib/overview'
 import { AiButton } from '@/agent/AgentActions'
-import { ResumeView } from '@/resume/ResumeView'
-import { AtsPanel, ResumeToolbar, TailoringChanges } from '@/resume/Studio'
+import { AtsPanel, ResumeDocument, TailoringChanges } from '@/resume/Studio'
 import { CompanyTile } from '@/pages/Board'
 
 function ListItem({
@@ -64,10 +63,7 @@ export function TailoredPreview({ slug }: { slug: string }) {
         <Problems problems={d.resumeProblems} file={`applications/${slug}/resume.json`} />
         {d.resume ? (
           <>
-            <ResumeToolbar file={`applications/${slug}/resume.json`} resume={d.resume} onChanged={detail.reload} />
-            <div className="print-area flex justify-center">
-              <ResumeView resume={d.resume} />
-            </div>
+            <ResumeDocument file={`applications/${slug}/resume.json`} resume={d.resume} onChanged={detail.reload} />
           </>
         ) : (
           <Empty icon={<MagicWand size={26} />} title={t.resume.noTailored}>
@@ -116,30 +112,33 @@ function BasePreview({ file, isBase, onChanged }: { file: ResumeFile; isBase: bo
       <Problems problems={file.problems} file={`profile/${file.name}`} />
       {file.resume && (
         <>
-          <ResumeToolbar file={`profile/${file.name}`} resume={file.resume} onChanged={onChanged} />
-          <div className="flex flex-wrap gap-2">
-            <AiButton
-              task="tailor-resume"
-              size="small"
-              language={file.resume.language}
-              icon={<ArrowsClockwise size={16} />}
-              label={t.resume.rebuild}
-              onDone={onChanged}
-            />
-            {isBase && other && (
-              <AiButton
-                task="tailor-resume"
-                size="small"
-                language={other}
-                icon={<Translate size={16} />}
-                label={t.resume.translate(LANGUAGE_DATA[other].name)}
-                onDone={onChanged}
-              />
-            )}
-          </div>
-          <div className="print-area flex justify-center">
-            <ResumeView resume={file.resume} />
-          </div>
+          <ResumeDocument
+            file={`profile/${file.name}`}
+            resume={file.resume}
+            onChanged={onChanged}
+            extra={
+              <div className="flex flex-wrap gap-2">
+                <AiButton
+                  task="tailor-resume"
+                  size="small"
+                  language={file.resume.language}
+                  icon={<ArrowsClockwise size={16} />}
+                  label={t.resume.rebuild}
+                  onDone={onChanged}
+                />
+                {isBase && other && (
+                  <AiButton
+                    task="tailor-resume"
+                    size="small"
+                    language={other}
+                    icon={<Translate size={16} />}
+                    label={t.resume.translate(LANGUAGE_DATA[other].name)}
+                    onDone={onChanged}
+                  />
+                )}
+              </div>
+            }
+          />
         </>
       )}
     </div>

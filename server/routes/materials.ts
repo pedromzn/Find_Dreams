@@ -17,6 +17,7 @@ import {
   listResumes,
   overview,
   saveLetter,
+  saveResume,
   setDiscoveryStatus,
   setResumeTemplate,
 } from '../store/applications.js'
@@ -37,6 +38,18 @@ materialsRouter.get(
 
 /** Only these files: the base résumé, its translations, and a tailored one inside an application. */
 const RESUME_FILE = /^(profile\/resume(\.(en|pt-BR))?\.json|applications\/[a-z0-9]+(-[a-z0-9]+)*\/resume\.json)$/
+
+materialsRouter.put(
+  '/resumes',
+  route((req, res) => {
+    const body = z
+      .object({ file: z.string().regex(RESUME_FILE), resume: z.record(z.string(), z.unknown()) })
+      .strict()
+      .parse(req.body)
+    saveResume(body.file, body.resume)
+    res.json({ data: { ok: true } })
+  }),
+)
 
 materialsRouter.put(
   '/resumes/template',

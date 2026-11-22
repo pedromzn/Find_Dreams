@@ -292,6 +292,15 @@ export function saveLetter(slug: string, body: string, tone: string, language: s
   writeFileAtomic(workspacePath(relative), content)
 }
 
+/** Saves a résumé the person edited in the app (validated like any file the AI writes) and marks it as edited. */
+export function saveResume(relative: string, resume: unknown, now = new Date().toISOString()) {
+  if (readText(relative) === null) throw new HttpError(404, 'Résumé not found.', 'not_found')
+  const next = `${JSON.stringify({ ...(resume as object), editedAt: now }, null, 2)}\n`
+  const problems = validateFile(relative, next) ?? []
+  if (problems.length) throw new HttpError(422, problems.join(' '), 'invalid')
+  writeFileAtomic(workspacePath(relative), next)
+}
+
 /** Changes the template of a résumé (the only field the app writes in a file the AI owns). */
 export function setResumeTemplate(relative: string, template: string) {
   const content = readText(relative)

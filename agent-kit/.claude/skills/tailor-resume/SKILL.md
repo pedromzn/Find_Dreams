@@ -21,6 +21,11 @@ and `company.md` if they exist. The format is `.mzn/schemas/resume.schema.json`.
 for the first résumé. Those names are only for translations of an existing base. When you write the base and a
 `profile/resume.<same language>.json` exists (an earlier mistake), delete that file: the base replaces it.
 
+**If the file you are replacing has `editedAt`, the person edited it by hand in the app.** Start from their version:
+keep their wording, facts and order wherever they still fit the task, and change only what the task needs (a
+tailoring, a translation). Rebuild from the CV from scratch only when the request's `details` ask for it. Drop
+`editedAt` from what you write (the app sets it again on the next edit).
+
 Keep the `template` of the file you are replacing, if any (the person chose it in the app); otherwise `"modern"`.
 
 ## The base résumé

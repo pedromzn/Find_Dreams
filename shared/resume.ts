@@ -93,6 +93,8 @@ export const resumeSchema = z
       .strict()
       .optional(),
     generatedAt: isoDateTime,
+    /** set by the app when the person edits the résumé by hand: the AI keeps their wording when it rebuilds */
+    editedAt: isoDateTime.optional(),
   })
   .strict()
 export type Resume = z.infer<typeof resumeSchema>

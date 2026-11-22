@@ -4,15 +4,27 @@
  */
 
 import { useState } from 'react'
-import { CheckCircle, Copy, Check, Printer, XCircle, Circle } from '@phosphor-icons/react'
+import { CheckCircle, Copy, Check, PencilSimple, Printer, XCircle, Circle } from '@phosphor-icons/react'
 import type { AtsReport } from '@shared/ats'
 import { RESUME_TEMPLATES, resumeText, type Resume, type ResumeTemplate } from '@shared/resume'
-import { Button, Loading, ScoreRing, Section, Segmented, join } from '@/components/ui'
+import { Badge, Button, Loading, ScoreRing, Section, Segmented, join } from '@/components/ui'
 import { useT } from '@/i18n'
 import { api, useData } from '@/lib/api'
 import { useLiveReload } from '@/lib/events'
+import { ResumeEditor } from './ResumeEditor'
+import { ResumeView } from './ResumeView'
 
-export function ResumeToolbar({ file, resume, onChanged }: { file: string; resume: Resume; onChanged: () => void }) {
+export function ResumeToolbar({
+  file,
+  resume,
+  onChanged,
+  onEdit,
+}: {
+  file: string
+  resume: Resume
+  onChanged: () => void
+  onEdit?: () => void
+}) {
   const t = useT()
   const [copied, setCopied] = useState(false)
   async function setTemplate(template: ResumeTemplate) {
@@ -36,7 +48,13 @@ export function ResumeToolbar({ file, resume, onChanged }: { file: string; resum
         onChange={(v) => void setTemplate(v)}
         options={RESUME_TEMPLATES.map((id) => ({ id, label: t.resume.templates[id] }))}
       />
+      {resume.editedAt && <Badge>{t.resume.editor.edited}</Badge>}
       <div className="ml-auto flex flex-wrap gap-2">
+        {onEdit && (
+          <Button size="small" icon={<PencilSimple size={16} />} onClick={onEdit}>
+            {t.resume.editor.edit}
+          </Button>
+        )}
         <Button variant="subtle" size="small" icon={copied ? <Check size={16} /> : <Copy size={16} />} onClick={copy}>
           {copied ? t.general.copied : t.resume.copyText}
         </Button>
@@ -157,5 +175,33 @@ export function AtsPanel({ slug, className }: { slug: string; className?: string
     <Section title={t.ats.title} note={t.ats.note} className={className}>
       {body}
     </Section>
+  )
+}
+
+/**
+ * A résumé on screen: the toolbar and the page, or — after "Edit" — the editor with its live preview. `extra` goes
+ * between the toolbar and the page (the AI actions of each screen).
+ */
+export function ResumeDocument({
+  file,
+  resume,
+  onChanged,
+  extra,
+}: {
+  file: string
+  resume: Resume
+  onChanged: () => void
+  extra?: React.ReactNode
+}) {
+  const [editing, setEditing] = useState(false)
+  if (editing) return <ResumeEditor file={file} resume={resume} onClose={() => setEditing(false)} onSaved={onChanged} />
+  return (
+    <>
+      <ResumeToolbar file={file} resume={resume} onChanged={onChanged} onEdit={() => setEditing(true)} />
+      {extra}
+      <div className="print-area flex justify-center">
+        <ResumeView resume={resume} />
+      </div>
+    </>
   )
 }

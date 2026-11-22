@@ -183,6 +183,20 @@ describe('v2: overview, résumés, ATS, letters, discoveries', () => {
     )
   })
 
+  it('saves a résumé edited by hand, marks it as edited, and refuses an invalid one', async () => {
+    const before = (await call('GET', '/resumes')).json.data[0].resume
+    const edited = { ...before, summary: 'Edited by hand in the app.' }
+    expect((await call('PUT', '/resumes', { file: 'profile/resume.json', resume: edited })).status).toBe(200)
+    const after = (await call('GET', '/resumes')).json.data[0].resume
+    expect(after.summary).toBe('Edited by hand in the app.')
+    expect(after.editedAt).toBeTruthy()
+    const broken = { ...before, experience: [{ company: 'X', role: 'Y', start: 'last year', bullets: [] }] }
+    const refused = await call('PUT', '/resumes', { file: 'profile/resume.json', resume: broken })
+    expect(refused.status).toBe(422)
+    expect(refused.json.error).toMatch(/YYYY/)
+    expect((await call('PUT', '/resumes', { file: '../secrets.json', resume: edited })).status).toBe(422)
+  })
+
   it('saves an edited letter with valid front matter', async () => {
     const { status } = await call('PUT', `/applications/${ACME}/letter`, {
       body: 'Hello team,\n\nEdited.\n\nAna',
