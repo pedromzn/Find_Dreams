@@ -10,11 +10,16 @@ and `company.md` if they exist. The format is `.mzn/schemas/resume.schema.json`.
 
 ## Which file
 
-| The request has…                                 | Write                                         |
-| ------------------------------------------------ | --------------------------------------------- |
-| an `application`                                 | `applications/<slug>/resume.json` (tailored)  |
-| no `application`, `language` = the CV's language | `profile/resume.json` (the base)              |
-| no `application`, `language` ≠ the base's        | `profile/resume.<language>.json` (translated) |
+| The request has…                                                    | Write                                         |
+| ------------------------------------------------------------------- | --------------------------------------------- |
+| an `application`                                                    | `applications/<slug>/resume.json` (tailored)  |
+| no `application`, and `profile/resume.json` does not exist yet      | `profile/resume.json` (the base)              |
+| no `application`, `profile/resume.json` exists in the same language | `profile/resume.json` (rebuild the base)      |
+| no `application`, `profile/resume.json` exists in another language  | `profile/resume.<language>.json` (translated) |
+
+**The base is always `profile/resume.json`**, whatever its language — never `resume.pt-BR.json` or `resume.en.json`
+for the first résumé. Those names are only for translations of an existing base. When you write the base and a
+`profile/resume.<same language>.json` exists (an earlier mistake), delete that file: the base replaces it.
 
 Keep the `template` of the file you are replacing, if any (the person chose it in the app); otherwise `"modern"`.
 

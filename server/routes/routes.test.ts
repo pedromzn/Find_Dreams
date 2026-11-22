@@ -1,5 +1,5 @@
 import express from 'express'
-import { cpSync, existsSync, readdirSync, readFileSync, rmSync } from 'node:fs'
+import { cpSync, existsSync, readdirSync, readFileSync, renameSync, rmSync } from 'node:fs'
 import type { AddressInfo } from 'node:net'
 import type { Server } from 'node:http'
 import path from 'node:path'
@@ -200,6 +200,17 @@ describe('v2: overview, résumés, ATS, letters, discoveries', () => {
     const files = (await call('GET', '/discoveries')).json.data
     expect(files[0].discovery.jobs[0].status).toBe('dismissed')
     expect((await call('PATCH', '/discoveries/../x.json/0', { status: 'saved' })).status).toBe(404)
+  })
+
+  it('a first résumé named resume.<language>.json still counts as the base', async () => {
+    const base = workspacePath('profile', 'resume.json')
+    const named = workspacePath('profile', 'resume.pt-BR.json')
+    renameSync(base, named)
+    try {
+      expect((await call('GET', '/overview')).json.data.hasBaseResume).toBe(true)
+    } finally {
+      renameSync(named, base)
+    }
   })
 
   it('keeps the theme preference', async () => {

@@ -108,7 +108,7 @@ export function TailoredPreview({ slug }: { slug: string }) {
   )
 }
 
-function BasePreview({ file, onChanged }: { file: ResumeFile; onChanged: () => void }) {
+function BasePreview({ file, isBase, onChanged }: { file: ResumeFile; isBase: boolean; onChanged: () => void }) {
   const t = useT()
   const other = file.resume ? LANGUAGES.find((l) => l !== file.resume!.language) : undefined
   return (
@@ -126,7 +126,7 @@ function BasePreview({ file, onChanged }: { file: ResumeFile; onChanged: () => v
               label={t.resume.rebuild}
               onDone={onChanged}
             />
-            {file.name === 'resume.json' && other && (
+            {isBase && other && (
               <AiButton
                 task="tailor-resume"
                 size="small"
@@ -157,10 +157,12 @@ export default function Resumes() {
   if (overview.error) return <ScreenError error={overview.error} onRetry={overview.reload} />
   if (!resumes.data || !overview.data) return <Loading />
 
-  const base = resumes.data.find((r) => r.name === 'resume.json')
-  const translations = resumes.data.filter((r) => r.name !== 'resume.json')
+  // the base is resume.json; without it, the first résumé in profile/ stands in (an AI may have named it
+  // resume.<language>.json), so the screen never says "no résumé" while showing one
+  const base = resumes.data.find((r) => r.name === 'resume.json') ?? resumes.data[0]
+  const translations = resumes.data.filter((r) => r !== base)
   const apps = overview.data.applications
-  const selected = params.get('show') ?? (base ? 'profile:resume.json' : apps[0] ? `app:${apps[0].slug}` : '')
+  const selected = params.get('show') ?? (base ? `profile:${base.name}` : apps[0] ? `app:${apps[0].slug}` : '')
   const select = (value: string) => setParams({ show: value }, { replace: true })
 
   if (!overview.data.hasCv) {
@@ -190,8 +192,8 @@ export default function Resumes() {
             <p className="px-3 pt-1 pb-1.5 text-[12.5px] font-medium text-faint">{t.resume.base}</p>
             {base ? (
               <ListItem
-                active={selected === 'profile:resume.json'}
-                onClick={() => select('profile:resume.json')}
+                active={selected === `profile:${base.name}`}
+                onClick={() => select(`profile:${base.name}`)}
                 title={base.resume?.basics.name ?? base.name}
                 note={
                   base.resume
@@ -207,9 +209,10 @@ export default function Resumes() {
                   task="tailor-resume"
                   variant="main"
                   size="small"
-                  icon={<MagicWand size={16} />}
+                  icon={<MagicWand size={16} className="shrink-0" />}
                   label={t.resume.build}
                   onDone={resumes.reload}
+                  className="h-auto min-h-9 w-full py-2 text-left leading-snug"
                 />
               </div>
             )}
@@ -246,7 +249,7 @@ export default function Resumes() {
 
         <div className="min-w-0">
           {shownProfile ? (
-            <BasePreview file={shownProfile} onChanged={resumes.reload} />
+            <BasePreview file={shownProfile} isBase={shownProfile === base} onChanged={resumes.reload} />
           ) : shownApp ? (
             <TailoredPreview key={shownApp} slug={shownApp} />
           ) : (

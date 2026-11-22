@@ -379,7 +379,8 @@ export function overview(): Overview {
     metrics: metrics(readApplications().flatMap((r) => (r.application ? [r.application] : []))),
     recent: recent.slice(0, 10),
     hasCv: Boolean(cv?.trim()),
-    hasBaseResume: existsSync(workspacePath('profile', 'resume.json')),
+    // any résumé in profile/ counts: an AI may have named the first one resume.<language>.json
+    hasBaseResume: listResumes().some((r) => r.resume !== null),
     profileName,
   }
 }
