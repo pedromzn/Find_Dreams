@@ -162,9 +162,18 @@ export class AgentSession {
     this.pending.clear()
     this.connection?.close()
     if (this.child && this.child.exitCode === null) {
-      this.child.kill()
       const child = this.child
-      setTimeout(() => child.exitCode === null && child.kill('SIGKILL'), 3000).unref()
+      if (process.platform === 'win32' && child.pid) {
+        // on Windows the agent runs under cmd.exe (shell: true): killing the shell would orphan the agent, which keeps
+        // running and keeps the workspace folder locked. End the whole tree.
+        spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true }).on(
+          'error',
+          () => child.kill(),
+        )
+      } else {
+        child.kill()
+        setTimeout(() => child.exitCode === null && child.kill('SIGKILL'), 3000).unref()
+      }
     }
     this.connection = null
     this.child = null
