@@ -1,6 +1,6 @@
-# Every push to main and every pull request: formatting and types, the tests on the three systems and the production
-# build. Pull requests also get a dependency review. Later phases add the privacy check, the deterministic evals and
-# the desktop build.
+# Every push to main and every pull request: formatting, types, the privacy check and the schemas; the tests, the
+# fixture validation and the recorded evals on the three systems; and the production build. Pull requests also get a
+# dependency review. The installers are built by release.yml, on a version tag.
 name: CI
 
 on:
