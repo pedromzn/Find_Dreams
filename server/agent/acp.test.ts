@@ -106,16 +106,20 @@ describe('the ACP client against a real subprocess', () => {
     expect(() => insideWorkspace('.MZN/session.json')).toThrow()
   })
 
-  it('the file guard follows links: a symlink inside the workspace cannot lead outside it', () => {
-    mkdirSync(config.workspaceFolder, { recursive: true })
-    const outside = mkdtempSync(path.join(tmpdir(), 'mzn-outside-'))
-    try {
-      symlinkSync(outside, path.join(config.workspaceFolder, 'escape'), 'dir')
-      expect(() => insideWorkspace('escape/file.txt')).toThrow()
-    } finally {
-      rmSync(outside, { recursive: true, force: true })
-    }
-  })
+  // creating a symlink needs admin rights (or developer mode) on Windows
+  it.skipIf(process.platform === 'win32')(
+    'the file guard follows links: a symlink inside the workspace cannot lead outside it',
+    () => {
+      mkdirSync(config.workspaceFolder, { recursive: true })
+      const outside = mkdtempSync(path.join(tmpdir(), 'mzn-outside-'))
+      try {
+        symlinkSync(outside, path.join(config.workspaceFolder, 'escape'), 'dir')
+        expect(() => insideWorkspace('escape/file.txt')).toThrow()
+      } finally {
+        rmSync(outside, { recursive: true, force: true })
+      }
+    },
+  )
 })
 
 describe('runs', () => {
