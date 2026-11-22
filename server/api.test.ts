@@ -23,7 +23,7 @@ function call(route: string, init: RequestInit & { token?: string | null; origin
 }
 
 beforeAll(async () => {
-  rmSync(config.workspaceFolder, { recursive: true, force: true })
+  rmSync(config.workspaceFolder, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   cpSync(path.join(config.root, 'test', 'fixtures', 'sample-workspace'), config.workspaceFolder, { recursive: true })
   setDb(openDb(':memory:'))
   const app = mountApi(express(), TOKEN)

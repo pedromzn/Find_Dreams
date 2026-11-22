@@ -37,7 +37,8 @@ afterAll(() => {
 })
 
 beforeEach(() => {
-  rmSync(config.workspaceFolder, { recursive: true, force: true })
+  // Windows keeps a folder locked for a moment after the fake agent (whose cwd it was) exits: retry the removal
+  rmSync(config.workspaceFolder, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   rmSync(path.join(config.workspaceFolder, '..', 'escape.md'), { force: true })
 })
 

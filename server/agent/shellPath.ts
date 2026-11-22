@@ -64,10 +64,13 @@ export async function childEnv(extra: Record<string, string> = {}): Promise<Node
 /** The absolute path of an executable on the merged PATH, or null. */
 export async function which(binary: string): Promise<string | null> {
   const dirs = (await shellPath()).split(path.delimiter)
-  const extensions = process.platform === 'win32' ? (process.env.PATHEXT ?? '.EXE;.CMD;.BAT').split(';') : ['']
+  const pathext = (process.env.PATHEXT ?? '.EXE;.CMD;.BAT').split(';').map((e) => e.toLowerCase())
+  // on Windows a name may come with its extension already ("node.exe"): look it up as is, not as "node.exe.exe"
+  const extensions =
+    process.platform !== 'win32' ? [''] : pathext.includes(path.extname(binary).toLowerCase()) ? [''] : pathext
   for (const dir of dirs) {
     for (const ext of extensions) {
-      const candidate = path.join(dir, binary + ext.toLowerCase())
+      const candidate = path.join(dir, binary + ext)
       try {
         if (!statSync(candidate).isFile()) continue
         if (process.platform !== 'win32') accessSync(candidate, constants.X_OK)

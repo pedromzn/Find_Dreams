@@ -56,7 +56,7 @@ afterAll(() => {
   setDb(null)
 })
 beforeEach(() => {
-  rmSync(config.workspaceFolder, { recursive: true, force: true })
+  rmSync(config.workspaceFolder, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   cpSync(path.join(config.root, 'test', 'fixtures', 'sample-workspace'), config.workspaceFolder, { recursive: true })
   installKit()
 })

@@ -12,7 +12,7 @@ const appFile = () => workspacePath('applications', SLUG, 'application.json')
 let db: DatabaseSync
 
 beforeEach(() => {
-  rmSync(config.workspaceFolder, { recursive: true, force: true })
+  rmSync(config.workspaceFolder, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 })
   cpSync(path.join(config.root, 'test', 'fixtures', 'sample-workspace'), config.workspaceFolder, { recursive: true })
   db = openDb(':memory:')
 })
