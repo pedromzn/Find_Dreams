@@ -1,11 +1,12 @@
 /**
  * New application: from a link (the server reads public job boards; LinkedIn and other login walls are refused) or
- * from pasted text. Either way the person reviews the fields and the post before anything is saved.
+ * by pasting the whole job page (⌘A ⌘C): `parsePastedJob` finds the post and its facts in the copy, locally. Either
+ * way the person reviews the fields and the post before anything is saved.
  */
 
 import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { DownloadSimple } from '@phosphor-icons/react'
+import { ArrowSquareOut, CheckCircle, ClipboardText, DownloadSimple } from '@phosphor-icons/react'
 import type { CapturedJob } from '@shared/api'
 import {
   SOURCES,
@@ -16,6 +17,7 @@ import {
   type Status,
 } from '@shared/application'
 import { PAY_PERIODS, WORK_MODELS, type WorkModel } from '@shared/common'
+import { parsePastedJob } from '@shared/pastedJob'
 import { Button, ErrorLine, Field, Header, Input, Panel, Select, Tabs, TextArea } from '@/components/ui'
 import { useT } from '@/i18n'
 import { api, ApiError } from '@/lib/api'
@@ -23,6 +25,10 @@ import { api, ApiError } from '@/lib/api'
 type Mode = 'link' | 'text'
 
 const today = () => new Date().toISOString().slice(0, 10)
+const COPY_KEYS =
+  typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform) ? '⌘A, ⌘C' : 'Ctrl+A, Ctrl+C'
+
+type Found = Array<'role' | 'company' | 'location' | 'workModel' | 'salary'>
 
 export default function NewApplication() {
   const t = useT()
@@ -49,6 +55,59 @@ export default function NewApplication() {
     jobMarkdown: '',
   })
   const set = (patch: Partial<typeof form>) => setForm((f) => ({ ...f, ...patch }))
+  const [pasted, setPasted] = useState('')
+  const [found, setFound] = useState<Found | null>(null)
+  const [loginWall, setLoginWall] = useState(false)
+  // what the last paste filled in: a new paste may replace those values, never what the person typed
+  const [auto, setAuto] = useState<Partial<typeof form>>({})
+
+  function readPaste(text: string) {
+    setPasted(text)
+    if (!text.trim()) {
+      setFound(null)
+      return
+    }
+    const job = parsePastedJob(text)
+    const fill: Partial<typeof form> = {
+      role: job.role,
+      company: job.company,
+      location: job.location,
+      workModel: job.workModel ?? '',
+      jobMarkdown: job.markdown,
+      ...(job.source ? { source: job.source } : {}),
+      ...(job.salary
+        ? {
+            salaryMin: String(job.salary.min ?? ''),
+            salaryMax: String(job.salary.max ?? ''),
+            currency: job.salary.currency,
+            period: job.salary.period,
+          }
+        : {}),
+    }
+    const next: Partial<typeof form> = {}
+    for (const [k, v] of Object.entries(fill) as Array<[keyof typeof form, string]>) {
+      const current = form[k]
+      if (v && (current === '' || current === auto[k] || k === 'jobMarkdown' || k === 'source')) {
+        ;(next as Record<string, string>)[k] = v
+      }
+    }
+    set(next)
+    setAuto(fill)
+    setFound(
+      (['role', 'company', 'location', 'workModel', 'salary'] as const).filter((k) =>
+        k === 'salary' ? job.salary !== null : k === 'workModel' ? job.workModel !== null : Boolean(job[k]),
+      ),
+    )
+  }
+
+  async function pasteFromClipboard() {
+    setError(null)
+    try {
+      readPaste(await navigator.clipboard.readText())
+    } catch {
+      setError(n.clipboardDenied)
+    }
+  }
 
   async function fetchJob() {
     setFetching(true)
@@ -66,10 +125,13 @@ export default function NewApplication() {
       })
     } catch (e) {
       if (e instanceof ApiError && e.code === 'login_required') {
+        // not an error to the person: the paste flow below takes it from here
         set({ url: link, source: /linkedin/.test(link) ? 'linkedin' : 'other' })
+        setLoginWall(true)
         setMode('text')
+      } else {
+        setError((e as Error).message)
       }
-      setError((e as Error).message)
     } finally {
       setFetching(false)
     }
@@ -139,6 +201,71 @@ export default function NewApplication() {
               </div>
             )}
           </Field>
+        </Panel>
+      )}
+      {mode === 'text' && (
+        <Panel className="flex flex-col gap-4 p-5">
+          {loginWall && (
+            <div className="rounded-tile border border-st-applied/40 bg-st-applied/8 p-4">
+              <p className="text-[14px] font-medium text-text">{n.linkedinTitle}</p>
+              <ol className="mt-2 flex flex-col gap-1.5 text-[14px] text-muted">
+                {n.linkedinSteps(COPY_KEYS).map((step, i) => (
+                  <li key={step} className="flex items-center gap-2.5">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-st-applied/20 text-[12px] font-semibold text-st-applied">
+                      {i + 1}
+                    </span>
+                    {step}
+                    {i === 0 && form.url && (
+                      <a
+                        href={form.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[13.5px] font-medium"
+                      >
+                        {n.openPost}
+                        <ArrowSquareOut size={14} />
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+          <div>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <label htmlFor="pasted" className="font-medium text-text">
+                {n.pasteTitle}
+              </label>
+              <Button variant="subtle" size="small" icon={<ClipboardText size={16} />} onClick={pasteFromClipboard}>
+                {n.pasteButton}
+              </Button>
+            </div>
+            <p className="mt-1 text-[13px] text-faint">{n.pasteNote(COPY_KEYS)}</p>
+          </div>
+          <TextArea
+            id="pasted"
+            value={pasted}
+            onChange={(e) => readPaste(e.target.value)}
+            placeholder={n.pastePlaceholder}
+            className="min-h-36"
+          />
+          {found &&
+            (found.length > 0 ? (
+              <p className="flex flex-wrap items-center gap-1.5 text-[13.5px] text-muted">
+                <CheckCircle size={17} weight="fill" className="text-success" aria-hidden />
+                {n.found}
+                {found.map((k) => (
+                  <span
+                    key={k}
+                    className="rounded-pill border border-success/35 bg-success/8 px-2 py-0.5 text-[12.5px] text-success"
+                  >
+                    {n.foundFields[k]}
+                  </span>
+                ))}
+              </p>
+            ) : (
+              <p className="text-[13.5px] text-warning">{n.notFound}</p>
+            ))}
         </Panel>
       )}
       <ErrorLine message={error} />

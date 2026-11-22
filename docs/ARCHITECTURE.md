@@ -270,3 +270,14 @@ Plan: [`docs/PLAN-V2.md`](PLAN-V2.md). Benchmarked against aiapply.co's public p
 - Internal identifiers stay `mzn-vagas` for now: npm package, `appId`, the workspace's `.mzn/` folder, `MZN_*`
   variables, the `X-MZN-Token` header and `localStorage` keys. Renaming those would break existing workspaces and
   settings for no visible gain; the GitHub repository name is decided when it is created.
+
+### Pasting a whole job page (2026-11-21)
+
+- LinkedIn stays unread by the app (login wall, terms). Instead, a new application accepts the whole page copied with
+  ⌘A ⌘C: `shared/pastedJob.ts` finds the description between LinkedIn's "About the job / Sobre a vaga" and its end
+  markers, drops page chrome, and reads role, company, place, work model and pay from the top card. Pure and local —
+  the text never leaves the machine, no AI needed. Other pages get a plain clean-up.
+- A paste only fills fields that are empty or that the previous paste filled; what the person typed is never
+  overwritten.
+- The desktop window may read the clipboard (`clipboard-read`, app origin only) for the "paste from the clipboard"
+  button; it reads only on that click.

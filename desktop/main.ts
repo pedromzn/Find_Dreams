@@ -2,7 +2,7 @@
  * The Find Dreams desktop app (Electron main process). It runs the SAME server as `npm start` — `createApp()` — on
  * 127.0.0.1 with a random port and a per-launch API token, and opens a hardened window on it:
  * contextIsolation, no Node in the page, sandbox, a minimal preload, a CSP, external links in the system browser,
- * only the microphone permission (voice interviews), and only for the app's own origin.
+ * only the microphone (voice interviews) and clipboard-read permissions, and only for the app's own origin.
  *
  * Paths: the workspace (the person's data) defaults to `~/Documents/Find Dreams`; the app's own state, the voice
  * engines and the keychain-encrypted keys live in `userData`; the agent kit and the voice scripts ship as extra
@@ -24,6 +24,12 @@ import {
 } from './settings.js'
 import { keychainStore } from './secrets.js'
 import { startUpdater } from './updater.js'
+
+/**
+ * What the app's own page may ask for: the microphone (voice interviews) and reading the clipboard (the "paste from
+ * the clipboard" button of a new application, which reads only when the person clicks it).
+ */
+const ALLOWED_PERMISSIONS = new Set(['media', 'clipboard-read'])
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const resources = app.isPackaged ? process.resourcesPath : path.resolve(here, '..')
@@ -72,10 +78,10 @@ async function start() {
   })
   session.defaultSession.setPermissionRequestHandler((contents, permission, allow, details) => {
     const fromApp = isAppUrl(details.requestingUrl ?? contents.getURL(), origin)
-    allow(fromApp && permission === 'media')
+    allow(fromApp && ALLOWED_PERMISSIONS.has(permission))
   })
   session.defaultSession.setPermissionCheckHandler(
-    (_contents, permission, requestingOrigin) => requestingOrigin === origin && permission === 'media',
+    (_contents, permission, requestingOrigin) => requestingOrigin === origin && ALLOWED_PERMISSIONS.has(permission),
   )
 
   window = new BrowserWindow({
