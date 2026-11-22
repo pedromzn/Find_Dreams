@@ -11,7 +11,8 @@
  *    `index.html` the server itself serves (same origin: another site cannot read it), so it works the same in the
  *    browser (dev) and in the Electron window.
  *
- * The token is random per process (or `MZN_API_TOKEN`, set by the desktop main process). Rotating it is a restart.
+ * The token is random per process (or `MZN_API_TOKEN`, for a fixed one in development — removed from the environment as
+ * soon as it is read, so no child process inherits it). Rotating it is a restart.
  */
 
 import { randomBytes, timingSafeEqual } from 'node:crypto'
@@ -21,6 +22,8 @@ export const TOKEN_HEADER = 'x-mzn-token'
 export const TOKEN_META = 'mzn-token'
 
 export const sessionToken: string = process.env.MZN_API_TOKEN || randomBytes(32).toString('base64url')
+// never leave it in the environment: every agent the app starts inherits it, and the AI must not get the page's session
+delete process.env.MZN_API_TOKEN
 
 /**
  * A second, narrow token for the AI's validator (`.mzn/session.json`): it opens `POST /api/validate` and nothing else.

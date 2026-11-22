@@ -10,7 +10,6 @@
  */
 
 import { app, BrowserWindow, dialog, ipcMain, safeStorage, session, shell } from 'electron'
-import { randomBytes } from 'node:crypto'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { AddressInfo } from 'node:net'
@@ -50,7 +49,6 @@ function prepareEnvironment() {
   process.env.MZN_DATA = userData
   process.env.MZN_AGENT_KIT = path.join(resources, 'agent-kit')
   process.env.MZN_VOICE_SCRIPTS = path.join(resources, 'voice')
-  process.env.MZN_API_TOKEN = randomBytes(32).toString('base64url')
   process.env.HOST = '127.0.0.1'
 }
 
