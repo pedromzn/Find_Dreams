@@ -11,12 +11,13 @@
  */
 
 import { createHash } from 'node:crypto'
-import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync } from 'node:fs'
 import path from 'node:path'
 import { z } from 'zod'
 import { SCHEMAS } from '../../shared/workspace.js'
 import { config } from '../config.js'
 import { HttpError } from '../errors.js'
+import { validateToken } from '../security.js'
 import { workspacePath, writeFileAtomic } from '../store/workspace.js'
 
 export interface KitStatus {
@@ -48,9 +49,19 @@ export function kitFiles(folder = config.agentKitFolder, prefix = ''): string[] 
 
 export const kitVersion = () => readFileSync(path.join(config.agentKitFolder, 'VERSION'), 'utf8').trim()
 
+/**
+ * The manifest lives in the workspace, where the AI can write: never trust its paths. Only real kit files survive the
+ * read, so a planted `../../somewhere` can never reach a write or a delete.
+ */
 function readManifest(): Manifest | null {
   try {
-    return manifestSchema.parse(JSON.parse(readFileSync(workspacePath('.mzn', 'agent-kit.json'), 'utf8')))
+    const raw = manifestSchema.parse(JSON.parse(readFileSync(workspacePath('.mzn', 'agent-kit.json'), 'utf8')))
+    const known = new Set(kitFiles())
+    return {
+      version: raw.version,
+      files: Object.fromEntries(Object.entries(raw.files).filter(([f]) => known.has(f))),
+      conflicts: raw.conflicts.filter((f) => known.has(f)),
+    }
   } catch {
     return null
   }
@@ -106,7 +117,10 @@ export function kitStatus(): KitStatus {
 /** The person chose: `replace` takes the new version (`.new`), `keep` keeps theirs. */
 export function resolveConflict(file: string, choice: 'replace' | 'keep'): KitStatus {
   const manifest = readManifest()
-  if (!manifest?.conflicts.includes(file)) throw new HttpError(404, 'No such conflict.', 'not_found')
+  // the file must be a real kit file (the manifest is already filtered, but say it here too: this path is written)
+  if (!kitFiles().includes(file) || !manifest?.conflicts.includes(file)) {
+    throw new HttpError(404, 'No such conflict.', 'not_found')
+  }
   const target = workspacePath(file)
   const fresh = readFileSync(path.join(config.agentKitFolder, file))
   if (choice === 'replace') writeFileAtomic(target, fresh.toString('utf8'))
@@ -122,7 +136,8 @@ function writeSchemas() {
   mkdirSync(folder, { recursive: true })
   for (const [name, schema] of Object.entries(SCHEMAS)) {
     const json = z.toJSONSchema(schema, { io: 'input', unrepresentable: 'any' })
-    writeFileSync(path.join(folder, `${name}.schema.json`), `${JSON.stringify(json, null, 2)}\n`)
+    // temp file + rename: a symlink planted at the target is replaced, never followed
+    writeFileAtomic(path.join(folder, `${name}.schema.json`), `${JSON.stringify(json, null, 2)}\n`)
   }
 }
 
@@ -187,9 +202,17 @@ console.log(problems ? '\\n' + problems + ' problem(s).' : '\\nAll valid.')
 process.exit(problems ? 1 : 0)
 `
 
-/** Called once the server listens: the port is only known then (random in the desktop app). */
-export function writeSession(port: number, token: string) {
-  writeFileAtomic(workspacePath('.mzn', 'session.json'), `${JSON.stringify({ port, token, pid: process.pid })}\n`)
+/**
+ * Called once the server listens: the port is only known then (random in the desktop app). The token written here is
+ * the narrow VALIDATE token, which only opens \`/api/validate\` (\`security.ts\`): the AI reads this file and must not
+ * get the page's full session (the CV, salary, messages). Readable by the person's user only.
+ */
+export function writeSession(port: number, token: string = validateToken) {
+  writeFileAtomic(
+    workspacePath('.mzn', 'session.json'),
+    `${JSON.stringify({ port, token, pid: process.pid })}\n`,
+    0o600,
+  )
   writeFileAtomic(workspacePath('.mzn', 'validate.mjs'), VALIDATOR)
 }
 

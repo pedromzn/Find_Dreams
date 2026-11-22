@@ -67,10 +67,10 @@ export async function createApp({ token = sessionToken }: { token?: string } = {
  * session file the AI's validator reads, and the watcher that keeps the page live. A failure here never stops the
  * app — it only means the AI side is degraded, and the log says why.
  */
-export function startServices(port: number, token: string = sessionToken): () => void {
+export function startServices(port: number): () => void {
   try {
     installKit()
-    writeSession(port, token)
+    writeSession(port)
   } catch (error) {
     log.warn('agent kit not installed', { error })
   }

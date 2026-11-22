@@ -99,10 +99,10 @@ export function readApplications(): ReadApplication[] {
  * Writes a whole file atomically (temp file + rename): the AI or the file watcher never read half a JSON, and a crash
  * mid-write leaves the old version intact.
  */
-export function writeFileAtomic(absolute: string, content: string): void {
+export function writeFileAtomic(absolute: string, content: string, mode?: number): void {
   mkdirSync(path.dirname(absolute), { recursive: true })
   const temporary = `${absolute}.${process.pid}.tmp`
-  writeFileSync(temporary, content)
+  writeFileSync(temporary, content, mode === undefined ? undefined : { mode })
   renameSync(temporary, absolute)
 }
 

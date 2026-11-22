@@ -22,6 +22,12 @@ export const TOKEN_META = 'mzn-token'
 
 export const sessionToken: string = process.env.MZN_API_TOKEN || randomBytes(32).toString('base64url')
 
+/**
+ * A second, narrow token for the AI's validator (`.mzn/session.json`): it opens `POST /api/validate` and nothing else.
+ * The AI can read that file; it must not get the page's session, which reads the CV, the salary and the messages.
+ */
+export const validateToken: string = randomBytes(32).toString('base64url')
+
 const LOCAL_HOSTNAMES = new Set(['127.0.0.1', 'localhost', '[::1]'])
 
 /** `127.0.0.1:3060` → `127.0.0.1`; `[::1]:3060` → `[::1]`. Null when the header is malformed. */
@@ -63,12 +69,14 @@ function sameToken(given: string, expected: string): boolean {
 }
 
 /** Every `/api` route requires the session token. */
-export function requireToken(expected: string = sessionToken): RequestHandler {
+export function requireToken(expected: string = sessionToken, narrow: string = validateToken): RequestHandler {
   return (req, res, next) => {
     // EventSource cannot send headers: only the event stream takes the token in the query string
     const fromQuery = req.method === 'GET' && req.path === '/events' ? req.query.token : undefined
     const given = req.headers[TOKEN_HEADER] ?? fromQuery
-    if (typeof given !== 'string' || !sameToken(given, expected)) {
+    const validator =
+      req.method === 'POST' && req.path === '/validate' && typeof given === 'string' && sameToken(given, narrow)
+    if (!validator && (typeof given !== 'string' || !sameToken(given, expected))) {
       res.status(401).json({ error: 'Missing or wrong session token.', code: 'unauthorized' })
       return
     }

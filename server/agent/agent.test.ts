@@ -1,13 +1,14 @@
 import { execFile } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import express from 'express'
-import { cpSync, existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import type { AddressInfo } from 'node:net'
 import type { Server } from 'node:http'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { promisify } from 'node:util'
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { validateToken } from '../security.js'
 import { config } from '../config.js'
 import { mountApi } from '../main.js'
 import { openDb, setDb } from '../store/db.js'
@@ -143,6 +144,32 @@ describe('the AI validator (.mzn/validate.mjs)', () => {
       (e) => e,
     )
     expect(all.stdout).toMatch(/problem\(s\)/)
+  })
+
+  it('the session file holds a narrow token: it opens /api/validate and nothing else', async () => {
+    writeSession(port)
+    const session = workspacePath('.mzn', 'session.json')
+    const { token } = JSON.parse(readFileSync(session, 'utf8')) as { token: string }
+    expect(token).toBe(validateToken)
+    if (process.platform !== 'win32') expect(statSync(session).mode & 0o777).toBe(0o600)
+    const validate = await fetch(`http://127.0.0.1:${port}/api/validate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-MZN-Token': token },
+      body: JSON.stringify({ all: true }),
+    })
+    expect(validate.status).toBe(200)
+    const profile = await fetch(`http://127.0.0.1:${port}/api/profile`, { headers: { 'X-MZN-Token': token } })
+    expect(profile.status).toBe(401)
+  })
+
+  it('never trusts the paths in the kit manifest (the AI can write it)', () => {
+    installKit()
+    writeFileSync(
+      workspacePath('.mzn', 'agent-kit.json'),
+      JSON.stringify({ version: '1', files: { '../escape.txt': 'x' }, conflicts: ['../escape.txt'] }),
+    )
+    expect(kitStatus().conflicts).toEqual([])
+    expect(() => resolveConflict('../escape.txt', 'replace')).toThrow(/No such conflict/)
   })
 
   it('says the app is not running when there is no session', async () => {
