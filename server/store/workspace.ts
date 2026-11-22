@@ -6,6 +6,7 @@
  * AI could create one pointing outside the workspace), and `.mzn/` (the app's internal state) is never listed.
  */
 
+import { randomBytes } from 'node:crypto'
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { applicationSchema, type Application, type ApplicationInput } from '../../shared/application.js'
@@ -101,8 +102,13 @@ export function readApplications(): ReadApplication[] {
  */
 export function writeFileAtomic(absolute: string, content: string, mode?: number): void {
   mkdirSync(path.dirname(absolute), { recursive: true })
-  const temporary = `${absolute}.${process.pid}.tmp`
-  writeFileSync(temporary, content, mode === undefined ? undefined : { mode })
+  // an unpredictable temp name, created exclusively ('wx' fails on anything already there, a symlink included): the
+  // AI writes in this folder too, and a link planted at a predictable name would redirect the write
+  const temporary = path.join(
+    path.dirname(absolute),
+    `.${path.basename(absolute)}.${randomBytes(8).toString('hex')}.tmp`,
+  )
+  writeFileSync(temporary, content, { flag: 'wx', ...(mode === undefined ? {} : { mode }) })
   renameSync(temporary, absolute)
 }
 
