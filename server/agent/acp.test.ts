@@ -1,4 +1,5 @@
-import { existsSync, readFileSync, rmSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, symlinkSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { config } from '../config.js'
@@ -96,11 +97,24 @@ describe('the ACP client against a real subprocess', () => {
 
   it('the file guard: only inside the workspace, never .mzn', () => {
     expect(insideWorkspace('applications/x/fit.json')).toBe(
-      path.join(config.workspaceFolder, 'applications/x/fit.json'),
+      path.join(realpathSync(config.workspaceFolder), 'applications/x/fit.json'),
     )
     expect(() => insideWorkspace('../outside.txt')).toThrow()
     expect(() => insideWorkspace('/etc/passwd')).toThrow()
     expect(() => insideWorkspace('.mzn/session.json')).toThrow()
+    // the same folder on macOS and Windows
+    expect(() => insideWorkspace('.MZN/session.json')).toThrow()
+  })
+
+  it('the file guard follows links: a symlink inside the workspace cannot lead outside it', () => {
+    mkdirSync(config.workspaceFolder, { recursive: true })
+    const outside = mkdtempSync(path.join(tmpdir(), 'mzn-outside-'))
+    try {
+      symlinkSync(outside, path.join(config.workspaceFolder, 'escape'), 'dir')
+      expect(() => insideWorkspace('escape/file.txt')).toThrow()
+    } finally {
+      rmSync(outside, { recursive: true, force: true })
+    }
   })
 })
 

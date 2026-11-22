@@ -8,7 +8,7 @@
  */
 
 import { spawn, type ChildProcess } from 'node:child_process'
-import { mkdirSync, readFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, realpathSync } from 'node:fs'
 import path from 'node:path'
 import { Readable, Writable } from 'node:stream'
 import * as acp from '@agentclientprotocol/sdk'
@@ -30,11 +30,23 @@ type PermissionPolicy = 'ask' | 'allow_once' | 'reject'
 
 /** A file the agent may read or write through the client: inside the workspace, outside `.mzn/`. */
 export function insideWorkspace(file: string): string {
-  const absolute = path.resolve(config.workspaceFolder, file)
-  const relative = path.relative(config.workspaceFolder, absolute)
-  if (relative.startsWith('..') || path.isAbsolute(relative) || relative.split(path.sep)[0] === '.mzn') {
-    throw acp.RequestError.invalidParams({ path: file }, 'Outside the workspace.')
+  const refuse = () => acp.RequestError.invalidParams({ path: file }, 'Outside the workspace.')
+  mkdirSync(config.workspaceFolder, { recursive: true })
+  const workspace = realpathSync(config.workspaceFolder)
+  // links resolved on the deepest folder that exists: a symlink inside the workspace must not lead outside it
+  let existing = path.resolve(workspace, file)
+  const rest: string[] = []
+  while (!existsSync(existing)) {
+    rest.unshift(path.basename(existing))
+    const parent = path.dirname(existing)
+    if (parent === existing) throw refuse()
+    existing = parent
   }
+  const absolute = path.join(realpathSync(existing), ...rest)
+  const relative = path.relative(workspace, absolute)
+  // case-insensitive: on macOS and Windows ".MZN" is the same folder as ".mzn"
+  const first = relative.split(path.sep)[0]?.toLowerCase()
+  if (!relative || relative.startsWith('..') || path.isAbsolute(relative) || first === '.mzn') throw refuse()
   return absolute
 }
 
