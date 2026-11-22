@@ -1,4 +1,4 @@
-# MZN Vagas v2 — paridade de funcionalidades e nova interface
+# Find Dreams v2 — paridade de funcionalidades e nova interface
 
 Plano de 21/11/2026. Continua o `docs/PLAN.md` (fases 0–8, todas feitas) e respeita as mesmas regras: tudo local, a
 IA é a da pessoa (ACP ou prompt colado), os dados são arquivos validados por zod, nada é enviado em nome de ninguém.
@@ -8,7 +8,7 @@ IA é a da pessoa (ACP ou prompt colado), os dados são arquivos validados por z
 Inventário feito em 21/11/2026 a partir das páginas públicas (`/pt`, resume-builder, cover-letter-generator,
 ai-job-interview, interview-answer-buddy, auto-apply).
 
-| aiapply                                   | MZN Vagas v2                                                                                                                                                                  | Onde                                      |
+| aiapply                                   | Find Dreams v2                                                                                                                                                                | Onde                                      |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | Criador de currículo com IA (por vaga)    | **Estúdio de currículo**: currículo estruturado (`resume.json`) gerado do CV pela sua IA, uma versão adaptada por vaga, nunca inventando experiência                          | skill `tailor-resume`, tela Currículos    |
 | Modelos Harvard / Moderno / Clássico      | Três modelos renderizados no app, com pré-visualização ao vivo e exportação em PDF (impressão) e texto                                                                        | `web/src/resume/`                         |
@@ -51,7 +51,7 @@ ai-job-interview, interview-answer-buddy, auto-apply).
 
 ```
 ┌──────────────┬─────────────────────────────────────────────────────────────┐
-│ MZN Vagas    │  Bom dia, Ana                              [+ Nova vaga]    │
+│ Find Dreams    │  Bom dia, Ana                              [+ Nova vaga]    │
 │              │  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇  funil por etapa       │
 │ Busca        │  ┌ métricas ─────────────────────────────────────────────┐  │
 │  Início      │  └───────────────────────────────────────────────────────┘  │

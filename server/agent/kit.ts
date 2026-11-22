@@ -131,7 +131,7 @@ function writeSchemas() {
  * running app (`.mzn/session.json`) to validate with the real schemas, so the rules live in one place.
  */
 const VALIDATOR = `#!/usr/bin/env node
-// Written by the MZN Vagas app. Validates workspace files with the app's own rules.
+// Written by the Find Dreams app. Validates workspace files with the app's own rules.
 // Usage: node .mzn/validate.mjs <file> [more files]   |   node .mzn/validate.mjs --all
 import { readFileSync, realpathSync } from 'node:fs'
 import { dirname, join, relative, resolve } from 'node:path'
@@ -151,7 +151,7 @@ let session
 try {
   session = JSON.parse(readFileSync(join(here, 'session.json'), 'utf8'))
 } catch {
-  console.error('The MZN Vagas app is not running: open it and try again.')
+  console.error('The Find Dreams app is not running: open it and try again.')
   process.exit(2)
 }
 const args = process.argv.slice(2)
@@ -171,7 +171,7 @@ try {
   answer = await res.json()
   if (!res.ok) throw new Error(answer.error ?? res.status)
 } catch (e) {
-  console.error('Could not reach the MZN Vagas app (is it open?): ' + (e.message ?? e))
+  console.error('Could not reach the Find Dreams app (is it open?): ' + (e.message ?? e))
   process.exit(2)
 }
 let problems = 0

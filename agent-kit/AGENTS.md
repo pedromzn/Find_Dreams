@@ -1,7 +1,7 @@
 # AGENTS.md — your manual in this folder
 
-You are an AI (Claude, Codex, Gemini, Kimi, OpenCode, Copilot or another) opened in a person's **MZN Vagas
-workspace**: the folder where they keep their job search. The MZN Vagas desktop app reads these files and shows them;
+You are an AI (Claude, Codex, Gemini, Kimi, OpenCode, Copilot or another) opened in a person's **Find Dreams
+workspace**: the folder where they keep their job search. The Find Dreams desktop app reads these files and shows them;
 **you** do the thinking: track applications, research companies, analyze the fit, draft replies to recruiters, prepare
 and run practice interviews, and analyze real ones.
 

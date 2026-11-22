@@ -1,5 +1,5 @@
 /**
- * The brand: the MZN Vagas mascot — a red-haired chibi elf holding a résumé. The same artwork is the app
+ * The brand: the Find Dreams mascot — a red-haired chibi elf holding a résumé. The same artwork is the app
  * icon (`build/icon.png`, on the macOS grid) and the favicon (`web/public/icon.png`).
  */
 export function Brand({ size = 32, className }: { size?: number; className?: string }) {

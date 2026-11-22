@@ -1,5 +1,5 @@
 /**
- * The MZN Vagas server: the API (`/api`) and the web app on the SAME port.
+ * The Find Dreams server: the API (`/api`) and the web app on the SAME port.
  *
  * - `npm run dev`: Vite runs as middleware (with hot reload) — no second process, no proxy.
  * - `npm start`: serves the already built `dist/`.
@@ -90,7 +90,7 @@ if (entryPoint) {
   const app = await createApp()
   const server = app.listen(config.port, config.host, () => {
     startServices((server.address() as import('node:net').AddressInfo).port)
-    console.log(`\n  ● MZN Vagas at http://${config.host === '0.0.0.0' ? 'localhost' : config.host}:${config.port}\n`)
+    console.log(`\n  ● Find Dreams at http://${config.host === '0.0.0.0' ? 'localhost' : config.host}:${config.port}\n`)
     console.log(`    workspace: ${config.workspaceFolder}\n`)
   })
   for (const signal of ['SIGINT', 'SIGTERM'] as const) process.once(signal, () => process.exit(0))

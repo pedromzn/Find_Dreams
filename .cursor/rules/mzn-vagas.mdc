@@ -1,9 +1,9 @@
 ---
-description: MZN Vagas — how to develop this repository
+description: Find Dreams — how to develop this repository
 alwaysApply: true
 ---
 
-This repository is MZN Vagas, a desktop app (Electron + Express + React) that tracks job applications and simulates
+This repository is Find Dreams, a desktop app (Electron + Express + React) that tracks job applications and simulates
 interviews with the person's own AI. Read the root `AGENTS.md` before doing anything, and `docs/PLAN.md` for the plan.
 
 Golden rules:

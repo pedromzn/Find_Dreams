@@ -1,4 +1,4 @@
-# Plano: MZN Vagas — copiloto de candidaturas e simulador de entrevistas
+# Plano: Find Dreams — copiloto de candidaturas e simulador de entrevistas
 
 Data: 19/11/2026. Pasta: `~/Projetos_open_source/mzn_vagas`. Projetos irmãos usados como referência de arquitetura:
 `../learning-anything` (principal) e `../Photos_use`. A skill `../infra-mercado` serve de régua para não exagerar
@@ -85,10 +85,10 @@ Novos neste projeto:
 
 ## 4. O que muda por ser um app de desktop
 
-| Tema                   | Irmãos (repo como área de trabalho)  | MZN Vagas                                                                                                                                                                                                             |
+| Tema                   | Irmãos (repo como área de trabalho)  | Find Dreams                                                                                                                                                                                                           |
 | ---------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Instalação             | clonar + `npm install`               | instalador por SO no GitHub Releases; clonar continua valendo para quem contribui                                                                                                                                     |
-| Onde ficam os dados    | dentro do repo (`courses/`, `data/`) | **pasta de trabalho** do usuário, padrão `~/Documents/MZN Vagas` (configurável); estado interno em `app.getPath('userData')`                                                                                          |
+| Onde ficam os dados    | dentro do repo (`courses/`, `data/`) | **pasta de trabalho** do usuário, padrão `~/Documents/Find Dreams` (configurável); estado interno em `app.getPath('userData')`                                                                                        |
 | Como a IA é chamada    | a pessoa abre a CLI no repo          | o app inicia o agente via **ACP** com a pasta de trabalho como `cwd`; a pessoa não abre terminal                                                                                                                      |
 | `AGENTS.md` e skills   | na raiz do repo                      | ficam no app (`agent-kit/`) e são **copiados/atualizados** para a pasta de trabalho na primeira execução e a cada versão nova (com `agent-kit/VERSION`; nunca sobrescrever arquivo que a pessoa editou sem perguntar) |
 | Processo               | `tsx server/main.ts`                 | Electron (main) sobe o mesmo `createApp()` em `127.0.0.1` com **porta aleatória** e abre a janela                                                                                                                     |
@@ -132,7 +132,7 @@ mzn_vagas/
 Pasta de trabalho do usuário (o que a IA lê e escreve):
 
 ```
-~/Documents/MZN Vagas/
+~/Documents/Find Dreams/
 ├── AGENTS.md, CLAUDE.md, .claude/skills/, .cursor/rules/   (vindos do agent-kit)
 ├── profile/
 │   ├── profile.json        dados do candidato (nome, stack, anos, idiomas, pretensão, preferências de local/modelo)
@@ -392,8 +392,9 @@ o README.
 
 ## 15. Decisões em aberto (perguntar ao Pedro quando chegar nelas)
 
-Já decidido: o nome é **MZN Vagas** (repositório e pacote npm `mzn-vagas`, pasta `mzn_vagas`, título da
-janela e dos instaladores "MZN Vagas").
+Já decidido: o nome é **Find Dreams** (renomeado de "MZN Vagas" em 21/11/2026: título da janela, dos instaladores e
+da interface). Os identificadores internos continuam `mzn-vagas` por enquanto (pacote npm, `appId`, pasta `.mzn/` do
+workspace, variáveis `MZN_*`); quem já tinha `~/Documents/MZN Vagas` continua usando essa pasta.
 
 - ~~Porta padrão em dev~~ **Decidido:** 3060.
 - ~~Se o Claude via assinatura será suportado~~ **Decidido (19/11/2026):** sim. O app usa o login do Claude Code da própria pessoa (assinatura ou chave de API), avisa que cada tarefa e entrevista gastam os limites do plano, e o projeto é gratuito e não cobra pelo acesso. Ver `docs/AGENTS-SUPPORT.md`.

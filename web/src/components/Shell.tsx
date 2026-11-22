@@ -159,7 +159,7 @@ function Sidebar({ collapsed, toggle }: { collapsed: boolean; toggle: () => void
       <div className={join('flex h-16 shrink-0 items-center gap-2.5', collapsed ? 'justify-center' : 'px-1')}>
         <NavLink to="/" aria-label={t.general.appName} className="flex items-center gap-2.5 no-underline">
           <Brand size={34} />
-          {!collapsed && <span className="text-[17px] font-semibold tracking-tight text-text">MZN Vagas</span>}
+          {!collapsed && <span className="text-[17px] font-semibold tracking-tight text-text">Find Dreams</span>}
         </NavLink>
       </div>
 

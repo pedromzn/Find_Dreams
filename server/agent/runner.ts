@@ -177,7 +177,7 @@ export async function testAgent(
     await session.start()
     await Promise.race([
       session.prompt(
-        'This is a connection test from the MZN Vagas app. Reply with the single word OK and nothing else. Do not use tools.',
+        'This is a connection test from the Find Dreams app. Reply with the single word OK and nothing else. Do not use tools.',
       ),
       new Promise((_, fail) => setTimeout(() => fail(new Error('No answer in 120 s.')), 120_000).unref()),
     ])

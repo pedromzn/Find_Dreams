@@ -1,6 +1,6 @@
 ---
 name: add-agent
-description: Use when adding support for a new ACP agent (a CLI that speaks the Agent Client Protocol) to MZN Vagas — registry entry, docs and a real connection test.
+description: Use when adding support for a new ACP agent (a CLI that speaks the Agent Client Protocol) to Find Dreams — registry entry, docs and a real connection test.
 ---
 
 # Add an agent

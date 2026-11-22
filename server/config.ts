@@ -3,7 +3,7 @@
  * Node reads the file on its own.
  *
  * Unlike the sibling projects, the person's data does NOT live in the repository: it lives in a **workspace folder**
- * the person picks (`~/Documents/MZN Vagas` in the desktop app). In dev it defaults to `./workspace`, which git
+ * the person picks (`~/Documents/Find Dreams` in the desktop app). In dev it defaults to `./workspace`, which git
  * ignores. The desktop main process sets `MZN_WORKSPACE` (or changes `config` directly) before calling `createApp()`.
  */
 

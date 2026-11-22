@@ -26,10 +26,20 @@ export function writeSettings(userData: string, settings: DesktopSettings): void
   writeFileSync(path.join(userData, 'desktop.json'), `${JSON.stringify(settings, null, 2)}\n`)
 }
 
-/** `~/Documents/MZN Vagas` unless the person chose another folder. Created if missing. */
+/** The default folder's name, and the one the app had before it was renamed (data already there is kept). */
+export const WORKSPACE_NAME = 'Find Dreams'
+const LEGACY_WORKSPACE_NAME = 'MZN Vagas'
+
+/**
+ * `~/Documents/Find Dreams` unless the person chose another folder. Created if missing. Someone who used the app as
+ * "MZN Vagas" keeps their `~/Documents/MZN Vagas` folder: the rename must never hide their data.
+ */
 export function resolveWorkspace(userData: string, documents: string): string {
   const chosen = readSettings(userData).workspace
-  const folder = chosen && path.isAbsolute(chosen) ? chosen : path.join(documents, 'MZN Vagas')
+  const current = path.join(documents, WORKSPACE_NAME)
+  const legacy = path.join(documents, LEGACY_WORKSPACE_NAME)
+  const fallback = !existsSync(current) && existsSync(legacy) ? legacy : current
+  const folder = chosen && path.isAbsolute(chosen) ? chosen : fallback
   if (!existsSync(folder)) mkdirSync(folder, { recursive: true })
   return folder
 }

@@ -1,6 +1,6 @@
-<p align="center"><img src="docs/images/logo.png" width="128" alt="MZN Vagas" /></p>
+<p align="center"><img src="docs/images/logo.png" width="128" alt="Find Dreams" /></p>
 
-# MZN Vagas
+# Find Dreams
 
 **Your job search, on your machine.** Track every application, see how you fit each job and rehearse every interview
 stage — HR, technical, client, hiring manager, live coding, system design — by text or voice, with **your own AI**
@@ -56,7 +56,7 @@ The builds are **not code-signed yet**, so the system warns you the first time:
 
 ## First steps
 
-1. Pick your language, check where your data will live (`Documents/MZN Vagas`), import your CV (PDF or DOCX — you
+1. Pick your language, check where your data will live (`Documents/Find Dreams`), import your CV (PDF or DOCX — you
    review the text) and fill your profile.
 2. Add an application from a job link.
 3. Open **Your AI**: choose an installed agent and press **Test** (each agent signs in once with its own CLI — see

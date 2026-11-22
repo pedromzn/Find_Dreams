@@ -261,7 +261,7 @@ export const networkFetcher: Fetcher = async (start) => {
       res = await fetch(url, {
         signal: controller.signal,
         redirect: 'manual',
-        headers: { 'User-Agent': 'Mozilla/5.0 (MZN Vagas desktop app)', Accept: 'text/html,application/json' },
+        headers: { 'User-Agent': 'Mozilla/5.0 (Find Dreams desktop app)', Accept: 'text/html,application/json' },
       })
       const location = res.headers.get('location')
       if (res.status < 300 || res.status >= 400 || !location) break

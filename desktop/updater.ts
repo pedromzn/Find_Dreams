@@ -24,7 +24,7 @@ export function startUpdater(window: BrowserWindow) {
     if (!notifyOnly) return
     const { response } = await dialog.showMessageBox(window, {
       type: 'info',
-      message: `MZN Vagas ${info.version}`,
+      message: `Find Dreams ${info.version}`,
       detail: 'A new version is available. Download it from GitHub and replace the app in Applications.',
       buttons: ['Download', 'Later'],
       defaultId: 0,

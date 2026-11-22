@@ -1,5 +1,5 @@
 /**
- * zod's default messages, in Portuguese (MZN Vagas — shared contracts).
+ * zod's default messages, in Portuguese (Find Dreams — shared contracts).
  *
  * This app's schemas have the important sentences written by hand, but what
  * zod generates on its own (text too long, number out of range) comes out in

@@ -1,6 +1,6 @@
 # Architecture
 
-How MZN Vagas is built, and the decisions taken along the way that `docs/PLAN.md` left open. The plan is the source of
+How Find Dreams is built, and the decisions taken along the way that `docs/PLAN.md` left open. The plan is the source of
 truth for _what_; this file records _how_ and _why_, phase by phase.
 
 ## Shape
@@ -201,7 +201,7 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
 - **Hardening**: contextIsolation, no nodeIntegration, sandbox, no webview; CSP set on every response (production
   only; Vite dev needs inline scripts); external links open in the system browser, other navigation is blocked; only
   the microphone permission, only for the app's origin; one instance per user.
-- **Workspace**: `~/Documents/MZN Vagas` by default, changeable in Settings (the app relaunches). The choice lives in
+- **Workspace**: `~/Documents/Find Dreams` by default, changeable in Settings (the app relaunches). The choice lives in
   `userData/desktop.json`. `MZN_USER_DATA` gives a separate profile for development and smoke tests.
 - **Keys** in the OS keychain through `safeStorage`; saving refuses (instead of falling back to plain text) when the
   keychain is unavailable.
@@ -261,3 +261,12 @@ Plan: [`docs/PLAN-V2.md`](PLAN-V2.md). Benchmarked against aiapply.co's public p
   dialog with print CSS that leaves only the sheet — no PDF library, works in the browser and in Electron.
 - **`GET /api/overview`** feeds the home, résumés, letters, interviews and tools screens from one read of the
   workspace (fine at personal scale: tens of applications).
+
+### Renamed to Find Dreams (2026-11-21)
+
+- Every visible name (interface, window, installers, docs, the agent kit) is now **Find Dreams**; the default workspace
+  is `~/Documents/Find Dreams`, but an existing `~/Documents/MZN Vagas` keeps being used (`desktop/settings.ts`), so
+  the rename never hides anyone's data.
+- Internal identifiers stay `mzn-vagas` for now: npm package, `appId`, the workspace's `.mzn/` folder, `MZN_*`
+  variables, the `X-MZN-Token` header and `localStorage` keys. Renaming those would break existing workspaces and
+  settings for no visible gain; the GitHub repository name is decided when it is created.

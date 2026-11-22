@@ -17,7 +17,7 @@ const s = (n: number, one: string, many: string) => (n === 1 ? one : many)
 
 export const en = {
   general: {
-    appName: 'MZN Vagas',
+    appName: 'Find Dreams',
     loading: 'Loading',
     tryAgain: 'Try again',
     save: 'Save',
@@ -531,7 +531,7 @@ export const en = {
   },
 
   welcome: {
-    title: 'Welcome to MZN Vagas',
+    title: 'Welcome to Find Dreams',
     note: 'Three quick steps. Everything you type stays in a folder on this computer.',
     stepWorkspace: 'Your folder',
     stepCv: 'Your CV',

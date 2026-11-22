@@ -6,7 +6,7 @@ const s = (n: number, one: string, many: string) => (n === 1 ? one : many)
 
 export const ptBR: Dictionary = {
   general: {
-    appName: 'MZN Vagas',
+    appName: 'Find Dreams',
     loading: 'Carregando',
     tryAgain: 'Tentar de novo',
     save: 'Salvar',
@@ -527,7 +527,7 @@ export const ptBR: Dictionary = {
   },
 
   welcome: {
-    title: 'Boas-vindas ao MZN Vagas',
+    title: 'Boas-vindas ao Find Dreams',
     note: 'Três passos rápidos. Tudo o que você digitar fica numa pasta deste computador.',
     stepWorkspace: 'Sua pasta',
     stepCv: 'Seu currículo',

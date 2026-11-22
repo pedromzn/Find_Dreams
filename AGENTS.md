@@ -1,4 +1,4 @@
-# AGENTS.md — developing MZN Vagas
+# AGENTS.md — developing Find Dreams
 
 If you are an AI (Claude Code, Codex, Cursor or another) working **on this repository's code**, read this first.
 
@@ -8,7 +8,7 @@ If you are an AI (Claude Code, Codex, Cursor or another) working **on this repos
 
 ## 1. What this project is
 
-**MZN Vagas** is a desktop app (Electron, for Windows, macOS and Linux) for people looking for a job, starting with
+**Find Dreams** is a desktop app (Electron, for Windows, macOS and Linux) for people looking for a job, starting with
 developers. It tracks every application, analyzes the fit with each job, drafts replies to recruiters and simulates
 every interview stage (HR, technical, client, hiring manager, live coding, system design…) by text or voice.
 

@@ -1,6 +1,6 @@
 ---
 name: add-interview-type
-description: Use when adding a new interview stage to MZN Vagas (e.g. "pair programming", "bar raiser") — the enum, both dictionaries, the agent-kit references, a persona role and an eval.
+description: Use when adding a new interview stage to Find Dreams (e.g. "pair programming", "bar raiser") — the enum, both dictionaries, the agent-kit references, a persona role and an eval.
 ---
 
 # Add an interview type

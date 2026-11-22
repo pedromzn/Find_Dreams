@@ -1,10 +1,10 @@
 /**
- * The MZN Vagas desktop app (Electron main process). It runs the SAME server as `npm start` — `createApp()` — on
+ * The Find Dreams desktop app (Electron main process). It runs the SAME server as `npm start` — `createApp()` — on
  * 127.0.0.1 with a random port and a per-launch API token, and opens a hardened window on it:
  * contextIsolation, no Node in the page, sandbox, a minimal preload, a CSP, external links in the system browser,
  * only the microphone permission (voice interviews), and only for the app's own origin.
  *
- * Paths: the workspace (the person's data) defaults to `~/Documents/MZN Vagas`; the app's own state, the voice
+ * Paths: the workspace (the person's data) defaults to `~/Documents/Find Dreams`; the app's own state, the voice
  * engines and the keychain-encrypted keys live in `userData`; the agent kit and the voice scripts ship as extra
  * resources (they must be real files: Python cannot read inside the asar archive).
  */
@@ -84,7 +84,7 @@ async function start() {
     minWidth: 960,
     minHeight: 640,
     backgroundColor: '#12141a',
-    title: 'MZN Vagas',
+    title: 'Find Dreams',
     // packaged builds take the icon from the installer; in development, Windows and Linux need it here
     ...(app.isPackaged ? {} : { icon: devIcon }),
     show: false,
@@ -120,7 +120,7 @@ async function start() {
 
 ipcMain.handle('mzn:choose-workspace', async () => {
   const result = await dialog.showOpenDialog(window!, {
-    title: 'MZN Vagas',
+    title: 'Find Dreams',
     defaultPath: readSettings(userData).workspace ?? app.getPath('documents'),
     properties: ['openDirectory', 'createDirectory'],
   })
@@ -140,6 +140,6 @@ app.on('second-instance', () => {
 })
 app.on('window-all-closed', () => app.quit())
 app.whenReady().then(start, (error) => {
-  dialog.showErrorBox('MZN Vagas', String(error))
+  dialog.showErrorBox('Find Dreams', String(error))
   app.exit(1)
 })

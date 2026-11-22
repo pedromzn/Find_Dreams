@@ -76,7 +76,7 @@ export function systemPrompt(slug: string, persona: InterviewerPersona, language
     .filter(Boolean)
     .join('\n\n')
   return [
-    'MZN-INTERVIEWER. You are running a PRACTICE job interview inside the MZN Vagas app. You are the interviewer.',
+    'MZN-INTERVIEWER. You are running a PRACTICE job interview inside the Find Dreams app. You are the interviewer.',
     `Speak ${LANGUAGE_DATA[language].name} (${LANGUAGE_DATA[language].bcp47}) the whole time.`,
     'Answer EVERY turn with ONLY a JSON object, no other text: {"say": "<your next words to the candidate>", "intent": "probe" | "next_topic" | "wrap_up" | "end", "notes": "<your private notes, one line>"}.',
     'Use "end" only after closing the interview. Do not use tools. Do not read or write files.',

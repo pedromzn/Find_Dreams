@@ -1,11 +1,11 @@
 # Privacy
 
-MZN Vagas handles some of the most sensitive data a person has during a job search: the CV, salary expectations,
+Find Dreams handles some of the most sensitive data a person has during a job search: the CV, salary expectations,
 recruiter messages and interview transcripts. This is what happens to it.
 
 ## Where your data lives
 
-- **Your workspace folder** (`~/Documents/MZN Vagas` by default, changeable in Settings): profile, CV, applications,
+- **Your workspace folder** (`~/Documents/Find Dreams` by default, changeable in Settings): profile, CV, applications,
   job posts, company research, messages, practice transcripts and feedback, debriefs. Plain files you can read, copy,
   back up or delete.
 - **The app's data folder** (the operating system's application data): the app state (`state.sqlite` is in the

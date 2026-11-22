@@ -1,6 +1,6 @@
 # Agents supported
 
-MZN Vagas does not call any AI on its own: it starts **your** agent through
+Find Dreams does not call any AI on its own: it starts **your** agent through
 [ACP (Agent Client Protocol)](https://agentclientprotocol.com) with your workspace folder as the working directory,
 or hands you a one-line prompt to paste into any AI you open yourself. Commands checked on 2026-11-19; they change, so
 this file and `server/agent/registry.ts` are updated together.
@@ -36,7 +36,7 @@ app is optional.
 Claude plan, like using Claude Code yourself; the app says so on "Your AI", when you run a task and when you start an
 interview with your agent as the engine. For long voice practice, a local Ollama model costs nothing.
 
-MZN Vagas is free and open source and does not resell or charge for access to Claude. Anthropic's terms for the
+Find Dreams is free and open source and does not resell or charge for access to Claude. Anthropic's terms for the
 Claude Agent SDK restrict third-party products from offering claude.ai login or subscription limits without approval;
 the maintainer chose to allow it here (2026-11-19) because the app is free, runs the person's own CLI and login, and
 is explicit about the usage. If Anthropic objects, switching back is one line (`--hide-claude-auth` in

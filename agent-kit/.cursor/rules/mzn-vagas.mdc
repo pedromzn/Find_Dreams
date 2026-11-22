@@ -1,9 +1,9 @@
 ---
-description: MZN Vagas workspace — how to track applications and prepare interviews here
+description: Find Dreams workspace — how to track applications and prepare interviews here
 alwaysApply: true
 ---
 
-This folder is a person's MZN Vagas workspace (their job search). Read `AGENTS.md` before doing anything.
+This folder is a person's Find Dreams workspace (their job search). Read `AGENTS.md` before doing anything.
 
 The steps of each task are in `.claude/skills/<skill>/SKILL.md` (plain Markdown: open them by path).
 

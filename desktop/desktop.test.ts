@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, statSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, readFileSync, statSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { describe, expect, it } from 'vitest'
@@ -15,16 +15,23 @@ import {
 const temp = () => mkdtempSync(path.join(tmpdir(), 'mzn-desktop-'))
 
 describe('desktop settings', () => {
-  it('the workspace defaults to Documents/MZN Vagas and follows the choice', () => {
+  it('the workspace defaults to Documents/Find Dreams and follows the choice', () => {
     const userData = temp()
     const documents = temp()
-    expect(resolveWorkspace(userData, documents)).toBe(path.join(documents, 'MZN Vagas'))
-    expect(statSync(path.join(documents, 'MZN Vagas')).isDirectory()).toBe(true)
+    expect(resolveWorkspace(userData, documents)).toBe(path.join(documents, 'Find Dreams'))
+    expect(statSync(path.join(documents, 'Find Dreams')).isDirectory()).toBe(true)
     const chosen = path.join(temp(), 'Vagas')
     writeSettings(userData, { workspace: chosen })
     expect(readSettings(userData).workspace).toBe(chosen)
     expect(resolveWorkspace(userData, documents)).toBe(chosen)
     writeSettings(userData, { workspace: 'relative/path' })
+    expect(resolveWorkspace(userData, documents)).toBe(path.join(documents, 'Find Dreams'))
+  })
+
+  it("keeps the folder of the app's old name when it already holds data", () => {
+    const userData = temp()
+    const documents = temp()
+    mkdirSync(path.join(documents, 'MZN Vagas'))
     expect(resolveWorkspace(userData, documents)).toBe(path.join(documents, 'MZN Vagas'))
   })
 

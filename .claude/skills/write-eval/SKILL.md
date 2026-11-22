@@ -1,6 +1,6 @@
 ---
 name: write-eval
-description: Use when adding a product eval to MZN Vagas — a verifiable check of how the AI behaves (the interviewer, the feedback, the drafts), recorded and/or live.
+description: Use when adding a product eval to Find Dreams — a verifiable check of how the AI behaves (the interviewer, the feedback, the drafts), recorded and/or live.
 ---
 
 # Write an eval

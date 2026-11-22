@@ -1,6 +1,6 @@
 # Security
 
-MZN Vagas runs on your machine and handles sensitive personal data: your CV, salary expectations, recruiter messages
+Find Dreams runs on your machine and handles sensitive personal data: your CV, salary expectations, recruiter messages
 and interview transcripts. There are no accounts and no server of ours; the app calls no AI API on its own. The parts
 that matter most:
 
