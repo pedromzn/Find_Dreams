@@ -15,7 +15,7 @@ that matter most:
 ## Reporting a vulnerability
 
 Please **do not open a public issue**. Use GitHub's private report:
-[Security → Report a vulnerability](https://github.com/pedromzn/mzn-vagas/security/advisories/new).
+[Security → Report a vulnerability](https://github.com/pedromzn/Find_Dreams/security/advisories/new).
 
 Include what an attacker could do, the steps to reproduce and the version or commit. You will get an answer within
 7 days. Once a fix is released, the advisory is published with credit to you, unless you prefer otherwise.

@@ -46,5 +46,5 @@ linux:
 publish:
   provider: github
   owner: pedromzn
-  repo: mzn-vagas
+  repo: Find_Dreams
   releaseType: draft

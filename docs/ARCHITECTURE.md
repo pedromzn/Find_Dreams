@@ -36,7 +36,7 @@ One npm package (no monorepo), the same shape as the sibling projects (`../learn
 - **The interface language is stored in `localStorage`**, as in the siblings. Known issue for phase 7: Electron serves
   the app on a random port each launch and `localStorage` is per origin, so the choice would be lost. In the desktop
   phase, the preference moves to the server settings (SQLite) or the port becomes stable per install.
-- **The repository URL** used in docs and templates is `https://github.com/pedromzn/mzn-vagas` (assumed from the
+- **The repository URL** used in docs and templates is `https://github.com/pedromzn/Find_Dreams` (assumed from the
   package name; the remote does not exist yet).
 
 ### Phase 1 — domain and storage

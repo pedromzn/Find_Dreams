@@ -7,6 +7,6 @@ harassment, insults, sexualized language or personal attacks, and no publishing 
 (including recruiters' and interviewers'). This applies to issues, pull requests and discussions.
 
 To report a problem, write to the maintainer through a
-[private security report](https://github.com/pedromzn/mzn-vagas/security/advisories/new) (it is private and reaches
+[private security report](https://github.com/pedromzn/Find_Dreams/security/advisories/new) (it is private and reaches
 only the maintainers) or by direct message on GitHub. Reports are handled confidentially. Maintainers may remove
 content and block people who break these rules.

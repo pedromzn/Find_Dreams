@@ -69,9 +69,9 @@
   },
   "main": "dist-desktop/main.js",
   "author": "Find Dreams contributors",
-  "homepage": "https://github.com/pedromzn/mzn-vagas",
+  "homepage": "https://github.com/pedromzn/Find_Dreams",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pedromzn/mzn-vagas.git"
+    "url": "git+https://github.com/pedromzn/Find_Dreams.git"
   }
 }

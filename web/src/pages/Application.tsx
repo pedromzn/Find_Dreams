@@ -255,7 +255,7 @@ export default function Application() {
             value={a.status}
             onChange={(e) => void save({ status: e.target.value as Status })}
             aria-label={t.application.status}
-            className="h-9 w-auto py-0"
+            className="w-auto !py-1.5"
           >
             {STATUSES.map((s) => (
               <option key={s} value={s}>

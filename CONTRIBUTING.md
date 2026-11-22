@@ -13,7 +13,7 @@ the AI instructions and bug reports.
 ## Verification (run before opening the pull request)
 
 ```bash
-npm run verify       # format check, types, tests and build
+npm run verify       # format, types, tests, workspace validation, schemas, privacy check, evals and build
 npm run format       # Prettier, if the format check complained
 ```
 

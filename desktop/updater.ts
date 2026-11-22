@@ -9,7 +9,7 @@
 import { dialog, shell, type BrowserWindow } from 'electron'
 import electronUpdater from 'electron-updater'
 
-const RELEASES = 'https://github.com/pedromzn/mzn-vagas/releases/latest'
+const RELEASES = 'https://github.com/pedromzn/Find_Dreams/releases/latest'
 
 export function startUpdater(window: BrowserWindow) {
   // electron-updater is CommonJS: the documented interop for an ESM main process

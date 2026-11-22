@@ -103,7 +103,7 @@ function ToolsFor({ app }: { app: OverviewApplication }) {
             value={when}
             onChange={(e) => setWhen(e.target.value as When)}
             aria-label={t.tools.when}
-            className="h-9 w-full py-0 text-[13.5px]"
+            className="w-full !py-1.5 text-[13.5px]"
           >
             {(Object.keys(t.tools.whenOptions) as When[]).map((w) => (
               <option key={w} value={w}>
